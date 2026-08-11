@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>原子磁力仪实验：测量、搭建与原理</title>
+<style>
+:root{
+  --bg:#0f1115; --card:#171a21; --bord:#23262d; --mut:#9aa4b2;
+  --txt:#e6e8ec; --acc:#7dd3fc; --warn:#fbbf24; --intu:#c4b5fd; --side:#2a2140;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font:16px/1.9 -apple-system,"Segoe UI","Microsoft YaHei",sans-serif;padding:28px 20px 60px}
+main{max-width:820px;margin:0 auto}
+a{color:var(--acc);text-decoration:none}
+a:hover{text-decoration:underline}
+h1{font-size:27px;line-height:1.45;margin-bottom:8px}
+h2{font-size:21px;margin:40px 0 14px;padding-left:12px;border-left:4px solid var(--acc)}
+h3{font-size:17px;margin:24px 0 10px;color:var(--acc)}
+p{margin:12px 0}
+ul,ol{margin:10px 0 10px 24px}
+li{margin:6px 0}
+table{border-collapse:collapse;width:100%;margin:14px 0;font-size:14px}
+th,td{border:1px solid var(--bord);padding:7px 11px;text-align:left}
+th{background:#1c2029;color:var(--acc)}
+tr:nth-child(even) td{background:#151922}
+.sub{color:var(--mut);font-size:14px}
+.formula{background:#11141a;border:1px solid var(--bord);border-radius:8px;padding:12px 18px;margin:14px 0;font-family:"Cambria Math",Georgia,serif;font-size:16px;overflow-x:auto;text-align:center}
+.formula b{color:var(--acc)}
+.note{border-left:3px solid var(--warn);padding:8px 14px;margin:14px 0;background:#1a1710;font-size:14px}
+.side{background:var(--side);border:1px solid #3b2f5e;border-radius:10px;padding:12px 16px;margin:14px 0;font-size:14px}
+.side b{color:#c4b5fd}
+.glos{background:#11141a;border:1px solid var(--bord);border-radius:8px;padding:10px 14px;margin:8px 0;font-size:14px}
+.glos b{color:var(--acc)}
+.links{margin-top:30px;display:flex;gap:16px;flex-wrap:wrap;font-size:14px}
+.toplink{color:var(--mut);font-size:13px;margin-bottom:12px;display:block}
+/* 浅色主题 */
+body[data-theme="light"]{
+  --bg:#f7f8fa; --card:#ffffff; --bord:#dde1e7; --mut:#5a6472;
+  --txt:#1a2029; --acc:#0284c7; --warn:#b45309; --intu:#6d28d9; --side:#f3eefb;
+}
+body[data-theme="light"] .formula{background:#f1f3f6;border-color:#dde1e7}
+body[data-theme="light"] .note{background:#fdf6e3;border-color:#e5c97a}
+body[data-theme="light"] .side{border-color:#c9b8ec}
+body[data-theme="light"] .glos{background:#f1f3f6;border-color:#dde1e7}
+body[data-theme="light"] th{background:#eef1f5}
+body[data-theme="light"] tr:nth-child(even) td{background:#f3f5f8}
+/* 顶部可折叠目录 */
+#tocBtn{position:fixed;top:10px;right:10px;z-index:90;background:transparent;border:1px solid var(--bord);
+  color:var(--mut);border-radius:6px;font-size:14px;padding:3px 9px;cursor:pointer;opacity:.55;transition:opacity .2s}
+#tocBtn:hover{opacity:1;color:var(--acc)}
+#toc{position:fixed;top:0;left:0;right:0;z-index:89;background:var(--bg);border-bottom:1px solid var(--bord);
+  max-height:0;overflow:hidden;transition:max-height .3s ease;display:flex;flex-wrap:wrap;gap:4px 16px;padding:0 16px}
+#toc.open{max-height:70vh;overflow:auto;padding-top:44px;padding-bottom:12px}
+#toc a{font-size:13px;color:var(--mut);padding:2px 0}
+#toc a:hover{color:var(--acc)}
+#toc a.cur{color:var(--acc)}
+/* 主题切换按钮（右下角，不起眼） */
+#themeBtn{position:fixed;right:10px;bottom:10px;z-index:90;width:34px;height:34px;border-radius:50%;
+  background:var(--card);border:1px solid var(--bord);color:var(--mut);font-size:16px;cursor:pointer;
+  opacity:.5;transition:opacity .2s}
+#themeBtn:hover{opacity:1;color:var(--acc)}
+@media(max-width:860px){main{padding:0 4px}h1{font-size:22px}}
+</style>
+</head>
+<body>
+<button id="tocBtn" title="展开/收起目录">☰</button>
+<button id="themeBtn" title="深浅切换">◐</button>
+<div id="toc"></div>
+<main>
+<a class="toplink" href="index.html">&larr; 返回《从原子到磁力仪》主线</a>
+<h1>原子磁力仪实验：测什么、怎么搭、怎么读数据</h1>
+<p class="sub">实验支线，与主线配套。按做实验的人真正思考的顺序来讲：先弄清楚要干什么，再把装置一件件摆出来，最后看数据里能读出什么。</p>
+
+<!-- ============ 0 学习地图 ============ -->
+<section id="e0">
+<h2>0 &middot; 先看地图：这条线一共有几步</h2>
+<p>主线回答的是"原子能干什么"，这条线回答的是"人在实验室里怎么让它干出来"。一句话概括：<b>实验 = 造一个安静到极致的环境 + 用光把原子的自旋方向变成电信号</b>。</p>
+<p>整条线的推进顺序是这样：</p>
+<ul>
+<li>第 1 节说清楚"为什么值得做"——理论预言原子自旋对外磁场极度敏感，实验要证明的，是它到底有多敏感、以及每一步是被什么卡住的。</li>
+<li>第 2&ndash;4 节是动手前的三堂预备课：<b>环境</b>（屏蔽、线圈、加热）、<b>光学</b>（泵浦与探测）、<b>噪声</b>（怎么从噪声里把信号挖出来）。</li>
+<li>第 5&ndash;8 节是四个真实验：光抽运极化、SERF 磁力仪、FID 脉冲磁力仪、脑磁图。每个都按同一思路展开——想测什么、怎么搭、怎么读、读出了什么。</li>
+<li>第 9 节把四十年灵敏度进步收成一张表，看极限到底在哪。</li>
+</ul>
+<div class="note">如果你时间少：只读每节第一段（那里有整节的核心）和结果表，大约 20 分钟能过一遍；想自己上手，再读搭建和测量部分。</div>
+</section>
+
+<!-- ============ 1 为什么 ============ -->
+<section id="e1">
+<h2>1 &middot; 先问一句：这些实验到底在证明什么</h2>
+<p>主线的第 4 节给出了磁力仪灵敏度的理论极限。把它写出来，就是下面这个公式：</p>
+<div class="formula">&delta;B &asymp; 1 / (&gamma;<sub>e</sub> &middot; &radic;(n &middot; T<sub>2</sub> &middot; V &middot; t))</div>
+<p>公式里四个因子决定了灵敏度：n 是原子数密度，T<sub>2</sub> 是横向弛豫时间（自旋极化的横向分量衰减到 1/e 的时间），V 是激光照到的原子体积，t 是测量时间。这个公式直接告诉实验者该往哪个方向使劲——每一项都值得投入：</p>
+<ul>
+<li>提高 n：把铷泡加热到一百多度，蒸气密度随温度指数上升；</li>
+<li>延长 T<sub>2</sub>：消除一切使自旋失去取向的机制——磁场梯度、碰撞、光散射；</li>
+<li>增大 V：扩宽探测光束，或用反射镜让光多次穿过原子蒸气；</li>
+<li>加长 t：延长积分时间，但要留意低频噪声会随积分反而上升（见第 4 节）。</li>
+</ul>
+<p>所以实验的"为什么"其实非常朴素：<b>每一步搭建，都是在为公式里的某一项充值</b>。下面就从充值的第一步讲起。</p>
+<div class="side"><b>一个常被问起的问题：</b>为什么不用现成的超导量子干涉仪（SQUID）？它同样能做到 fT 级，但需要液氦冷却。原子磁力仪的价值在于室温运行、可光纤化、能直接贴近人体测量——这正是脑磁图近年转向它的原因。</div>
+</section>
+
+<!-- ============ 2 环境 ============ -->
+<section id="e2">
+<h2>2 &middot; 预备课一：先给原子造一个"无菌病房"</h2>
+<p>做这个实验的人，第一件要学的事是：别急着碰仪器。要测的磁场只有飞特斯拉量级——大约是一根小磁铁磁场的一万亿分之一——而实验室里到处是比它大几百万倍的东西：地球磁场、电线里的 50 赫兹电流、甚至楼下开过的电梯。所以实验真正的第一步，不是开激光，而是<b>把环境洗干净</b>。</p>
+
+<h3>2.1 磁屏蔽：地球磁场是最大的敌人</h3>
+<p>地球磁场约 30&ndash;60 微特斯拉，而 SERF 磁力仪工作在 10 纳特斯拉以下的"近零场"——差着四个数量级。更麻烦的是城市环境：电力线、电梯、地铁都会造成毫秒级的磁场跳动。对付它们靠的是坡莫合金（一种高磁导率的镍铁合金）：</p>
+<ul>
+<li><b>多层屏蔽桶</b>：典型是四层圆桶套在一起，屏蔽能力达到 10<sup>4</sup>&ndash;10<sup>5</sup> 倍，桶内剩磁小于 1 纳特斯拉。层数越多越安静，体积和成本也越大；</li>
+<li><b>铁氧体屏蔽</b>：2010 年创下 0.16 fT/√Hz 纪录的那台装置用的就是铁氧体——它自身的磁噪声比坡莫合金更低；</li>
+<li><b>亥姆霍兹线圈</b>：屏蔽桶内再放三轴线圈，主动补偿残余磁场，把工作点精确调到零。这一步通常叫"消磁+补偿"，是整个实验最磨人的环节之一。</li>
+</ul>
+<p>屏蔽桶上当然要开孔让激光进出——但每个孔都是屏蔽能力的漏洞，所以光束要尽量细（几毫米），或者干脆用光纤把光送进桶里。</p>
+
+<h3>2.2 加热：让铷从固体变成"蒸气仓库"</h3>
+<p>铷在室温是固体。要得到足够的原子密度（10<sup>13</sup>&ndash;10<sup>15</sup> cm<sup>-3</sup>），得把泡加热到 100&ndash;180 &deg;C。加热听上去简单，其实是"最脏"的环节，因为电加热本身会产生磁场：</p>
+<ul>
+<li>加热丝必须用<b>高频交流电</b>——直流电会产生恒定磁场，低频交流电会直接混进磁力仪的工作频段；</li>
+<li>温度要用铂电阻（PT100）盯着，控温精度做到 &plusmn;0.5&ndash;1 &deg;C——温度一抖，原子密度就抖，灵敏度就跟着抖；</li>
+<li>泡里通常充上<b>缓冲气体</b>：氮气能吸收自发辐射的光子，防止它们重新激发原子、破坏极化（这叫猝灭气）；惰性气体则减慢原子撞到泡壁的速度——撞壁是自旋弛豫的主要来源之一。</li>
+</ul>
+<p>选什么碱金属也有讲究。钾、铷、铯都只有一个外层电子，能级简单，D 线波长正好落在半导体激光能覆盖的范围。铯的自旋交换效应最强（灵敏度上限高），但自旋破坏也最强——这个权衡，正是每个实验组反复调温度、换元素的原因。</p>
+</section>
+
+<!-- ============ 3 光学 ============ -->
+<section id="e3">
+<h2>3 &middot; 预备课二：两束激光，一个负责泵浦，一个负责读出</h2>
+<p>整个磁力仪，其实是两束激光的分工。要读懂它，只需要记住两件事。</p>
+
+<h3>3.1 第一件事：光抽运，让原子自旋取向一致</h3>
+<p>圆偏振光打在铷的 D1 线上时，每个光子都携带一份角动量，它只能把自旋朝下的原子抬到激发态；激发态原子落回基态时，两个自旋方向都有份。于是循环几轮之后，自旋朝上的原子不再吸收这种光（处于"暗态"），其他原子却被一遍遍推向暗态堆积。这个让原子自旋取向一致的过程，就叫光抽运。</p>
+<p>取向一致的程度用<b>极化度</b> P 衡量。它由泵浦速率 R（光把原子推向暗态的速度）和总弛豫速率 &Gamma;（各种碰撞、光散射把取向打乱的速度）的竞争决定：</p>
+<div class="formula">P = R / (R + &Gamma;)</div>
+<p>想得到接近 1 的极化，就得让光足够强、弛豫足够小。而弛豫里最阴险的一项来自自旋交换碰撞——两个原子互相撞一下，自旋就"换"了。这个机制在 SERF 之前是所有磁力仪的头号杀手，第 6 节的实验二专门对付它。</p>
+
+<h3>3.2 第二件事：法拉第旋转，读出原子自旋偏了多少</h3>
+<p>线偏振光可以看作左旋和右旋两束圆偏振光的叠加。极化原子对这两种圆偏振的折射率不一样，于是线偏振面经过原子蒸气时会被拧过一个角度 &theta;——这个角度正比于极化度，也正比于磁场：</p>
+<div class="formula">&theta; &prop; 极化度 &times; 磁场 &times; 光程</div>
+<p>磁场让自旋偏离泵浦方向，探测光读到的旋转角就正比于这个偏离。<b>旋转角 &rarr; 磁场</b>，这就是"原子磁力仪"名字的来历。探测光通常选在 D2 线附近并稍微失谐——完全共振的话原子会把它吃掉，那反而引入噪声。</p>
+</section>
+
+<!-- ============ 4 探测与噪声 ============ -->
+<section id="e4">
+<h2>4 &middot; 预备课三：偏振角小到可怕，怎么从噪声里挖出来</h2>
+<p>要测的偏振旋转角只有 10<sup>-6</sup>&ndash;10<sup>-8</sup> 弧度——相当于一条一公里长的直线，端点偏了一根头发丝的宽度。靠"看得更清楚"是不可能的，实验的答案是<b>把两路光相减，让无关的噪声互相抵消</b>。</p>
+<p>这个装置叫平衡偏振计：沃拉斯顿棱镜把线偏振光按偏振方向劈成两束，各打在一个光电二极管上，然后差分放大。激光强度会抖动，但两束光一起抖——相减之后就抵消了；只有真正的偏振旋转（也就是磁场信号）会留下差值：</p>
+<div class="formula">I<sub>1</sub> = I<sub>0</sub>&middot;sin&sup2;(&theta; - &pi;/4),&nbsp;&nbsp;I<sub>2</sub> = I<sub>0</sub>&middot;cos&sup2;(&theta; - &pi;/4) &nbsp;&rArr;&nbsp; 差值 &prop; 2I<sub>0</sub>&theta;</div>
+<p>动手测量前，得先把差分信号调到零点附近——这不仅仅是为了好看，而是让探测器工作在增益最高、最线性的区间。</p>
+<p>那么，灵敏度到底被谁限制？把噪声来源从大到小排一遍，大概是这样的顺序：激光的强度/频率抖动，以及光子到达探测器的随机性（散粒噪声，这是光探测的量子噪声底）；原子自身的自旋投影噪声（第 1 节公式里的那个极限）和各种弛豫；屏蔽桶漏进来的环境场、线圈电流的纹波、光纤的振动；最后才是光电二极管和放大器的电子噪声。实验里测灵敏度的办法很直接——<b>施加一个已知的小磁场，看信噪比</b>：</p>
+<div class="formula">灵敏度 = B / SNR &middot; &radic;&tau;&nbsp;&nbsp;（单位 fT/√Hz）</div>
+<p>积分时间越长，随机噪声平均得越干净；但低频段的 1/f 噪声（功率随频率下降而上升）会反噬，所以"无限积分"并不能无限提高精度——这是所有精密测量的通识。</p>
+</section>
+
+<!-- ============ 5 实验一 光抽运 ============ -->
+<section id="e5">
+<h2>5 &middot; 实验一：光打进去，原子到底被极化了多少</h2>
+<p>第一个实验只问一个问题：<b>把泵浦光打进去，自旋到底被极化到什么程度？</b>极化度是后面所有实验的基础，所以得先把它量清楚。</p>
+<p>测极化有个很取巧的办法——利用暗态。泡对泵浦光的吸收随极化增大而下降：原子越整齐，越没原子去吸收光。所以只要比较"没极化时的吸收"和"极化后的透射"，就能反推出极化度。</p>
+<p>搭建上并不复杂：铷泡（&sup8;&#8317;Rb 加上 100 托氮气）放进四层坡莫合金桶，桶内线圈只留一个方向的偏置场（约 1 微特斯拉）；795 纳米的外腔半导体激光经四分之一波片变成圆偏振，扩束到约 10 毫米打进泡里；泡后面放一个光电二极管记录透射光；整个泡用高频加热加 PT100 温控。</p>
+<p>测量的流程是：先关掉泵浦光，记下"冷态"吸收作为参考；再打开泵浦光，等极化建立（几秒量级），记录透射上升到的平台；从透射增量反推极化度。如果顺便扫描偏置场，还能看到透射曲线的磁共振峰——从峰宽可以读出弛豫率，进而得到 T<sub>2</sub>。</p>
+<table>
+<tr><th>参数</th><th>典型值</th><th>说明</th></tr>
+<tr><td>极化度 P</td><td>50&ndash;90%</td><td>教学装置一般能到 50% 上下</td></tr>
+<tr><td>横向弛豫 T<sub>2</sub></td><td>毫秒到几十毫秒</td><td>SERF 区可以接近 1 秒</td></tr>
+<tr><td>透射上升时间</td><td>~1/(R+&Gamma;)</td><td>直接反映泵浦与弛豫的竞争</td></tr>
+</table>
+<p>这个实验真正的"隐藏课"是：把光调大，极化会饱和；把温度调高，弛豫会变大。<b>极化不是越高越好，而是光强和弛豫之间的平衡</b>——后面 SERF 实验里"扫温度找最优"的做法，根源就在这里。</p>
+</section>
+
+<!-- ============ 6 实验二 SERF ============ -->
+<section id="e6">
+<h2>6 &middot; 实验二：SERF——把敌人变成朋友</h2>
+<p>自旋交换碰撞本来是弛豫的头号杀手：两个原子一撞，自旋就交换了，集体的取向被迅速打乱。SERF（自旋交换弛豫自由区）的思路反其道而行——<b>让碰撞快到极致，快到超过拉莫尔进动，碰撞的随机性反而被平均掉了</b>。用一句俗话：以毒攻毒。</p>
+
+<h3>6.1 它到底是怎么工作的</h3>
+<p>普通磁力仪里，自旋交换率小于拉莫尔进动率（自旋绕磁场方向的进动），每次碰撞都在打断进动，线宽被碰撞率卡死，灵敏度上不去。SERF 区则相反：让自旋交换率远大于进动率——这要求磁场极低（10 纳特斯拉以下）且原子密度足够高。这时两次碰撞之间自旋只转了一个极小角度，碰撞反而把进动"拍平"成一种整体缓慢的进动，弛豫被抑制，T<sub>2</sub> 可以到约 1 秒。小场下磁力仪的响应是：</p>
+<div class="formula">P<sub>x</sub> &asymp; P<sub>z</sub> &middot; &Omega;<sub>y</sub> / &Gamma;&nbsp;&nbsp;（&Omega;<sub>y</sub> = &gamma;B<sub>y</sub>）</div>
+<p>看这个式子：磁场引起的响应正比于 1/&Gamma;——&Gamma; 越小，响应越大。SERF 的高灵敏度，机制就在这里。</p>
+
+<h3>6.2 一台 SERF 磁力仪是怎么搭起来的</h3>
+<p>以 2002 年那台首次演示的装置为蓝本：约 1 立方厘米的钾泡放在四层坡莫合金桶中心；圆偏振泵浦光沿 z 轴打进去把自旋极化；线偏振探测光沿 x 轴穿过（与泵浦正交），出泡后进平衡偏振计；桶内三轴线圈把总场压到 10 纳特斯拉以下的工作点；泡加热到一百多度；信号走锁相放大加数据采集。</p>
+<p>调机的顺序几乎是固定的，每一步都有讲究：先给屏蔽桶消磁；再用线圈把中心场一点点补到零；然后扫描温度找最优密度；接着扫光强和频率找最大响应；最后施加已知小磁场做标定。第一次搭这套装置的人，往往要在这里耗上几天——但这也是理解整套物理最快的途径。</p>
+
+<h3>6.3 测量与结果：四十年灵敏度阶梯</h3>
+<p>灵敏度怎么测？在工作点附近加一个小的正弦磁场，扫它的频率，记录响应幅度——画出响应-频率曲线，从 3 分贝带宽读出磁力仪带宽（典型 10&ndash;100 赫兹，加偏置场可以拓宽）。再把一个已知小磁场（比如 1 纳特斯拉）加到噪声本底上，从信噪比换算成每根号赫兹多少飞特斯拉。</p>
+<table>
+<tr><th>年份</th><th>实验</th><th>灵敏度</th><th>关键改进</th></tr>
+<tr><td>2002</td><td>首次 SERF 演示</td><td>10 fT/√Hz</td><td>小泡+近零场，证明弛豫可抑制</td></tr>
+<tr><td>2003</td><td>梯度仪构型</td><td>0.54 fT/√Hz</td><td>双通道相减压环境噪声</td></tr>
+<tr><td>2007</td><td>MEMS 微加工泡</td><td>70 fT/√Hz</td><td>毫米级泡，芯片化</td></tr>
+<tr><td>2010</td><td>铁氧体屏蔽</td><td><b>0.16 fT/√Hz</b></td><td>至今的梯度灵敏度纪录</td></tr>
+<tr><td>理论极限</td><td>自旋投影噪声</td><td>&lt;0.01 fT/√Hz</td><td>还有约一个数量级空间</td></tr>
+</table>
+<p>大学实验室按这套方法复刻的教学装置，典型能到 38&ndash;100 fT/√Hz、带宽约 20 赫兹——和 2002 年那台原始装置同量级。这说明 SERF 不是某种难以复现的绝活，而是一套可以被任何人学会的实验技术。</p>
+<div class="side"><b>一个有意思的细节：</b>抑制自旋交换弛豫的物理早在 1970 年代就被预言了，但直到 2002 年才有人把它做成磁力仪——理论和工程之间隔了整整三十年。这类"迟到的应用"在精密测量领域并不少见。</div>
+</section>
+
+<!-- ============ 7 实验三 FID ============ -->
+<section id="e7">
+<h2>7 &middot; 实验三：场不小时怎么办——脉冲磁力仪</h2>
+<p>SERF 只爱近零场。可地球磁场有几十微特斯拉，太空中磁场也不小——在这些场合，思路就得换：<b>既然频率可以数得很准，那就先把自旋泵齐，再让它在磁场里自由进动，数进动频率就等于数磁场</b>。</p>
+<p>这个方案叫 Bell&ndash;Bloom，时序像一首节拍分明的曲子：泵浦光先开一小段时间（把自旋泵齐）；关掉泵浦，同时打一个 &pi;/2 射频脉冲把自旋扳到横向；横向自旋在磁场里以拉莫尔频率进动，探测光读出这段衰减振荡（自由感应衰减，FID）；对信号做傅里叶变换，峰的位置就是进动频率，磁场由频率直接换算：</p>
+<div class="formula">B = (2&pi;/&gamma;) &middot; f<sub>Larmor</sub></div>
+<p>频率测量天生精度高——数脉冲个数这件事，人类能做到 10 位以上。所以这类磁力仪的特点是量程宽、绝对精度高，代价是时间分辨差（每个周期都要重新泵浦一次），和 SERF 正好互补。</p>
+<p>搭建上，一套典型的 FID 磁力仪长这样：20 毫米见方的铷泡（天然铷加 100 托氮气）放在四层坡莫合金桶里；795 纳米的泵浦束经过两个声光调制器——一个负责稳定功率，一个负责快速开关；线偏振探测束沿另一方向穿过，出泡后进沃拉斯顿棱镜加平衡探测器。有意思的改进是在泡外加两面高反镜，让探测光来回穿五次——光程×5，等效信号放大。整个周期约 100 毫秒：泵浦 6&ndash;20 毫秒，探测 14&ndash;80 毫秒。</p>
+<p>测量上，先扫泵浦频率找到 D1 吸收谷并锁定，再设好偏置场，记录 FID 波形、取傅里叶峰频、换算磁场。连续周期平均下来，就能画出磁场随时间的变化。</p>
+<table>
+<tr><th>参数</th><th>典型值</th></tr>
+<tr><td>量程</td><td>0.1 微特斯拉 &ndash; 100 微特斯拉（跟踪锁定可扩展）</td></tr>
+<tr><td>灵敏度</td><td>约 0.2 pT/√Hz（分辨率 0.1 pT）</td></tr>
+<tr><td>采样率</td><td>1&ndash;1000 赫兹（场越大可越快）</td></tr>
+<tr><td>多程光路</td><td>5 程时信噪比显著提升</td></tr>
+</table>
+<div class="side"><b>值得注意：</b>Bell&ndash;Bloom 的时序思想其实来自 1960 年代的光抽运磁力仪，今天它又回到太空磁场测量的舞台上——老方案配上现代激光，照样能开出新花。</div>
+</section>
+
+<!-- ============ 8 实验四 脑磁图 ============ -->
+<section id="e8">
+<h2>8 &middot; 实验四：把磁力仪贴到人头上</h2>
+<p>大脑里几十亿个神经元放电，会在头皮外产生约 10&ndash;100 飞特斯拉的磁场——比地球磁场小一亿倍。实验做到最后一步，就是<b>把毫米级的磁力仪排成阵列贴满头皮，画出一张"刚才哪片脑区在活动"的图</b>。</p>
+<p>这里的关键是"芯片化"：用微机电（MEMS）工艺在硅片上蚀刻出毫米级的泡腔，注入碱金属后用激光封焊。单个传感器（泵浦+探测+平衡探测）只有指甲盖大小，可以几十上百个排成头盔状贴到头皮上。整个房间要用坡莫合金屏蔽（房间级的屏蔽房，比桶大多了），或者用梯度仪构型在开放环境里硬扛。</p>
+<p>测量流程朴实而漫长：受试者躺进屏蔽房，阵列贴好；同步记录各通道的磁场时间序列；同一个刺激重复几十上百次，把信号平均——随机噪声被压下去，事件相关的磁场就浮现出来。</p>
+<table>
+<tr><th>测量</th><th>信号大小</th><th>结果与意义</th></tr>
+<tr><td>心磁图（MCG）</td><td>约 10&ndash;100 pT</td><td>2010 年微加工泡阵列测得，与 SQUID 同测吻合</td></tr>
+<tr><td>脑磁图（诱发）</td><td>约 10&ndash;100 fT</td><td>听觉/体感诱发场清晰可辨</td></tr>
+<tr><td>脑磁图（自发节律）</td><td>&lt;1 pT</td><td>&alpha; 节律的空间分布可以成图</td></tr>
+</table>
+<p>为什么这件事"值钱"？脑电（EEG）被头皮和颅骨"糊化"，空间分辨率差；而磁场穿透组织几乎不失真——fT 级磁力仪等于给大脑装了一个"空间锐化滤镜"。这正是 SERF 磁力仪走向商用 OPM 头盔的直接动机。</p>
+</section>
+
+<!-- ============ 9 综合 ============ -->
+<section id="e9">
+<h2>9 &middot; 收束：把四十年实验压成一张表</h2>
+<p>走到这里，回头看整条线，会发现一个很清晰的规律：<b>灵敏度的每一次跃升，都是把公式 &delta;B 里的某一项喂得更满</b>。</p>
+<table>
+<tr><th>实验</th><th>回答的问题</th><th>关键数字</th><th>卡在哪</th></tr>
+<tr><td>光抽运极化</td><td>自旋能被极化到什么程度？</td><td>P 50&ndash;90%</td><td>光强与弛豫的平衡</td></tr>
+<tr><td>SERF</td><td>弛豫能压多低？</td><td>0.16 fT/√Hz（2010）</td><td>自旋投影噪声</td></tr>
+<tr><td>FID 脉冲</td><td>强场里怎么测？</td><td>0.2 pT/√Hz @ 100 &micro;T</td><td>时间分辨</td></tr>
+<tr><td>脑磁图阵列</td><td>能不能贴人？</td><td>100&ndash;200 fT/√Hz/通道</td><td>阵列一致性</td></tr>
+</table>
+<p>主线给出的理论极限是 0.01 fT/√Hz 量级，实验已经走到 0.16 fT/√Hz——<b>还差大约一个数量级，而每一步逼近都要同时打赢"环境噪声"和"原子噪声"两场仗</b>。这就是从原子物理走向精密测量的真实路径：理论给出方向，实验给出边界，两者互相较劲，科学就是这样往前走的。</p>
+</section>
+
+<!-- ============ 10 术语表 ============ -->
+<section id="glos">
+<h2>10 &middot; 术语表（随时回来查）</h2>
+<div class="glos"><b>光抽运</b>：用圆偏振光让原子自旋取向一致的过程。</div>
+<div class="glos"><b>暗态</b>：不再吸收泵浦光的自旋态；原子在暗态堆积即极化。</div>
+<div class="glos"><b>法拉第旋转</b>：线偏振光通过极化介质时偏振面转动的效应。</div>
+<div class="glos"><b>拉莫尔进动</b>：自旋在磁场中绕场轴的进动，频率 &Omega;=&gamma;B。</div>
+<div class="glos"><b>SERF</b>：自旋交换弛豫自由区——自旋交换率远大于拉莫尔频率，交换弛豫被平均掉。</div>
+<div class="glos"><b>自旋破坏碰撞</b>：碰撞中自旋角动量转移给相对运动，缩短 T<sub>2</sub>。</div>
+<div class="glos"><b>猝灭气</b>：泡内的氮气，吸收自发辐射光子、防止再泵浦破坏极化。</div>
+<div class="glos"><b>缓冲气体</b>：泡内惰性气体，减慢原子撞壁、压窄多普勒线宽。</div>
+<div class="glos"><b>坡莫合金（&mu;-金属）</b>：高磁导率合金，做磁屏蔽桶。</div>
+<div class="glos"><b>亥姆霍兹线圈</b>：一对同轴线圈，产生均匀磁场。</div>
+<div class="glos"><b>平衡偏振计</b>：沃拉斯顿棱镜+双光电二极管+差分放大，把偏振角变电流差。</div>
+<div class="glos"><b>散粒噪声</b>：光子到达探测器的随机涨落，光探测的量子噪声底。</div>
+<div class="glos"><b>自旋投影噪声</b>：原子自旋方向测量的量子极限。</div>
+<div class="glos"><b>1/f 噪声</b>：低频段功率随频率下降而上升的噪声，限制长时间积分。</div>
+<div class="glos"><b>锁相放大</b>：只提取已知调制频率附近信号的仪器，抑制 1/f 噪声。</div>
+<div class="glos"><b>FID</b>：自由感应衰减——横向自旋自由进动产生的衰减振荡信号。</div>
+<div class="glos"><b>Bell&ndash;Bloom</b>：泵浦&rarr;关泵浦&rarr;测进动的时序型磁力仪方案。</div>
+<div class="glos"><b>AOM</b>：声光调制器，用声波给光束做快速开关/移频。</div>
+<div class="glos"><b>沃拉斯顿棱镜</b>：按偏振方向把一束光分成两束的棱镜。</div>
+<div class="glos"><b>MCG/MEG</b>：心磁图/脑磁图——记录心脏/大脑的磁场。</div>
+<div class="glos"><b>灵敏度</b>：单位带宽内的最小可测磁场（fT/√Hz），越小越好。</div>
+</section>
+
+<div class="links">
+<a href="index.html">&larr; 返回主线</a>
+<a href="#e0">回到顶部</a>
+</div>
+</main>
+<script>
+(function(){
+  var KEY='siteTheme';
+  function apply(t){document.body.setAttribute('data-theme',t);}
+  try{var saved=localStorage.getItem(KEY);if(saved==='light')apply('light');}catch(e){}
+  var tb=document.getElementById('themeBtn');
+  tb.addEventListener('click',function(){
+    var cur=document.body.getAttribute('data-theme')==='light'?'dark':'light';
+    apply(cur);try{localStorage.setItem(KEY,cur);}catch(e){}
+  });
+  var toc=document.getElementById('toc'),btn=document.getElementById('tocBtn');
+  if(toc&&btn){
+    var links=[];
+    document.querySelectorAll('main section').forEach(function(sec){
+      var h=sec.querySelector('h2');if(sec.id&&h){
+        var a=document.createElement('a');a.href='#'+sec.id;a.textContent=h.textContent;
+        toc.appendChild(a);links.push(a);
+      }
+    });
+    btn.addEventListener('click',function(){toc.classList.toggle('open');});
+    toc.addEventListener('click',function(e){if(e.target.tagName==='A')toc.classList.remove('open');});
+    window.addEventListener('scroll',function(){
+      var cur=null;
+      document.querySelectorAll('main section').forEach(function(sec){
+        if(sec.getBoundingClientRect().top<120)cur=sec.id;
+      });
+      links.forEach(function(a){a.classList.toggle('cur',a.getAttribute('href')==='#'+cur);});
+    });
+  }
+})();
+</script>
+</body>
+</html>
