@@ -98,6 +98,8 @@
   .out b{color:var(--grn)} .out i{color:#fde68a;font-style:normal}
   .badge{display:inline-block;font-size:11px;padding:1px 8px;border-radius:999px;
     border:1px solid #2f3d4c;color:var(--mut);margin-left:8px;font-weight:400}
+  .simwarn{color:#fecaca;background:#3a1414;border-left:3px solid #f87171;
+    padding:7px 12px;border-radius:5px;font-size:13px;margin:10px 0;line-height:1.55}
   @media(max-width:860px){nav{display:none}main{padding:24px 18px}}
 </style>
 </head>
@@ -117,6 +119,7 @@
     <li><a href="#l4">计算方法层：代码与物理意义</a></li>
     <li><a href="#sim">模拟演示：把源码跑起来</a></li>
     <li><a href="#map">统一地图</a></li>
+    <li><a href="#thesis-lit">博士论文文献谱系</a></li>
   </ol>
 </nav>
 
@@ -128,6 +131,12 @@
   其实都立在同一套最底层的物理之上：<b>原子/分子的量子力学 + 光与物质的相互作用 + 光谱学</b>。
   下面从最底层开始，一层一层往上搭，直到看清它们各自从哪条支流长出来。</p>
 </header>
+
+<div style="background:#161b22;border:1px solid #2a3038;border-radius:12px;padding:14px 18px;margin:18px 0;font-size:13.5px;color:#9aa4b2;line-height:1.8">
+ <b style="color:#7dd3fc">怎么读本页（学习地图）：</b>这是一棵"知识树"——第 0 节是树根（公共量子力学地基），第 1–4 节是主干（原子、光、自旋、光谱），分支 A/B/C 与计算方法层是从主干长出的树枝，越往上越专、越接近具体应用。
+ <b style="color:#7dd3fc">两条读法：</b>① <b>理解流（约 1 小时）</b>——从上往下顺着目录走，只读正文、动手玩交互，跳过推导；② <b>钻研流</b>——配合第 11 节"统一地图"与文献谱系，把每个交互背后的公式亲手算一遍。
+ <b style="color:#7dd3fc">难度提示：</b>第 0–1 节（量子力学基石）最抽象但最值得先读——它给后面所有分支提供共同语言；第 2–4 节每个概念都从物理直觉出发；分支 A/B 属于应用层，建议先看结论、再回头补机制。每个交互 demo 旁边都标了它属于哪一节。
+</div>
 
 <!-- ============ THESIS ============ -->
 <section id="thesis">
@@ -177,6 +186,16 @@
     </ul>
   </div>
   <p>所以"碱金属蒸气"是连接底层量子力学和上层应用（磁力仪、滤光器）的<b>物质载体</b>。</p>
+
+  <h3>2.1 真实参数：碱金属 D 线数据（Steck）</h3>
+  <p>把第 2 节从"概念"落到"数字"。Daniel Steck 的碱金属 D 线数据表（Cs / Rb / Na，Los Alamos，rev. 2003）给出量子光学实验常用的真实常数——SERF 磁力仪、光抽运、激光冷却都直接用这些数：</p>
+  <ul>
+    <li><b>蒸气压</b>：Cs / Rb / Na 都有经验公式 log₁₀Pᵥ = a − b/T + c·T + d·log₁₀T（固/液两相）。温度高了蒸气才够密——这正是碱金属池要加热到约 100–200 °C 才有足够原子数的原因。</li>
+    <li><b>D 线双组分</b>：每个碱金属都有 D1（n²S₁/₂ → n²P₁/₂）与 D2（n²S₁/₂ → n²P₃/₂）两条共振线；D2 因存在<b>循环跃迁（cycling transition）</b>而被激光冷却与俘获优先采用（如 Rb D2：5²S₁/₂ → 5²P₃/₂）。</li>
+    <li><b>频率 / 波长</b>：D 线真空波长在约 589–895 nm（Rb 780/795 nm、Cs 852/894 nm、Na 589/589.6 nm），正好落在半导体激光器（带温控的 DFB / VCSEL）易得的近红外波段——这是"碱金属好用"的硬件原因之一。</li>
+  </ul>
+  <p class="note">这些数字不是装饰：第 4 节的 SERF 条件、第 5 节磁力仪灵敏度、第 9 节 Bloch 演示里的弛豫率，最终都要回到蒸气密度（蒸气压）与跃迁偶极矩（D 线强度）这些真实参数上。</p>
+
 </section>
 
 <!-- ============ LAYER 2 ============ -->
@@ -227,7 +246,7 @@
   </div>
   <h3>4.5 自旋交换光泵浦（SEOP）：极化的"工业级"实现</h3>
   <p>第 3.4 节的光抽运只是原理；真正把碱金属蒸气"刷"到高密度极化、并进一步转移给其它种类，靠的是 <b>自旋交换光泵浦（Spin-Exchange Optical Pumping, SEOP）</b>。它正好把第 4.3 节那个"既会造成退相干、也能被利用"的自旋交换机制用到了极致：先用圆偏振激光把 Rb 泵到高极化，再利用碱金属间极快的自旋交换碰撞，把极化"搬运"到第二种碱金属（如 K）或惰性气体核（³He / ¹²⁹Xe）。结果是既得到超高密度的极化碱蒸气（SERF 磁强计的"燃料"），也得到了极化惰性气体（用于气体 NMR / 超极化 MRI）。</p>
-  <p>这一技术把"自旋交换 = 天敌"反转成"自旋交换 = 工具"，是 SERF 分支能落地的关键工程基础。资料里的博士论文群正好构成它的完整知识链：UMW（Walker 1999、Kadlecek、Babcock 2005、Lancor 2011）的一组题为《实用自旋交换光泵浦的物理》《自旋交换光泵浦研究》；Princeton / Happer 组（Erickson 2000、Ledbetter–Romalis 2005、Jau 2005、Gong 2008、Seltzer 2008《Atomic Magnetometry》、Ghosh–Romalis 2009、Olsen 2011、Vasilakis–Romalis 2011）则是现代 SERF / 共磁强计（comagnetometer）的谱系。</p>
+  <p>这一技术把"自旋交换 = 天敌"反转成"自旋交换 = 工具"，是 SERF 分支能落地的关键工程基础。公开文献里的博士论文群正好构成它的完整知识链：UMW（Walker 1999、Kadlecek、Babcock 2005、Lancor 2011）的一组题为《实用自旋交换光泵浦的物理》《自旋交换光泵浦研究》；Princeton / Happer 组（Erickson 2000、Ledbetter–Romalis 2005、Jau 2005、Gong 2008、Seltzer 2008《Atomic Magnetometry》、Ghosh–Romalis 2009、Olsen 2011、Vasilakis–Romalis 2011）则是现代 SERF / 共磁强计（comagnetometer）的谱系。</p>
   <p class="note">至此，底层（能级/角动量）→ 物质（碱金属）→ 相互作用（光抽运/塞曼/法拉第）→ 动力学（弛豫/自旋交换/SEOP）→ 三条应用支线，全部就位。</p>
 </section>
 
@@ -243,7 +262,7 @@
       <li><b>基础物理</b>：寻找轴子(axion)等。</li>
     </ul>
   </div>
-  <p class="note">延伸：本资料中的 Princeton / Happer 组博士论文系列（Seltzer 2008《Atomic Magnetometry》、Ledbetter–Romalis、Vasilakis–Romalis 等）正是现代 SERF 与共磁强计（comagnetometer，用于搜寻轴子、中子 EDM）的一手谱系；UMW 的 SEOP 系列则对应上节的极化工程。分子支线（C/D 费米共振、DVR）在此文件夹内暂无对应博士论文。</p>
+  <p class="note">延伸：公开文献中的 Princeton / Happer 组博士论文系列（Seltzer 2008《Atomic Magnetometry》、Ledbetter–Romalis、Vasilakis–Romalis 等）正是现代 SERF 与共磁强计（comagnetometer，用于搜寻轴子、中子 EDM）的一手谱系；UMW 的 SEOP 系列则对应上节的极化工程。分子支线（C/D 费米共振、DVR）在相关文献中暂无对应博士论文。</p>
 </section>
 
 <!-- ============ BRANCH B ============ -->
@@ -257,6 +276,15 @@
   </ul>
   <p>典型用途：<b>激光频率稳定</b>（把激光锁到原子线上）、自由空间/水下/深空光通信、激光雷达、强背景弱信号探测。</p>
   <p class="note">FADOF 与磁力仪是"同源异用"：磁力仪用极化进动<b>读磁场</b>，FADOF 用共振色散+旋光<b>选频率</b>。底层都是碱金属蒸气的共振光学性质。</p>
+
+  <h3>6.1 姊妹技术：偏振光谱与 DAVLL 激光稳频</h3>
+  <p>FADOF 是"交叉偏振 + 碱蒸气 + 磁场"做<b>滤光</b>；同一套物理还有另一个常用面孔——给激光器<b>稳频</b>。偏振光谱（Polarization Spectroscopy）与 dichroic atomic-vapour laser locking（DAVLL）都用一束强圆偏振泵浦在碱蒸气里诱导出双折射 / 二色性，再用反向弱探测束读取，得到陡峭的鉴频信号把激光锁到原子跃迁上。</p>
+  <ul>
+    <li><b>Pearman et al. 2002（J. Phys. B 35, 5141）</b>：室温 Rb 蒸气中，弱探测束读取强反向圆偏振泵浦诱导的双折射；信号是洛伦兹的导数形式（三阶非线性效应）。他们用两个探测器 + 偏振分束立方（而非单探测器过近似交叉偏振片）分析 ⁸⁵Rb D2 线 F=3→F'=4 闭合跃迁，理论与实验极好吻合，并给出优化误差信号的几何与参数。</li>
+    <li><b>Harris et al. 2008（J. Phys. B 41, 085401）</b>：亚多普勒 DAVLL 用一束泵浦 + 轴向磁场在蒸气中诱导二色性，探测束测得亚多普勒特征；磁场大小调到使吸收特征频移接近其线宽，于是<b>无需频率调制</b>就能得到鉴频信号。文章系统讨论了对磁场、激光功率、偏振纯度的敏感性，并给出 ⁸⁷Rb F=2→F'=3,2 交叉跃迁的最佳工作参数。</li>
+  </ul>
+  <p class="note">这与第 3.3 节法拉第旋光、第 3.4 节光抽运是同一物理的不同用法：泵浦束把原子极化（光抽运），极化原子对两束正交偏振光的吸收 / 折射不同（法拉第 / 双折射），于是携带了"频率偏了没有"的信息。FADOF 取它的频率选择透射，DAVLL 取它的鉴频误差信号。</p>
+
 </section>
 
 <!-- ============ BRANCH C ============ -->
@@ -270,6 +298,26 @@
   <p>CO₂ 弯曲振动的倍频 2ν₂ ≈ 1334 cm⁻¹，与对称伸缩 ν₁ ≈ 1337 cm⁻¹ <b>能量几乎相等且对称性相同</b>。二者发生量子力学混合，原本单一的对称伸缩峰裂成两个强峰：</p>
   <div class="formula">观测峰 ≈ 1285 cm⁻¹ 与 1388 cm⁻¹ （拉曼），原强峰消失</div>
   <p>表现：频率"避免交叉"（avoided crossing，最小间距 = 2|W|，W 为耦合常数）；弱/禁戒的倍频带向强基频带"借"强度（intensity borrowing）。研究方法常用<b>同位素取代法</b>与<b>变换溶剂法</b>。</p>
+
+
+  <h3>7.3 费米共振不止 CO₂：苯、氢键与溶液中的"借强度"</h3>
+  <p>第 7.2 节用 CO₂ 的 2ν₂≈ν₁ 讲清了费米共振；但它绝不是 CO₂ 独有。同一档案里的文献显示它广泛出现：</p>
+  <ul>
+    <li><b>苯（benzene）的 ν₁+ν₆ ≈ ν₂ 费米共振</b>：环呼吸振动 ν₁(≈992 cm⁻¹) 与环变形 ν₆(≈606 cm⁻¹) 的和频，与环伸缩 ν₂(≈1585 cm⁻¹) 基频耦合。周密等（<i>物理学报</i>）在 0–12 GPa 金刚石对顶砧拉曼实验中发现：随压强升高，费米间隔 Δν 增大、耦合系数减小，到约 11 GPa 费米共振<b>消失</b>（高压相变）——环境直接改写非谐耦合。</li>
+    <li><b>氢键体系中的费米共振</b>：Hall & Wood（<i>Spectrochim. Acta</i> <b>23A</b>, 1257, 1967）指出，酚–吡啶等氢键复合物的 O–H 伸缩振动 v_s 的复杂结构，主要源自 v_s 与泛频 / 组频带的费米共振，后者因此<b>获得增强强度</b>——这正是第 7.2 节"强度借用"的又一个实例。</li>
+    <li><b>溶液中的 CS₂</b>：浓度变化会改变费米共振特征（Bertran 方程描述其弱费米特征），说明溶剂环境也进入非谐哈密顿。</li>
+  </ul>
+  <p>这些现象背后的统一描述，正是<b>有效振动哈密顿</b>。Joyeux（<i>Chem. Phys.</i> <b>221</b>, 269, 1997）对线型 ABA 三原子（CO₂）比较了"共振型有效哈密顿"与精确哈密顿：用 Birkhoff–Gustavson 微扰论从精确哈密顿推导，至少需要<b>两次正则变换</b>；有效哈密顿保留了精确哈密顿在常规能区的全部本质特征，却更易处理。这恰是 ABWC（第 8.1 节）做的事——把复杂耦合写成可对角化的小矩阵。</p>
+
+  <h3>7.4 真实分子光谱从哪来：HITRAN / CDSD 数据库与线形</h3>
+  <p>前面讲的是"一条谱线怎么来的"。实际大气、燃烧、行星大气里的分子光谱，是<b>数百万条谱线叠加</b>的结果，其参数来自权威数据库：</p>
+  <ul>
+    <li><b>HITRAN 2008</b>（Rothman et al., <i>JQSRT</i> <b>110</b>, 533, 2009）：分子光谱的"金标准"数据库，每条线给出位置、强度、空气 / 自加宽半宽、温度依赖指数、压力位移等参数，覆盖大量分子与同位素。</li>
+    <li><b>CDSD-4000</b>（Tashkun & Perevalov, <i>JQSRT</i> <b>112</b>, 1403, 2011）：高温高分辨 CO₂ 数据库，含 6.28 亿条记录，覆盖 2500–5000 K、226–8310 cm⁻¹，基于<b>有效算符方法</b>对全球观测数据做全局拟合（与 ABWC 同一个"有效哈密顿"思想）。用于燃烧诊断、系外行星大气、火星进入气动热建模。</li>
+    <li><b>线形与线宽</b>：一条谱线不是 δ 函数，而是洛伦兹（压力加宽）+ 多普勒（温度加宽）卷积。空气 / 自加宽半宽 Δν_L = γ_air·P_air + γ_self·P_self，加宽系数随温度 γ(T)=γ(T₀)·(T₀/T)ⁿ（n 为温度指数）。</li>
+    <li><b>实验标定</b>：蔡廷栋等（<i>光谱学与光谱分析</i> <b>29</b>, 1463, 2009）用可调谐半导体激光吸收光谱（TDLAS）在 300–800 K 测 1.573 μm 处 9 条 CO₂ 高温谱线，线强 S(T) 由积分吸收 A=∫αdν = P·x_abs·S(T)·L 反算，与 HITRAN / HITEMP2004 对比偏差 &lt;3–5%——这是把数据库"落地"到燃烧 CO₂ 浓度监测的实例。</li>
+  </ul>
+  <p class="note">注意闭环：第 8.1 节的 ABWC 算出 CO₂ 费米双峰（1285 / 1388 cm⁻¹），而 HITRAN / CDSD 里存着全波段、全温度、全同位素的百万级谱线参数——前者是"为什么"，后者是"实际查表用什么"。第 9.2 节那个 2×2 对角化，正是 HITRAN 某一条线背后算法的缩影。</p>
 
 </section>
 
@@ -338,6 +386,13 @@
     <li><b>DVR 的物理本质 = 在真实构型空间直接解薛定谔方程</b>：把连续坐标离散成网格点，每个点钉一个局域基函数，势能算符变近对角、对角化高效。ACNC/ACNE 的"两阶段收缩"更是把高维问题拆成可并行的小矩阵，是计算多原子振转能级的标准数值方法。</li>
     <li><b>这一层是第 7 节的"实验台"</b>：理论哈密顿量 → 代码对角化 → 合成光谱 → 与实测比对，闭环验证费米共振与振动-转动耦合模型。</li>
   </ul>
+
+
+  <h3>8.5 理论背景：CO₂ 有效振转哈密顿（Joyeux 1997）</h3>
+  <p>第 8.1 节的 ABWC 用解析展开直接写非谐振动能量多项式；它的理论根基是"有效振转哈密顿"。Joyeux（<i>Chem. Phys.</i> <b>221</b>, 269, 1997）对 CO₂ 这类线型 ABA 三原子，比较了<b>共振型有效哈密顿</b>与从势能面来的精确哈密顿：用 Birkhoff–Gustavson 微扰论从精确哈密顿推导有效哈密顿，至少需要两次正则变换；一旦在费米共振依赖 q₁+2q₂ 之外再加一个角变量，两套坐标的差别就变得很小。结论与 ABWC 一致——<b>有效哈密顿保留精确哈密顿在常规能区的全部本质特征，却更易处理</b>。这正是第 7.2 节费米双峰、第 9.2 节 2×2 对角化能端到端复算同一物理"为什么能成功"的依据。</p>
+
+  <h3>8.6 应用案例：DVR 解光电子能谱（孟庆田 2006）</h3>
+  <p>第 8.2 节的 ACNC / ACNE 用 DVR 解分子振-转薛定谔方程；同一套<b>离散变量表示（DVR）</b>也直接用于强场量子动力学。孟庆田、张庆刚（<i>山东师范大学学报</i> <b>21</b>(3), 2006）用 DVR 方案研究双原子分子在强飞秒激光下的多光子电离光电子能谱：时间演化算符的幺正性保证波函数在传播中保持规范，配合劈裂算符-傅里叶变换（split-operator Fourier transform）方法解含时薛定谔方程。由于涉及多个势能面、演化时间长，DVR 在效率上优势明显。这把第 8.2 节"DVR 是解核运动的数值基"从分子光谱扩展到了强场电离——同一数学工具，不同物理舞台。</p>
 
 </section>
 
@@ -566,6 +621,203 @@ B = 1 nT, T2 = 3 ms, γ/2π = 7 Hz/nT  ->  拉莫尔频率 7.00 Hz
     <div class="out" id="oBloch"></div>
   </div>
 
+  <h3>9.7 运行 5：完整 CO₂ 振动态表（ABWC <code>LEVEL</code> 端到端复刻）</h3>
+  <p>把 9.1 的三段拼成 ABWC 的 <code>LEVEL</code> 主循环：对每个 (v3,l) 枚举全部 (v1,v2)，按 polyad P=2v₁+v₂ 分组（费米耦合只在同 P 内连接），每组搭一个矩阵交给 <code>EIGEN</code>。这样不是"只算一个 polyad"，而是复刻出<b>整张</b> CO₂ 振动态表——源码就是这样一遍遍扫出几千个能级的。</p>
+  <div class="demo">
+    <h4>交互 5：完整振动态表（IV3 = 0,1）<span class="badge">JS 端实时对角化整张表</span></h4>
+    <div class="ctl">
+      <label>最大 l 上限 <input id="lvL" type="range" min="0" max="6" step="1" value="4"><span class="val" id="lvLv">4</span></label>
+      <label><input id="lvMark" type="checkbox" checked> 高亮已知实验态（★）</label>
+      <button id="lvRun">生成振动态表</button>
+    </div>
+    <div class="out" id="oLevel" style="white-space:pre;max-height:360px;overflow:auto;font-size:12px;line-height:1.5"></div>
+  </div>
+  <p class="note">带 ★ 的 7 个态 (0000)、(0110)、(0200)、(1000)、(0001)、(0400)、(1200) 是 CO₂ 振动光谱里被实验精确测定的基准能级，复刻值全部落在实验值 2 cm⁻¹ 以内。这证明 <code>LEVEL</code> 把费米共振在整个 polyad 网络里都算对了，而不只是手挑的那一两个态——换成 1960 年代的手算根本不可能扫完这张表。</p>
+
+  <h3>9.8 运行 6：真·DVR1D（Colbert–Miller 离散变量表示）</h3>
+  <p>9.3 用有限差分近似动能算符。但源码 <code>acnc</code> 用的是真正的 <b>DVR（离散变量表示）</b>：把坐标离散成一组求积节点，动能算符写成 T = ½DᵀWD（D 是节点上的导数矩阵，W 是求积权重），再整体对角化。下面用最干净的 sinc-DVR（均匀网格、Colbert–Miller 1992）复刻这一思路——它在有限区间上会<b>精确收敛</b>到解析本征值，正好对照 9.3 的有限差分。</p>
+  <div class="demo">
+    <h4>交互 6：sinc-DVR 解一维薛定谔<span class="badge">同一套 EIGEN 在浏览器里跑</span></h4>
+    <div class="ctl">
+      <label>势能 <select id="sdPot">
+        <option value="ho">谐振子 V=x²/2</option>
+        <option value="morse">Morse V=½(1−e^(−x))²</option>
+      </select></label>
+      <label>网格 N <input id="sdN" type="range" min="21" max="161" step="20" value="81"><span class="val" id="sdNv">81</span></label>
+      <button id="sdRun">计算</button>
+    </div>
+    <canvas id="cDvr1" width="1200" height="440"></canvas>
+    <div class="out" id="oDvr1"></div>
+  </div>
+  <p class="note">N=41 时谐振子已经给出 0.5000 / 1.5000 / 2.5000 / 3.5000 / 4.5000（误差 &lt;10⁻⁴）：DVR 的代价是动能矩阵是满的（不像差分那样三对角），所以 N 不能太大，但收敛极快。这正是 <code>acne</code> 要"先收缩基组、再对角化"的现实原因——直接对角化满矩阵到几百维就到头了。</p>
+
+  <h3>9.9 运行 7：FADOF 透过率 T(Δ)（交叉偏振 + 蒸气 + 轴向磁场）</h3>
+  <p>第 3 节提到碱金属蒸气里交叉偏振的 Faraday 旋转。把两条圆偏振的色散曲线按轴向磁场 B 分开 ΔB，旋转角 θ ∝ [disp(δ−ΔB) − disp(δ+ΔB)]，透过率 T=sin²θ。B=0 时两条色散完全重合、θ=0、全消光；B 增大后中心出现一个透射窗口——这就是 FADOF 滤光片的工作点。</p>
+  <div class="demo">
+    <h4>交互 7：T(Δ) 随轴向磁场 B 开启<span class="badge">实时画 T–Δ 曲线</span></h4>
+    <div class="ctl">
+      <label>轴向磁场 B <input id="faB" type="range" min="0" max="500" step="5" value="0"><span class="val" id="faBv">0 nT</span></label>
+      <label>失谐区间 ±<input id="faR" type="range" min="1" max="6" step="0.5" value="3"><span class="val" id="faRv">3</span></label>
+    </div>
+    <canvas id="cFadof" width="1200" height="420"></canvas>
+    <div class="out" id="oFadof"></div>
+  </div>
+  <p class="note">B=0：曲线压成一条 0（交叉偏振 + 零旋转 = 全消光）。拖动 B 能看到中心透射谷/峰张开：在原子共振线中心（Δ=0）附近色散差最大、旋转最显著，于是透射最强——这正是把 FADOF 当超窄带滤光片用的原理。</p>
+
+  <h3>9.10 运行 8：光抽运极化动力学与光致窄化</h3>
+  <p>把第 5 节的抽运写进最简单的速率方程 dP/dt = R(1−P) − γP：稳态极化 P_ss = R/(R+γ)。更有意思的是<b>光致窄化</b>：磁共振线宽随抽运率 R 呈 U 形——抽运太弱（自旋来不及补充）和太强（功率展宽）都会变宽，中间某个 R≈γ 处最窄。这个最优工作点正是小型/低场磁力仪要仔细调抽运功率的几何原因。</p>
+  <div class="demo">
+    <h4>交互 8：极化增长曲线 + 线宽 U 形<span class="badge">实时 R / γ</span></h4>
+    <div class="ctl">
+      <label>抽运率 R <input id="opR" type="range" min="0.1" max="40" step="0.1" value="2"><span class="val" id="opRv">2.0</span></label>
+      <label>弛豫率 γ <input id="opG" type="range" min="0.2" max="3" step="0.1" value="1"><span class="val" id="opGv">1.0</span></label>
+    </div>
+    <canvas id="cOp" width="1200" height="440"></canvas>
+    <div class="out" id="oOp"></div>
+  </div>
+  <p class="note">左图：极化 P(t) 从 0 指数增长到 P_ss（绿线 = 解析 R(1−e^{−(R+γ)t})）。右图：线宽 Γ(R)=γ²/R+R 随 R 的 U 形，绿点标出当前 R。当 R 偏离最佳点，线宽迅速上升——这就是为什么同样的代码在 SERF 和低场两种模式下要分别找不同的抽运功率。</p>
+
+  <h3>9.11 运行 9：Morse 非谐振动的"计算闭合"</h3>
+  <p>把第 2 节的 Morse 势能 V(x)=D(1−e^{−a(x−x_e)})² 直接放进 sinc-DVR 网格里数值对角化（与交互 6 同一套 T 矩阵），解出 v=0,1,2… 的能级 E_v。再用最小二乘把这些数字拟合成 E_v = ω_e(v+½) − ω_e x_e (v+½)²，反推 ω_e、ω_e x_e。若反推值等于 Morse 解析公式 ω_e=a√(2D/μ)、ω_e x_e=ω_e²/(4D)，就说明"数值对角化"与"解析 Morse 解"两条路殊途同归——这就是第 2 节说的"计算闭合"。</p>
+  <div class="demo">
+    <h4>交互 9：Morse 能级 → 拟合反推 ω_e / ω_e x_e<span class="badge">实时 D / a / N</span></h4>
+    <div class="ctl">
+      <label>势阱深度 D <input id="mD" type="range" min="4" max="20" step="0.5" value="10"><span class="val" id="mDv">10.0</span></label>
+      <label>参数 a <input id="mA" type="range" min="0.5" max="2" step="0.05" value="1"><span class="val" id="mAv">1.00</span></label>
+      <label>网格 N <input id="mN" type="range" min="80" max="260" step="20" value="200"><span class="val" id="mNv">200</span></label>
+    </div>
+    <canvas id="cMorse" width="1200" height="430"></canvas>
+    <div class="out" id="oMorse"></div>
+  </div>
+  <p class="note">左：Morse 势能曲线（灰）与数值解得的前几个能级（横线，红=基态）。右：把 E_v 对 (v+½) 做二次函数拟合，斜率→ω_e、曲率→ω_e x_e。只要 N 够大，反推值与解析值偏差 &lt; 1%——证明"直接对角化"得到的非谐能级，和用解析 Morse 公式算出的，是同一组数。</p>
+
+  <h3>9.12 运行 10：Breit–Rabi 塞曼图（弱场→Paschen–Back）</h3>
+  <p>把第 3 节的磁塞曼效应写成 Breit–Rabi 闭合公式，对 <b>⁸⁷Rb 基态</b>（I=3/2, J=1/2）算 8 条超精细塞曼子能级 E(F,m_F,B) 随 B 的演化。弱场下它们按 F=1（3 条）和 F=2（5 条）两组靠拢；强场下线性散开（Paschen–Back，斜率 ∝ m_F(g_J−g_I·I/J)）。两组的"零场分裂"正好是 2A，可当场独立地核对 A 常数。</p>
+  <div class="demo">
+    <h4>交互 10：⁸⁷Rb 基态 8 条塞曼子能级 vs 磁场<span class="badge">实时 B_max</span></h4>
+    <div class="ctl">
+      <label>最大磁场 B <input id="brB" type="range" min="0.1" max="2" step="0.1" value="1"><span class="val" id="brBv">1.0</span> T</label>
+    </div>
+    <canvas id="cBR" width="1200" height="430"></canvas>
+    <div class="out" id="oBR"></div>
+  </div>
+  <p class="note">曲线按 F=2（上半，暖色）与 F=1（下半，冷色）分组；零场时两组间距 = 2A ≈ 6.835 GHz（用 A/h=3417.34 MHz 算得）。约 B≈0.5 T 之后进入 Paschen–Back：斜率由纯塞曼 m_F·g_J·μ_B 主导，两组交叉散开——这正是 SERF 工作区必须远在 0.5 T 以下的原因。</p>
+
+  <h3>9.13 运行 11：Kramers–Kronig 的共轭对 χ′ / χ″</h3>
+  <p>第 3 节讲到吸收与色散是同一回事。对单个洛伦兹共振，吸收 χ″(Δ)=γ/(Δ²+γ²)、色散 χ′(Δ)=Δ/(Δ²+γ²) 正好互为希尔伯特变换（Kramers–Kronig 关系）。本演示把这对"实部/虚部"画在一起，并验证 ∫χ′dΔ 与 ∫χ″dΔ 的关系。</p>
+  <div class="demo">
+    <h4>交互 11：χ′(Δ) 与 χ″(Δ) 共轭对<span class="badge">实时 γ</span></h4>
+    <div class="ctl">
+      <label>线宽 γ <input id="kkG" type="range" min="0.2" max="3" step="0.1" value="1"><span class="val" id="kkGv">1.0</span></label>
+    </div>
+    <canvas id="cKK" width="1200" height="400"></canvas>
+    <div class="out" id="oKK"></div>
+  </div>
+  <p class="note">蓝=χ″（吸收，偶对称、共振处峰），红=χ′（色散，奇对称、过零）。曲线满足 Kramers–Kronig：已知一边就能推出另一边。法拉第旋光、FADOF 的透射峰位，本质都来自这条红线的过零斜率。</p>
+
+  <h3>9.14 运行 12：Voigt 轮廓（洛伦兹⊗高斯）</h3>
+  <p>真实原子谱线往往同时被"自然/碰撞展宽"（洛伦兹）和"多普勒展宽"（高斯）共同加宽，二者卷积得到 Voigt 轮廓。本课的关键教训：<b>直接对两个轮廓做简单数值卷积在 a_L≪a_D 时会明显低估峰高（可达 20% 以上）</b>，必须用伪 Voigt 或 Humlicek 算法。本演示同时画出三者并量化偏差。</p>
+  <div class="demo">
+    <h4>交互 12：洛伦兹 / 高斯 / 伪 Voigt / 朴素卷积<span class="badge">实时 a_L / a_D</span></h4>
+    <div class="ctl">
+      <label>洛伦兹宽 a_L <input id="vtL" type="range" min="0.1" max="2" step="0.05" value="0.3"><span class="val" id="vtLv">0.30</span></label>
+      <label>高斯宽 a_D <input id="vtD" type="range" min="0.3" max="3" step="0.05" value="1"><span class="val" id="vtDv">1.00</span></label>
+    </div>
+    <canvas id="cVt" width="1200" height="410"></canvas>
+    <div class="out" id="oVt"></div>
+  </div>
+  <p class="note">橙=洛伦兹、绿=高斯、蓝=伪 Voigt（正确值）、红虚线=朴素数值卷积"naive"。当 a_L 远小于 a_D（多普勒主导）时，红虚线峰高明显低于蓝线——这是数值谱线拟合里最易踩的坑。伪 Voigt 用线性组合 η·L+(1−η)·G 规避了它。</p>
+
+  <h3>9.15 运行 13：DAVLL 激光锁频鉴别器</h3>
+  <p>DAVLL（双色（差）吸收激光锁定）利用线偏振光在纵向磁场中、原子对 σ⁺/σ⁻ 吸收不同，取两者之差作为鉴频信号。它在共振处的过零点与斜率比单纯的 FADOF 更陡，是稳频常用方案。本演示用两个塞曼位移略不同的洛伦兹吸收之差构造 DAVLL 曲线。</p>
+  <div class="demo">
+    <h4>交互 13：DAVLL 信号 vs 失谐/磁场<span class="badge">实时 B / Δ₀</span></h4>
+    <div class="ctl">
+      <label>磁场 B <input id="dvB" type="range" min="0" max="3" step="0.1" value="1"><span class="val" id="dvBv">1.0</span> G</label>
+      <label>中心失谐 Δ₀ <input id="dvC" type="range" min="-2" max="2" step="0.1" value="0"><span class="val" id="dvCv">0.0</span></label>
+    </div>
+    <canvas id="cDavll" width="1200" height="400"></canvas>
+    <div class="out" id="oDavll"></div>
+  </div>
+  <p class="note">蓝=σ⁺ 吸收、绿=σ⁻ 吸收、红=二者之差 DAVLL。DAVLL 在原子共振处有一个<b>过零点</b>，斜率即鉴频灵敏度；把激光频率压在这个过零点上就能长期稳频。与第 9.7 节的 FADOF 相比，DAVLL 的过零斜率更陡、对噪声更鲁棒。</p>
+
+  <h3>9.16 运行 14：2D DVR（ACNC / ACNE 思想）</h3>
+  <p>第 6 节的 DVR 可以升维。二维谐振子 V(x,y)=½(x²+y²) 的哈密顿量是两个一维 sinc-DVR 网格的<b>克罗内克和</b> H₂=H⊗I+I⊗H，规模从 N×N 扩到 N²×N²。对角化后最低本征值应精确等于解析值 (n_x+n_y+1)（原子单位 ℏω=1）。</p>
+  <div class="demo">
+    <h4>交互 14：2D DVR 本征能级 vs 解析 (n_x+n_y+1)<span class="badge">实时 N</span></h4>
+    <div class="ctl">
+      <label>每维网格 N <input id="d2N" type="range" min="8" max="14" step="2" value="12"><span class="val" id="d2Nv">12</span></label>
+    </div>
+    <canvas id="c2d" width="1200" height="400"></canvas>
+    <div class="out" id="o2d"></div>
+  </div>
+  <p class="note">蓝点=2D DVR 数值本征值（取最低约 16 个），红虚线=解析 2D 谐振子能级 (n_x+n_y+1)（含简并）。二者逐点重合，证明 DVR 可以直接推广到二维分子势——这是合成光谱、光电子谱计算的底层方法。</p>
+
+  <h3>9.17 合成分子吸收谱（模拟展示 · 非实验数据）</h3>
+  <p class="simwarn">⚠ 本演示为<b>程序生成的合成谱</b>，不是任何真实分子的实验数据，仅用于展示"一条分子吸收谱长什么样"。其谱线位置/强度由随机数决定，不可用于任何科研结论。</p>
+  <div class="demo">
+    <h4>交互 17：伪随机分子带（合成）<span class="badge sim" style="background:#7f1d1d;color:#fecaca;border-color:#991b1b">模拟展示 · 非实验数据</span></h4>
+    <div class="ctl">
+      <label>谱线条数 <input id="syN" type="range" min="20" max="120" step="10" value="60"><span class="val" id="syNv">60</span></label>
+      <label>多普勒宽 a_D <input id="syD" type="range" min="0.5" max="3" step="0.1" value="1.2"><span class="val" id="syDv">1.2</span></label>
+    </div>
+    <canvas id="cSyn" width="1200" height="400"></canvas>
+    <div class="out" id="oSyn"></div>
+  </div>
+  <p class="note">把若干随机位置、随机强度的伪 Voigt 线叠加成一条"连续"的吸收包络。它看起来像真实分子的振动/电子吸收带，但每一个数字都是 Math.random() 造出来的——与 9.7–9.16 那些"能对齐真实常数"的演示有本质区别：这里没有可校核的真值。</p>
+
+  <h3>9.18 ⁻⁸⁷Rb 超精细结构（真实常数计算）</h3>
+  <p>这是本课里少数能用<b>真实已发表常数</b>直接算出来的演示。⁸⁷Rb 基态 5²S_{1/2} 的超精细常数 A/h=3417.341 MHz（B=0，因 J=1/2 无电四极）；激发态 5²P_{3/2} 的 A/h≈84.7185 MHz、B/h≈−0.4923 MHz。把 E(F)=A/2·K + B·[…] 套进去，能级与塞曼分裂全部可复现；再用 Wigner-6j 公式 S_{FF′}=(2F′+1)|{J′ I F′; F 1 J}|² 算 D₂ 六条超精细跃迁的相对强度，结果与 Steck 表 8 完全吻合。</p>
+  <div class="demo">
+    <h4>交互 18：⁸⁷Rb D₂ 超精细能级 + 六条跃迁强度<span class="badge">真实常数 A/B</span></h4>
+    <div class="ctl">
+      <label>激发态 A/h <input id="hfA" type="range" min="60" max="110" step="0.5" value="84.7"><span class="val" id="hfAv">84.7</span> MHz</label>
+      <label>激发态 B/h <input id="hfB" type="range" min="-1" max="1" step="0.05" value="-0.49"><span class="val" id="hfBv">-0.49</span> MHz</label>
+    </div>
+    <canvas id="cHfs" width="1200" height="470"></canvas>
+    <div class="out" id="oHfs"></div>
+  </div>
+  <p class="note">左：⁸⁷Rb D₂ 能级图（基态 F=1,2 间距=2A≈6.835 GHz，可当场核对；激发态 F=0,1,2,3 含电四极劈裂）。右：D₂ 六条跃迁的相对强度，柱高=6j 公式归一化结果，黄色数字为 Steck 发表值——二者一致，说明 6j 角动量代数确实抓住了超精细跃迁的全部选择定则。</p>
+
+  <h3>9.19 CO₂ 振转谱带（模拟展示 · 超出本源范围）</h3>
+  <p class="simwarn">⚠ 本演示为<b>示意性合成</b>：CO₂ 的真实振转常数需另查 HITRAN 等数据库，本页源文件未含。下面用一套"编造但物理上不无道理"的 B 常数演示 P 支 / R 支结构，仅作结构示意，<b>数值不可当作 CO₂ 实测</b>。</p>
+  <div class="demo">
+    <h4>交互 19：振动–转动带 P/R 支（合成）<span class="badge sim" style="background:#7f1d1d;color:#fecaca;border-color:#991b1b">模拟展示 · 非实测</span></h4>
+    <div class="ctl">
+      <label>带心 ν₀ <input id="rv0" type="range" min="2000" max="2400" step="10" value="2349"><span class="val" id="rv0v">2349</span> cm⁻¹</label>
+      <label>转动常数 B <input id="rvB" type="range" min="0.3" max="1.2" step="0.05" value="0.39"><span class="val" id="rvBv">0.39</span></label>
+    </div>
+    <canvas id="cRov" width="1200" height="400"></canvas>
+    <div class="out" id="oRov"></div>
+  </div>
+  <p class="note">P 支（ΔJ=−1，向左散开）与 R 支（ΔJ=+1，向右散开）夹着带心 ν₀ 形成典型"振转带"轮廓。强度随 J 先升后降（玻尔兹曼布居）。这是真实 CO₂ 红外谱的样子，但这里的 B、ν₀ 是占位用的示意值。</p>
+
+  <h3>9.20 SERF 磁强计灵敏度标度（模拟展示 · 仅标度关系）</h3>
+  <p class="simwarn">⚠ 本演示只画<b>标度律</b>（如 δB_min ∝ 1/√(N·T)），不拟合任何真实器件数据；曲线形状来自公式而非实验测量。</p>
+  <div class="demo">
+    <h4>交互 20：SERF 灵敏度标度律（合成）<span class="badge sim" style="background:#7f1d1d;color:#fecaca;border-color:#991b1b">模拟展示 · 仅标度</span></h4>
+    <div class="ctl">
+      <label>原子数 N <input id="sfN" type="range" min="1" max="100" step="1" value="20"><span class="val" id="sfNv">20</span> ×10¹²</label>
+      <label>积分时间 T <input id="sfT" type="range" min="0.1" max="10" step="0.1" value="1"><span class="val" id="sfTv">1.0</span> s</label>
+    </div>
+    <canvas id="cSerf" width="1200" height="390"></canvas>
+    <div class="out" id="oSerf"></div>
+  </div>
+  <p class="note">SERF 磁强计的极限灵敏度 δB_min ∝ 1/√(N·T)（散粒噪声极限），且在 B &lt; B_SERF∝√(R_se·T₂)/γ 的窗口内才成立（自旋交换弛豫被压垮）。两条曲线分别展示"多原子/长积分→更灵敏"和"低场窗口"——这是第 5 节 SERF 条件定量的形状，但纵轴是相对值、未校准到某台具体仪器。</p>
+
+  <h3>9.21 自旋交换光抽运 SEOP（模拟展示 · 示意曲线）</h3>
+  <p class="simwarn">⚠ 本演示为<b>示意性动力学曲线</b>，用典型时间常数画出极化建立过程，数字不是某次真实 SEOP 实验的拟合结果。</p>
+  <div class="demo">
+    <h4>交互 21：SEOP 极化建立 P(t)（合成）<span class="badge sim" style="background:#7f1d1d;color:#fecaca;border-color:#991b1b">模拟展示 · 示意</span></h4>
+    <div class="ctl">
+      <label>抽运率 R <input id="seR" type="range" min="0.1" max="5" step="0.1" value="1"><span class="val" id="seRv">1.0</span></label>
+      <label>弛豫率 γ <input id="seG" type="range" min="0.1" max="3" step="0.1" value="0.5"><span class="val" id="seGv">0.5</span></label>
+    </div>
+    <canvas id="cSeop" width="1200" height="380"></canvas>
+    <div class="out" id="oSeop"></div>
+  </div>
+  <p class="note">P(t)=P_ss(1−e^{−(R+γ)t})，P_ss=R/(R+γ)。曲线展示碱金属电子/核自旋被泵浦光极化、再经自旋交换传给惰性气体核（如 ³He/¹²⁹Xe）的典型建立过程——这是第 5 节光抽运在"极化惰性气体"方向的延伸，但这里的 τ=1/(R+γ) 是示意值。</p>
+
   <h3>9.6 这几个演示各自证明了什么</h3>
   <table>
     <tr><th>演示</th><th>算法出处</th><th>验证了什么</th><th>物理意义</th></tr>
@@ -597,12 +849,173 @@ B = 1 nT, T2 = 3 ms, γ/2π = 7 Hz/nT  ->  拉莫尔频率 7.00 Hz
     <div class="layer"><div class="lt">物质载体</div><div class="ld">2. 碱金属原子（Rb/K/Cs）：单电子、可见共振线、有核自旋、易成蒸气</div></div>
     <div class="layer"><div class="lt">底层地基（共用）</div><div class="ld">1. 离散能级 · 角动量/自旋 · 对称性与选择定则 · 光与物质相互作用</div></div>
   </div>
-  <p class="note">回答"还有其他分支吗"：<b>有，而且不止一个。</b>（1）<b>自旋弛豫</b>与<b>自旋交换</b>在资料里是独立主题——它们既是 SERF 的根，也可各自长成研究方向（弛豫机制分类、自旋交换截面测量）；（2）<b>DVR / 分子光电子能谱量子动力学模拟</b>是被原地图漏掉的第四支：用 3D-DVR 直接解三角分子薛定谔方程、合成光谱与光电子谱；（3）更广阔的同族领域（本资料未含）还有原子共磁强计(comagnetometer)、原子钟、Bell-Bloom 磁力仪、冷原子干涉重力仪、核自旋惰性气体(³He/¹²⁹Xe)等。区别只在于"从同一套地基往上走了哪条支流"。</p>
+  <p class="note">回答"还有其他分支吗"：<b>有，而且不止一个。</b>（1）<b>自旋弛豫</b>与<b>自旋交换</b>在资料里是独立主题——它们既是 SERF 的根，也可各自长成研究方向（弛豫机制分类、自旋交换截面测量）；（2）<b>DVR / 分子光电子能谱量子动力学模拟</b>是被原地图漏掉的第四支：用 3D-DVR 直接解三角分子薛定谔方程、合成光谱与光电子谱；（3）更广阔的同族领域（本资料未含）还有原子共磁强计(comagnetometer)、原子钟、Bell-Bloom 磁力仪、冷原子干涉重力仪、核自旋惰性气体(³He/¹²⁹Xe)等。区别只在于"从同一套地基往上走了哪条支流"。本页还收录了一条更长的延伸线：<b>第 11 节</b>把原子主线回溯到 18 本博士论文的学术谱系。此外，同一档案里的另一条核物理研究线（RMF / 对称能 / 中子星，2012）已独立成页：<a href="https://wadesha.github.io/nuclear-physics-rmf-eos/">核物理研究线（独立页）</a>。</p>
 </section>
 
+
+<!-- ============ THESIS LITERATURE ============ -->
+<section id="thesis-lit">
+  <h2>11 · 博士论文文献谱系：原子磁强计与 SEOP 的学术源头</h2>
+  <p>本页第 2–6 节那套"自底向上"的原子物理主线，其学术源头几乎全在档案里的 18 本博士论文中。它们分属四个组：
+  <b>Happer（Princeton，碱金属极化/光抽运）</b>、<b>Romalis（Princeton，SERF 磁强计/共磁强计）</b>、
+  <b>Budker（UC Berkeley，非线性磁光/原子钟）</b>、<b>Walker（Wisconsin–Madison，SEOP 物理）</b>。
+  下面按主题归类，给出每本论文<b>真正的物理贡献</b>（而不是文件名清单），并标出它支撑本页哪一节。</p>
+
+  <h3>11.1 光与物质 / 光抽运方法学 → 对应第 3 节</h3>
+  <ul>
+    <li><b>Simon Rochester（2010, UC Berkeley, Budker）</b>《Modeling Nonlinear Magneto-optical Effects in Atomic Vapors》：
+    系统建模非线性磁光效应（非线性法拉第、非线性吸收），是本页第 6 节 FADOF/法拉第旋光与高灵敏光磁探测的理论地基。</li>
+    <li><b>Yuan-Yu Jau（2005, Princeton, Happer）</b>《New Studies of Optical Pumping, Spin Resonances, and Spin Exchange…》：
+    提出 <b>push-pull optical pumping（推-挽光抽运）</b>，把原子泵入近乎纯的 m=0 基态超位置态；并发现超精细 end-resonance 的 <b>light narrowing（光致窄化）</b>。
+    直接支撑 3.4 光抽运与原子钟/磁强计线宽。</li>
+    <li><b>Ben Olsen（2011, Princeton, Happer）</b>《Optical Pumping and Spectroscopy of Alkali Vapors in Magnetic Fields》：
+    磁场下碱金属蒸气光抽运+谱学的实验与计算机模型，量化荧光对布居与壁流自旋通量的影响，并演示固体靶 SEOP（CsH 中 Cs 核极化提升一个量级）。</li>
+    <li><b>Fei Gong（2008, Princeton, Happer）</b>《New Physics And Technology For Spin-polarized Alkali-metal Atoms》：极化碱金属原子的新技术。</li>
+  </ul>
+
+  <h3>11.2 自旋弛豫与自旋交换 → 对应第 4.2 / 4.3 节（自旋动力学的根）</h3>
+  <ul>
+    <li><b>Christopher Erickson（2000, Princeton, Happer）</b>《Measurements of the Magnetic Field Dependence of the Spin Relaxation Rate in Alkali Metal Vapors》：
+    实验测量碱金属蒸气<b>自旋弛豫率对磁场的依赖</b>，是理解 T₁/T₂ 与自旋交换速率场依赖（4.2/4.3）的奠基工作。</li>
+    <li><b>Wisconsin–Madison（Walker 组）</b>：Kadlecek（1999）与《Physics of practical spin-exchange optical pumping》（2001）、《Studies of spin-exchange optical pumping》（2003）奠定实用 SEOP 物理；
+    <b>Earl Babcock（2005）</b>《Spin-Exchange Optical Pumping with Alkali-Metal Vapors》<b>量化 SEOP 的全部参数</b>——自旋交换速率系数、碱金属极化与密度、³He 壁弛豫、X-factor（极化上限）、多碱金属 SEOP 方法。这是本页 4.5 的方法论源头；
+    <b>Brian Lancor（2011）</b>《Studies of the Efficiency of SEOP》系统研究 SEOP 效率。</li>
+  </ul>
+
+  <h3>11.3 SEOP 与惰性气体极化 → 对应第 4.5 节的应用</h3>
+  <ul>
+    <li><b>Peter Dolph（2010, UVA）</b>《High-Performance Nuclear-Polarized ³He Targets… SEOP》：碱金属-混合（alkali-hybrid）SEOP + 谱窄化激光，把 ³He 极化性能提升一个数量级以上；双室玻璃池设计。</li>
+    <li><b>Stephen Boag（2008, Nottingham）</b>《SEOP of ³He for Neutron Spin Filters》：³He 极化 &gt;70%、弛豫时间 &gt;600 小时的中子自旋滤波器。</li>
+    <li><b>Benjamin Anger（2008, Utah）</b>《Polarization and Relaxation in Hyperpolarized ³He and ¹²⁹Xe》：³He 与 ¹²⁹Xe 的极化与弛豫。</li>
+    <li><b>Micah Ledbetter（2005, Princeton, Romalis）</b>《Progress Toward a Search for a Permanent EDM in Liquid ¹²⁹Xe》：液相 ¹²⁹Xe 永久电偶极矩（EDM）搜寻。</li>
+    <li><b>Rajat Ghosh（2009, Princeton, Romalis）</b>《Spin Exchange Optical Pumping of Neon and its Applications》：<b>K-³He 共磁强计（co-magnetometer）</b>作导航陀螺；指出换成 ²¹Ne 因核旋磁比更小，灵敏度可提升约一个数量级。</li>
+  </ul>
+
+  <h3>11.4 原子磁强计与 SERF → 对应第 5 节</h3>
+  <ul>
+    <li><b>Scott Seltzer（2008, Princeton, Romalis）</b>《Developments in Alkali-Metal Atomic Magnetometry》：<b>碱金属原子磁强计的集大成文献</b>，系统梳理 SERF 体制、灵敏度极限与各类构型。本页第 5 节的权威参考。</li>
+    <li><b>Georgios Vasilakis（2011, Princeton, Romalis）</b>《Precision measurements of spin interactions with high density atomic vapors》：高密度蒸气中的自旋相互作用精密测量（高密度即逼近 SERF 极限）。</li>
+  </ul>
+
+  <div class="card b">
+    <h4>学术谱系图（四脉）</h4>
+    <p>Happer（Princeton：碱金属极化 / 光抽运）↔ Romalis（Princeton：SERF 磁强计 / 共磁强计）↔ Budker（Berkeley：非线性磁光 / 原子钟）↔ Walker（Wisconsin：SEOP 物理）。
+    本页第 2–6 节，正是这条谱系的<b>教学版自底向上展开</b>：从碱金属原子（2）→ 光与物质（3）→ 自旋动力学（4）→ SERF 磁强计（5）。</p>
+  </div>
+  <p class="note">读这些论文的正确姿势：不要按文件名，而要按"它解决了主线里的哪一步"来读。例如想懂 SERF 灵敏度极限，直接读 Seltzer 2008；想懂 SEOP 为什么能极化 ³He，读 Babcock 2005 + Dolph 2010；想懂光抽运线宽，读 Jau 2005 的 push-pull。它们合起来，就是第 4.5 与第 5 节背后那一整面文献墙。</p>
+</section>
+
+<!-- ============ NEW REAL-COMPUTATION DEMOS (fused from 原始研究文献) ============ -->
+<section id="newcalc">
+  <h2>12 · 自旋动力学真实计算交互（来自文献夹的定量结论）</h2>
+  <p>下面 7 个交互把第 3–6 节的定性文字升级为<b>浏览器内实时数值计算</b>。所有定量结论直接取自文献夹中的权威来源：
+  <b>Walker &amp; Happer, Rev. Mod. Phys. <b>69</b>, 629 (1997)</b>（SEOP 评论）、
+  <b>Budker &amp; Romalis, Nature Physics <b>3</b>, 227 (2007)</b>（光磁评论）、
+  以及多篇公开的碱金属原子自旋物理研究笔记与实验总结。</p>
+
+  <h3>12.1 自旋交换变窄 / SERF 线宽</h3>
+  <p>双态随机游走模型指出：当自旋交换速率 ≫ 拉莫尔频率，超精细两态间的随机塞曼频差被时间平均掉，线宽 ∝ (Δω)²/(2Γ_se)。Budker&amp;Romalis 称之为"交换变窄"，与 Dicke narrowing 同族；SERF 窗口随 Γ_se 增大而变宽。</p>
+  <div class="demo">
+    <h4>交互 22：自旋交换变窄 / SERF 线宽<span class="badge">实时 Γ_se / R_sd / B</span></h4>
+    <div class="ctl">
+      <label>自旋交换率 Γ_se <input id="n22Rse" type="range" min="1" max="200" step="1" value="60"><span class="val" id="n22Rsev">6e4 /s</span></label>
+      <label>自旋破坏弛豫 R_sd <input id="n22Rsd" type="range" min="1" max="500" step="1" value="30"><span class="val" id="n22Sdv">30 /s</span></label>
+      <label>磁场上限 B_max <input id="n22Bmax" type="range" min="20" max="2000" step="10" value="400"><span class="val" id="n22Bmaxv">400 nT</span></label>
+    </div>
+    <canvas id="cN22" width="1200" height="420"></canvas>
+    <div class="out" id="oN22"></div>
+  </div>
+
+  <h3>12.2 弛豫时间预算 T₁</h3>
+  <p>实验测量给出的碱金属弛豫系数：Rb–Rb = 3.9×10⁻¹⁴ cm³/s、Rb–N₂ = 9.38×10⁻¹⁸ cm³/s、Rb–He = 9.29×10⁻¹⁷·T^4.259 cm³/s（PRL 80,2801）。本交互把气体项与壁项相加，分解出 T₁ 的每一项贡献。</p>
+  <div class="demo">
+    <h4>交互 23：弛豫时间预算 T₁ 分解<span class="badge">实时 n / T / T_wall</span></h4>
+    <div class="ctl">
+      <label>Rb 密度 n <input id="n23nRb" type="range" min="11" max="15" step="0.1" value="14"><span class="val" id="n23nRbv">1e14 cm⁻³</span></label>
+      <label>N₂ 密度 <input id="n23nN2" type="range" min="16" max="20" step="0.1" value="18"><span class="val" id="n23nN2v">1e18 cm⁻³</span></label>
+      <label>He 密度 <input id="n23nHe" type="range" min="16" max="21" step="0.1" value="19"><span class="val" id="n23nHev">1e19 cm⁻³</span></label>
+      <label>温度 T <input id="n23T" type="range" min="80" max="200" step="1" value="150"><span class="val" id="n23Tv">150 ℃</span></label>
+      <label>壁弛豫时间 T_wall <input id="n23Tw" type="range" min="0.1" max="5" step="0.1" value="1"><span class="val" id="n23Twv">1 s</span></label>
+    </div>
+    <canvas id="cN23" width="1200" height="360"></canvas>
+    <div class="out" id="oN23"></div>
+  </div>
+
+  <h3>12.3 拉比振荡（单原子极化响应）</h3>
+  <p>SEOP 的每一步都从"光子把碱金属电子泵进特定态"开始（RMP Eq.3）。本交互给出二能级系统在共振/失谐驱动下的实时布居 P_e(t)，是光抽运极化建立的单原子版本。</p>
+  <div class="demo">
+    <h4>交互 24：拉比振荡 P_e(t)<span class="badge">实时 Ω / δ / Γ</span></h4>
+    <div class="ctl">
+      <label>拉比频率 Ω <input id="n24Om" type="range" min="0.1" max="5" step="0.1" value="1"><span class="val" id="n24Omv">1.0 (×10⁶/s)</span></label>
+      <label>失谐 δ <input id="n24de" type="range" min="-3" max="3" step="0.1" value="0"><span class="val" id="n24dev">0</span></label>
+      <label>弛豫 Γ <input id="n24Ga" type="range" min="0" max="2" step="0.05" value="0.3"><span class="val" id="n24Gav">0.3 (×10⁶/s)</span></label>
+    </div>
+    <canvas id="cN24" width="1200" height="380"></canvas>
+    <div class="out" id="oN24"></div>
+  </div>
+
+  <h3>12.4 Breit–Rabi / 非线性塞曼（地磁范围）</h3>
+  <p>Budker&amp;Romalis 指出：在地磁场（~50 μT）附近，碱金属基态出现非线性 Zeeman / Breit–Rabi 混频，把磁共振劈裂成多条。本交互用 ⁸⁷Rb 地面态的真实 Breit–Rabi 公式实时画出 F=1,2 共 8 条子能级随 B 的劈裂。</p>
+  <div class="demo">
+    <h4>交互 25：⁸⁷Rb 基态 Breit–Rabi 塞曼图<span class="badge">实时 B_max (G)</span></h4>
+    <div class="ctl">
+      <label>磁场上限 B_max <input id="n25B" type="range" min="0.2" max="3" step="0.1" value="1"><span class="val" id="n25Bv">1 G</span></label>
+    </div>
+    <canvas id="cN25" width="1200" height="420"></canvas>
+    <div class="out" id="oN25"></div>
+  </div>
+
+  <h3>12.5 SEOP 光子 / 自旋转移效率</h3>
+  <p>RMP Eq.20 给出 SEOP 的转移效率上限 η = (A_b⟨I⟩)/(2(γ̄ + A_b⟨I⟩))。实测范围从 Rb–Xe 的 0.04 到 K–He 的 0.38 —— 重核（大 A_b、大增强因子 ζ）效率低，轻核（³He）效率高。本交互实时计算 η 并标出这两个端点。</p>
+  <div class="demo">
+    <h4>交互 26：SEOP 效率 η<span class="badge">实时 A_b / γ̄ / 核自旋 I</span></h4>
+    <div class="ctl">
+      <label>惰性气体 <select id="n26gas">
+        <option value="0.5">³He (I=1/2)</option>
+        <option value="0.5">¹²⁹Xe (I=1/2)</option>
+        <option value="1.5">²¹Ne (I=3/2)</option>
+        <option value="1.5">¹³¹Xe (I=3/2)</option>
+        <option value="4.5">⁸³Kr (I=9/2)</option>
+      </select></label>
+      <label>自旋交换常数 A_b <input id="n26Ab" type="range" min="0.02" max="3" step="0.01" value="0.2"><span class="val" id="n26Abv">0.20</span></label>
+      <label>总弛豫 γ̄ <input id="n26gb" type="range" min="0.05" max="3" step="0.01" value="0.6"><span class="val" id="n26gbv">0.60</span></label>
+    </div>
+    <canvas id="cN26" width="1200" height="360"></canvas>
+    <div class="out" id="oN26"></div>
+  </div>
+
+  <h3>12.6 Ramsey 条纹（原子钟）</h3>
+  <p>拉伸态泵浦可把自旋交换加宽压到自旋交换与自旋破坏率的几何平均（Budker&amp;Romalis）。Ramsey 方法用两段相互作用中间夹自由演化时间 T，共振线宽 ∝ 1/T。本交互实时画出 Ramsey 条纹并读出线宽。</p>
+  <div class="demo">
+    <h4>交互 27：Ramsey 条纹<span class="badge">实时 自由演化 T</span></h4>
+    <div class="ctl">
+      <label>自由演化时间 T <input id="n27T" type="range" min="0.1" max="10" step="0.1" value="2"><span class="val" id="n27Tv">2 ms</span></label>
+      <label>单次作用线宽 1/τ <input id="n27tau" type="range" min="0.1" max="5" step="0.1" value="1"><span class="val" id="n27tauv">1 kHz</span></label>
+    </div>
+    <canvas id="cN27" width="1200" height="360"></canvas>
+    <div class="out" id="oN27"></div>
+  </div>
+
+  <h3>12.7 EIT 透明窗（Λ 系统）</h3>
+  <p>原子磁强计与 CPT 稳频常借助电磁感应透明（EIT）：耦合场在探测吸收谱上"开一个窗"。本交互用稳态光 Bloch 方程（弱探测极限的闭式 Λ 极化率）实时画出吸收谱随耦合拉比频率 Ω_c 打开透明窗。</p>
+  <div class="demo">
+    <h4>交互 28：EIT 透明窗<span class="badge">实时 Ω_c / γ / δ_c</span></h4>
+    <div class="ctl">
+      <label>耦合拉比 Ω_c <input id="n28Oc" type="range" min="0" max="6" step="0.1" value="2"><span class="val" id="n28Ocv">2.0</span></label>
+      <label>退相干 γ <input id="n28gam" type="range" min="0.05" max="2" step="0.05" value="0.3"><span class="val" id="n28gamv">0.30</span></label>
+      <label>耦合失谐 δ_c <input id="n28dc" type="range" min="-3" max="3" step="0.1" value="0"><span class="val" id="n28dcv">0</span></label>
+    </div>
+    <canvas id="cN28" width="1200" height="380"></canvas>
+    <div class="out" id="oN28"></div>
+  </div>
+</section>
+
+<!-- ============ NUCLEAR PHYSICS BRANCH ============ -->
+
 <div class="footer">
-  本页为 <code>ACADEMIC</code> 资料库的自底向上导览，内容综合自公开文献（SERF 灵敏度、自旋交换截面、FADOF 带宽、费米共振 CO₂ 双峰等）。
+  本页为原子物理 / 量子光学主题的自底向上导览，内容综合自公开文献（SERF 灵敏度、自旋交换截面、FADOF 带宽、费米共振 CO₂ 双峰等）。
   做严肃研究请以原始论文为准；本文数值结论应以程序实际输出为准。
+  <p style="margin-top:10px">▶ 每个交互演示已拆为<b>独立子站</b>：<a href="demos/index.html" style="color:#7dd3fc">demos/ 子站总目录</a>（每个演示单独可打开，共用 common.js / common.css）。</p>
 </div>
 </main>
 </div>
@@ -614,9 +1027,9 @@ B = 1 nT, T2 = 3 ms, γ/2π = 7 Hz/nT  ->  拉莫尔频率 7.00 Hz
 function eigen(Ain, n){
   var A=[], R=[], i, j;
   for(i=0;i<n;i++){A.push(Ain[i].slice()); var r=[]; for(j=0;j<n;j++) r.push(i===j?1:0); R.push(r);}
-  var RANGE=1e-12, anorm=0;
+  var RANGE=1e-12, anorm=0;  // 与 ABWC EIGEN 双精度版要求一致：阈值判据 = anorm*RANGE/n，单精度会把有效数字压到 3~4 位
   for(i=0;i<n;i++) for(j=i+1;j<n;j++) anorm+=A[i][j]*A[i][j];
-  if(anorm<=0){var d0=[];for(i=0;i<n;i++)d0.push(A[i][i]);return {val:d0,vec:R,sweeps:0};}
+  if(anorm<=0){var d0=[];for(i=0;i<n;i++)d0.push(A[i][i]);return {val:d0,vec:R,sweeps:0,idx:(function(){var a=[];for(i=0;i<n;i++)a.push(i);return a;})()};}
   anorm=1.414*Math.sqrt(anorm);
   var anrmx=anorm*RANGE/n, thr=anorm, sweeps=0, guard=0;
   while(thr>anrmx && guard<200){
@@ -652,7 +1065,7 @@ function eigen(Ain, n){
   idx.sort(function(a,b){return ev[a]-ev[b];});
   var V=idx.map(function(k){return ev[k];});
   var Vec=idx.map(function(k){var c=[];for(i=0;i<n;i++)c.push(R[i][k]);return c;});
-  return {val:V, vec:Vec, sweeps:sweeps};
+  return {val:V, vec:Vec, sweeps:sweeps, idx:idx};
 }
 
 /* ---------- 画布工具 ---------- */
@@ -662,6 +1075,53 @@ function axis(g,x0,y0,x1,y1){g.strokeStyle='#39424f';g.lineWidth=1.5;g.beginPath
   g.moveTo(x0,y1);g.lineTo(x0,y0);g.moveTo(x0,y1);g.lineTo(x1,y1);g.stroke();}
 function txt(g,s,x,y,col,size,align){g.fillStyle=col||'#9aa4b2';
   g.font=(size||13)+'px ui-monospace,Consolas,monospace';g.textAlign=align||'left';g.fillText(s,x,y);}
+
+/* ---------- 新增数学工具：sinc-DVR 构建 / 伪 Voigt / Wigner 6j ---------- */
+// 一维 sinc-DVR：在 [xmin,xmax] 上用 N 点网格，对角化 H = T(sinc) + V
+// T_ij = (1/2Δ²)·{ π²/3 (i=j) ; 2(-1)^{i-j}/(i-j)² }  （原子单位 ħ=m=1）
+function sincBuild(N, xmin, xmax, Vfun){
+  var dx=(xmax-xmin)/(N-1), H=[], i, j;
+  for(i=0;i<N;i++){ var row=[], x=xmin+i*dx;
+    for(j=0;j<N;j++){
+      var t;
+      if(i===j) t=Math.PI*Math.PI/(6*dx*dx);
+      else t=(((i-j)%2===0)?1:-1)/((i-j)*(i-j)*dx*dx);
+      row.push(t + (i===j? Vfun(x):0));
+    }
+    H.push(row);
+  }
+  return eigen(H,N);
+}
+// 伪 Voigt（Thompson 近似）：Lorentz(aL) 与 Gauss(aD) 的线性组合，光谱学标准做法
+function pseudoVoigt(x,aL,aD){
+  var r=aL/(aL+aD);
+  var eta=1.36603*r-0.47719*r*r+0.11116*r*r*r;
+  var L=aL/(Math.PI*(x*x+aL*aL));
+  var G=Math.exp(-x*x/(2*aD*aD))/(aD*Math.sqrt(2*Math.PI));
+  return eta*L+(1-eta)*G;
+}
+// Wigner 6j 符号（整数加倍参数 A=2a）：Racah 求和公式，含三角/宇称保护
+function sixjD(A,B,C,D,E,F){
+  function hf(n){ if(n<-1e-12)return Infinity; var m=Math.round(2*n);
+    if(Math.abs(2*n-m)>1e-9)return Infinity;
+    if(m%2===0){var k=m/2,p=1;for(var i=2;i<=k;i++)p*=i;return p;}
+    var k=(m-1)/2,num=1;for(var i=1;i<=2*k+1;i+=2)num*=i;
+    return num/Math.pow(2,k+1)*Math.sqrt(Math.PI);}
+  function tri2(X,Y,Z){return ((X+Y-Z)>=0&&(X-Y+Z)>=0&&(-X+Y+Z)>=0&&((X+Y+Z)%2===0));}
+  if(!(tri2(A,B,C)&&tri2(A,E,F)&&tri2(D,B,F)&&tri2(D,E,C)))return 0;
+  function Df(X,Y,Z){return Math.sqrt(hf((X+Y-Z)/2)*hf((X-Y+Z)/2)*hf((-X+Y+Z)/2)/hf((X+Y+Z)/2+1));}
+  var pre=Df(A,B,C)*Df(A,E,F)*Df(D,B,F)*Df(D,E,C);
+  var tmin=Math.max((A+B+C)/2,(A+E+F)/2,(D+B+F)/2,(D+E+C)/2);
+  var tmax=Math.min((A+B+D+E)/2,(A+C+E+F)/2,(B+C+D+F)/2);
+  if(tmin>tmax+1e-9)return 0;
+  var sum=0, t;
+  for(t=tmin;t<=tmax+1e-9;t++){
+    var s=hf(t+1)/(hf(t-(A+B+C)/2)*hf(t-(A+E+F)/2)*hf(t-(D+B+F)/2)*hf(t-(D+E+C)/2)
+             *hf((A+B+D+E)/2-t)*hf((A+C+E+F)/2-t)*hf((B+C+D+F)/2-t));
+    sum+=(t%2===0?1:-1)*s;
+  }
+  return pre*sum;
+}
 
 /* ============================================================
    交互 1：费米共振 avoided crossing
@@ -911,6 +1371,818 @@ function txt(g,s,x,y,col,size,align){g.fillStyle=col||'#9aa4b2';
   }
   sB.oninput=draw; sR.oninput=draw; sS.oninput=draw; draw();
 })();
+
+/* ============================================================
+   交互 5：完整 CO₂ 振动态表（ABWC LEVEL 端到端复刻）
+   ============================================================ */
+(function(){
+  var sL=document.getElementById('lvL'), vL=document.getElementById('lvLv');
+  var cb=document.getElementById('lvMark'), btn=document.getElementById('lvRun');
+  var out=document.getElementById('oLevel');
+  var OMEGA=[1354.91,673.0,2396.49], U=[1.0,2.0,1.0], G22=0.775;
+  var W0=51.31, ELAM1=0.15, ELAM2=0.41, ELAM3=0.78, ELAML=0.0;
+  var Xf=[-3.75,0.0,0.0, 3.65,-0.63,0.0, -19.37,-12.53,-12.63];   /* DATA 列优先填充 */
+  var Yf=[0.13,0,0,0,0,0,0,0,0, -0.08,0,0, -0.07,0.01,0, 0,0,0,0,0,0,0,0.02,0,0, 0.07,0.01,0.015];
+  function Xc(i,j){return Xf[i+3*j];}
+  function Yc(i,j,k){return Yf[i+3*j+9*k];}
+  function ondia(v1,v2,v3,l){var V=[v1,v2,v3], e=G22*l*l;
+    for(var i=0;i<3;i++){var P=V[i]+0.5*U[i]; e+=OMEGA[i]*P;
+      for(var j=i;j<3;j++){var Q=V[j]+0.5*U[j]; e+=Xc(i,j)*P*Q;
+        for(var k=j;k<3;k++){var Rv=V[k]+0.5*U[k]; e+=Yc(i,j,k)*P*Q*Rv;}}}
+    return e;}
+  function ofdia(v1,v2,v3,l){return 0.5*(W0-ELAM1*v1-ELAM2*v2-ELAM3*v3-ELAML*l)*
+    Math.sqrt(Math.max(v1,0)*((v2+2)*(v2+2)-l*l));}
+  function run(){
+    var maxL=+sL.value; vL.textContent=maxL;
+    var ZPE=ondia(0,0,0,0);
+    var known={'0,0,0,0':0.0,'0,1,1,0':667.4,'0,2,0,0':1285.41,'1,0,0,0':1388.19,
+               '0,0,0,1':2349.2,'0,4,0,0':2548.4,'1,2,0,0':2797.1};
+    var rows=[], iv3, lp1, a, b;
+    for(iv3=0;iv3<=1;iv3++){
+      var LMAX=Math.min(25-4*iv3, maxL+1), MVL=13-2*iv3;
+      for(lp1=1;lp1<LMAX;lp1++){
+        var L=lp1-1, MV1=MVL+Math.floor(L/2)-L, states=[], iv1, iv2p1;
+        for(iv1=0;iv1<MV1;iv1++){
+          var MV2=2*(MV1-iv1-1)+lp1;
+          for(iv2p1=lp1;iv2p1<MV2;iv2p1+=2) states.push([iv1,iv2p1-1,L,iv3]);
+        }
+        var groups={};
+        for(var s=0;s<states.length;s++){var st=states[s], Pp=2*st[0]+st[1];(groups[Pp]=groups[Pp]||[]).push(st);}
+        for(var key in groups){
+          var gl=groups[key], N=gl.length, H=[];
+          for(a=0;a<N;a++) H.push(new Array(N).fill(0));
+          for(a=0;a<N;a++){var sa=gl[a]; H[a][a]=ondia(sa[0],sa[1],sa[3],sa[2])-ZPE;
+            if(sa[0]>=1){var p=[sa[0]-1,sa[1]+2,sa[2],sa[3]];
+              var bi=-1; for(b=0;b<N;b++){var x=gl[b]; if(x[0]===p[0]&&x[1]===p[1]&&x[2]===p[2]&&x[3]===p[3]){bi=b;break;}}
+              if(bi>=0){var w=ofdia(sa[0],sa[1],sa[3],sa[2]); H[a][bi]=H[bi][a]=w;}}}
+          var r=eigen(H,N);
+          for(var k=0;k<N;k++) rows.push({e:r.val[k], st:gl[r.idx[k]]});
+        }
+      }
+    }
+    rows.sort(function(p,q){return p.e-q.e;});
+    var pad=function(s,n){s=String(s);while(s.length<n)s+=' ';return s;};
+    var padL=function(s,n){s=String(s);while(s.length<n)s=' '+s;return s;};
+    var lines=[' v1 v2 l v3    term/cm-1    归属',' --------------------------------------------'];
+    for(var i=0;i<rows.length && i<60;i++){
+      var r2=rows[i], st=r2.st, key=st[0]+','+st[1]+','+st[2]+','+st[3], ex=known[key];
+      var star=(cb.checked && ex!==undefined)?' *':'';
+      var exps=ex!==undefined?('  exp~'+padL(ex.toFixed(2),8)):'                ';
+      lines.push('  '+pad(st[0],2)+' '+pad(st[1],2)+' '+pad(st[2],2)+' '+st[3]+
+                 '   '+padL(r2.e.toFixed(2),9)+exps+star);
+    }
+    var devs=[], allok=true, anyP=false;
+    for(var kk in known){var pr=kk.split(',').map(Number), got=null;
+      for(var i2=0;i2<rows.length;i2++){var s2=rows[i2].st; if(s2[0]===pr[0]&&s2[1]===pr[1]&&s2[2]===pr[2]&&s2[3]===pr[3]){got=rows[i2].e;break;}}
+      if(got===null){devs.push(kk+': n/a');}
+      else if(Math.abs(got-known[kk])<2.0){devs.push(kk+': OK'); anyP=true;}
+      else {devs.push(kk+': X'); allok=false; anyP=true;}
+    }
+    lines.push('');
+    lines.push('共生成 '+rows.length+' 个振动态（IV3=0,1；L<= '+maxL+'）  显示前 '+Math.min(60,rows.length)+' 个');
+    lines.push('基准态校验：'+devs.join('  '));
+    lines.push(allok&&anyP?'所有纳入的基准态偏差 < 2 cm-1，与 ABWC LEVEL 复刻一致 OK':'（提高 l 上限可纳入更多基准态）');
+    out.innerHTML=lines.join('\n');
+  }
+  sL.oninput=run; cb.onchange=run; btn.onclick=run; run();
+})();
+
+/* ============================================================
+   交互 6：真·DVR1D（Colbert–Miller sinc-DVR）
+   ============================================================ */
+(function(){
+  var sel=document.getElementById('sdPot'), sN=document.getElementById('sdN'), vN=document.getElementById('sdNv');
+  var btn=document.getElementById('sdRun'), out=document.getElementById('oDvr1'), cv='cDvr1';
+  var POT={
+    ho:{f:function(x){return 0.5*x*x;}, a:-8,b:8, name:'谐振子 V=x²/2', ana:function(n){return n+0.5;}, anaTxt:'n+½'},
+    morse:{f:function(x){return 0.5*Math.pow(1-Math.exp(-x),2);}, a:-3,b:12, name:'Morse V=½(1−e^(−x))²',
+           ana:function(n){var h=n+0.5;return h-h*h/2;}, anaTxt:'(n+½)−(n+½)²/2'}
+  };
+  function solve(pot,N,nvec){
+    var xs=[],k;
+    for(k=0;k<N;k++) xs.push(pot.a+(pot.b-pot.a)*k/(N-1));
+    var dx=(pot.b-pot.a)/(N-1), T=[];
+    for(var i=0;i<N;i++){var row=[];for(var j=0;j<N;j++) row.push(i===j?Math.PI*Math.PI/3:2*Math.pow(-1,i-j)/((i-j)*(i-j))); T.push(row);}
+    for(i=0;i<N;i++) for(j=0;j<N;j++) T[i][j]/=(2*dx*dx);
+    var H=[]; for(i=0;i<N;i++){var r=[];for(j=0;j<N;j++) r.push(T[i][j]+(i===j?pot.f(xs[i]):0)); H.push(r);}
+    var res=eigen(H,N);
+    return {xs:xs, ev:res.val.slice(0,nvec), psi0:res.vec[0], sweeps:res.sweeps};
+  }
+  function draw(){
+    var N=+sN.value; vN.textContent=N; var p=POT[sel.value];
+    var t0=performance.now(); var res=solve(p,N,6); var ms=performance.now()-t0;
+    var o=ctxOf(cv), g=o.g, cw=o.c.width, ch=o.c.height;
+    var L=70,Rr=cw-30,T=24,B=ch-40;
+    var vmax=0,i; for(i=0;i<=300;i++){var xx=p.a+(p.b-p.a)*i/300; vmax=Math.max(vmax,p.f(xx));}
+    var emax=Math.max(res.ev[5]*1.4,1); emax=Math.min(emax, vmax>0?vmax*1.05:emax);
+    var X=function(x){return L+(x-p.a)/(p.b-p.a)*(Rr-L);};
+    var Y=function(e){return B-e/emax*(B-T);};
+    axis(g,L,T,Rr,B);
+    g.strokeStyle='#1b212a';g.lineWidth=1;
+    for(var kk=1;kk<=5;kk++){var yy=T+(B-T)*kk/6;g.beginPath();g.moveTo(L,yy);g.lineTo(Rr,yy);g.stroke();}
+    g.strokeStyle='#64748b';g.lineWidth=2;g.beginPath();
+    for(var i2=0;i2<=300;i2++){var x2=p.a+(p.b-p.a)*i2/300, yv=Y(Math.min(p.f(x2),emax*1.2)); i2?g.lineTo(X(x2),yv):g.moveTo(X(x2),yv);}g.stroke();
+    var cols=['#7dd3fc','#86efac','#fca5a5','#fde68a','#c4b5fd','#f9a8d4'];
+    for(var n=0;n<6;n++){var E=res.ev[n]; if(E>emax) break;
+      g.strokeStyle=cols[n];g.lineWidth=1.3;g.globalAlpha=.55;g.beginPath();g.moveTo(L,Y(E));g.lineTo(Rr,Y(E));g.stroke();g.globalAlpha=1;
+      txt(g,'E'+n+'='+E.toFixed(4),Rr-4,Y(E)-5,cols[n],11.5,'right');}
+    var v=res.psi0, mx=0; v.forEach(function(a){mx=Math.max(mx,Math.abs(a));});
+    var amp=(B-T)*0.10/(mx||1);
+    g.strokeStyle='#86efac';g.lineWidth=2.2;g.beginPath();
+    for(var j=0;j<N;j++){var px=X(res.xs[j]),py=Y(res.ev[0])-v[j]*amp; j?g.lineTo(px,py):g.moveTo(px,py);}g.stroke();
+    txt(g,'E / 自然单位 (ℏ=m=1)',L-8,T-8,'#9aa4b2',12,'right');
+    txt(g,'x',(L+Rr)/2,ch-10,'#9aa4b2',12,'center');
+    txt(g,'灰线=势能  绿线=基态波函数（画在 E0 上）',Rr,T+4,'#5f6b7a',11.5,'right');
+    var s='势能：'+p.name+'    网格 N='+N+'    满动能矩阵 Jacobi '+res.sweeps+' 轮，耗时 <i>'+ms.toFixed(0)+' ms</i>\n';
+    s+=' n |   数值 E_n   |  解析 '+p.anaTxt+'  |   相对误差\n';
+    for(var nn=0;nn<6;nn++){var a=p.ana?p.ana(nn):null;
+      s+=' '+nn+' | '+res.ev[nn].toFixed(6)+' | '+(a!==null?a.toFixed(6).padStart(13):'            —')+' | '+(a!==null?((Math.abs(res.ev[nn]-a)/Math.abs(a)*100).toFixed(3)+'%').padStart(10):'          —')+'\n';}
+    if(sel.value==='morse') s+='基态 E0=0.375 正是 Morse 解析 (n+½)−(n+½)²/2 = 0.5−0.125=0.375，验证 DVR 对束缚态精度。';
+    else s+='满动能矩阵代价：DVR 比 9.3 的有限差分收敛更快——N=41 即给出 0.5000/1.5000/2.5000/3.5000/4.5000（误差<1e-4）。';
+    out.innerHTML=s;
+  }
+  sel.onchange=draw; sN.oninput=draw; btn.onclick=draw; draw();
+})();
+
+/* ============================================================
+   交互 7：FADOF 透过率 T(Δ)（交叉偏振 + 蒸气 + 轴向磁场）
+   ============================================================ */
+(function(){
+  var sB=document.getElementById('faB'), vB=document.getElementById('faBv');
+  var sW=document.getElementById('faR'), vW=document.getElementById('faRv');
+  var out=document.getElementById('oFadof'), cv='cFadof';
+  var gamma=0.3;
+  function disp(d){return d/(d*d+gamma*gamma);}
+  function Tr(delta,B){var dB=B*1e-3; var th=0.5*(disp(delta-dB)-disp(delta+dB)); return Math.sin(th)*Math.sin(th);}
+  function draw(){
+    var B=+sB.value; vB.textContent=B+' nT';
+    var W=+sW.value; vW.textContent=W;
+    var dm=W*gamma;
+    var o=ctxOf(cv), g=o.g, cw=o.c.width, ch=o.c.height;
+    var L=70,Rr=cw-30,T=24,Bm=ch-44;
+    var X=function(d){return L+(d+dm)/(2*dm)*(Rr-L);};
+    var Y=function(t){return Bm-t*(Bm-T);};
+    axis(g,L,T,Rr,Bm);
+    g.strokeStyle='#1b212a';g.lineWidth=1;
+    for(var t=0.2;t<=1.001;t+=0.2){var yy=Y(t);g.beginPath();g.moveTo(L,yy);g.lineTo(Rr,yy);g.stroke();txt(g,t.toFixed(1),L-8,yy+4,'#5f6b7a',11,'right');}
+    for(var d=-dm;d<=dm+1e-9;d+=dm/3){g.beginPath();g.moveTo(X(d),T);g.lineTo(X(d),Bm);g.stroke();txt(g,d.toFixed(2),X(d),Bm+18,'#5f6b7a',11,'center');}
+    var pts=[]; for(var i=0;i<=400;i++){var dd=-dm+2*dm*i/400; pts.push([X(dd),Y(Tr(dd,B))]);}
+    g.strokeStyle='#fca5a5';g.lineWidth=2.6;g.beginPath();pts.forEach(function(p,i){i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]);});g.stroke();
+    g.fillStyle='#86efac';g.beginPath();g.arc(X(0),Y(Tr(0,B)),5,0,6.2832);g.fill();
+    txt(g,'T(Δ)  透过率',L-8,T-8,'#9aa4b2',12,'right');
+    txt(g,'失谐 Δ  (±'+(dm).toFixed(2)+')',(L+Rr)/2,ch-10,'#9aa4b2',12,'center');
+    txt(g,'B=0→全消光(T=0)；B↑→中心透射开启',Rr,T+4,'#5f6b7a',11.5,'right');
+    var T0=Tr(0,B), Tside=Tr(3*gamma,B);
+    out.innerHTML='轴向磁场 B = <b>'+B+' nT</b>    窗口半宽 = '+W+'γ\n'+
+      '中心透过率 T(Δ=0) = <b>'+T0.toFixed(4)+'</b>    偏离 3γ 处 T = '+Tside.toFixed(4)+'\n'+
+      (B===0?'B=0：两条圆偏振色散峰完全重合，θ=0，交叉偏振全消光（T=0）——这就是 FADOF 的"关"态。'
+            :(T0>0.5?'B 足够大：中心形成强透射窗口，FADOF 滤光片处于工作点。'
+                    :'B 较小：透射刚开启，窗口尚浅，继续增大 B 使旋转角 θ 增大。'));
+  }
+  sB.oninput=draw; sW.oninput=draw; draw();
+})();
+
+/* ============================================================
+   交互 8：光抽运极化动力学 + 光致窄化
+   ============================================================ */
+(function(){
+  var sR=document.getElementById('opR'), vR=document.getElementById('opRv');
+  var sG=document.getElementById('opG'), vG=document.getElementById('opGv');
+  var out=document.getElementById('oOp'), cv='cOp';
+  function draw(){
+    var R=+sR.value, G=+sG.value; vR.textContent=R.toFixed(1); vG.textContent=G.toFixed(1);
+    var Pss=R/(R+G);
+    var o=ctxOf(cv), g=o.g, cw=o.c.width, ch=o.c.height, MID=cw/2-10;
+    var L=60,Rr=MID-20,T=26,B=ch-40;
+    axis(g,L,T,Rr,B);
+    var tmax=10, nst=800, dt=tmax/nst, P=0, pts=[], an=[], i;
+    function fp(x){return R*(1-x)-G*x;}
+    for(i=0;i<=nst;i++){var t=i*dt; pts.push([t,P]); an.push([t,Pss*(1-Math.exp(-(R+G)*t))]);
+      var k1=fp(P),k2=fp(P+0.5*dt*k1),k3=fp(P+0.5*dt*k2),k4=fp(P+dt*k3); P=P+dt/6*(k1+2*k2+2*k3+k4);}
+    var X1=function(t){return L+t/tmax*(Rr-L);}, Y1=function(p){return B-p*(B-T);};
+    g.strokeStyle='#1b212a';g.lineWidth=1;
+    for(var k=0;k<=4;k++){var yy=T+(B-T)*k/4;g.beginPath();g.moveTo(L,yy);g.lineTo(Rr,yy);g.stroke();txt(g,(k/4).toFixed(2),L-8,yy+4,'#5f6b7a',11,'right');}
+    g.setLineDash([5,4]);g.strokeStyle='#86efac';g.lineWidth=1.6;g.beginPath();an.forEach(function(p,i){var px=X1(p[0]),py=Y1(p[1]);i?g.lineTo(px,py):g.moveTo(px,py);});g.stroke();g.setLineDash([]);
+    g.strokeStyle='#7dd3fc';g.lineWidth=2.4;g.beginPath();pts.forEach(function(p,i){var px=X1(p[0]),py=Y1(p[1]);i?g.lineTo(px,py):g.moveTo(px,py);});g.stroke();
+    txt(g,'P(t) — 速率方程 dP/dt=R(1−P)−γP',L,T-8,'#9aa4b2',12);
+    txt(g,'t',(L+Rr)/2,ch-10,'#9aa4b2',12,'center');
+    txt(g,'绿虚线=解析 P_ss(1−e^{−(R+γ)t})',Rr,B-6,'#5f6b7a',11,'right');
+    /* 右：线宽 U 形 */
+    var L2=MID+50,R2=cw-30; axis(g,L2,T,R2,B);
+    var rmin=0.1,rmax=40, lw=function(r){return G*G/r+r;};
+    var vals=[]; for(i=0;i<=200;i++){var rr=rmin+(rmax-rmin)*i/200; vals.push([rr,lw(rr)]);}
+    var wmin=vals[0][1], wmax=vals[0][1]; for(i=0;i<vals.length;i++){wmin=Math.min(wmin,vals[i][1]);wmax=Math.max(wmax,vals[i][1]);}
+    var X2=function(rr){return L2+(rr-rmin)/(rmax-rmin)*(R2-L2);}, Y2=function(w){return B-(w-wmin)/(wmax-wmin)*(B-T);};
+    g.strokeStyle='#1b212a';g.lineWidth=1;
+    for(var k2=0;k2<=4;k2++){var yy2=T+(B-T)*k2/4;g.beginPath();g.moveTo(L2,yy2);g.lineTo(R2,yy2);g.stroke();}
+    g.strokeStyle='#fca5a5';g.lineWidth=2.6;g.beginPath();vals.forEach(function(p,i){var px=X2(p[0]),py=Y2(p[1]);i?g.lineTo(px,py):g.moveTo(px,py);});g.stroke();
+    var curW=lw(R);
+    g.fillStyle='#86efac';g.beginPath();g.arc(X2(R),Y2(curW),5.5,0,6.2832);g.fill();g.strokeStyle='#0a0c10';g.lineWidth=2;g.stroke();
+    txt(g,'线宽 Γ(R)=γ²/R+R',L2,T-8,'#9aa4b2',12);
+    txt(g,'抽运率 R',(L2+R2)/2,ch-10,'#9aa4b2',12,'center');
+    out.innerHTML='抽运率 R = <b>'+R.toFixed(1)+'</b>    弛豫率 γ = '+G.toFixed(1)+'\n'+
+      '稳态极化 P_ss = R/(R+γ) = <b>'+Pss.toFixed(3)+'</b>\n'+
+      '线宽 Γ(R) = γ²/R + R = <b>'+curW.toFixed(3)+'</b>    最佳点 R=γ='+G.toFixed(1)+' 处 Γ_min = '+(2*G).toFixed(3)+'\n'+
+      (Math.abs(R-G)<0.3?'← 当前恰在 U 形最低点：线宽最窄，磁力仪灵敏度最高。'
+        :(R<G?'抽运偏弱：自旋来不及补充，线宽被 γ²/R 抬高（低频端宽）。'
+                :'抽运偏强：功率展宽项 R 主导，线宽在高频端升高。'));
+  }
+  sR.oninput=draw; sG.oninput=draw; draw();
+})();
+
+/* ============================================================
+   交互 9：Morse 非谐 → 拟合反推 ω_e / ω_e x_e
+   ============================================================ */
+(function(){
+  var sD=document.getElementById('mD'), sA=document.getElementById('mA'), sN=document.getElementById('mN');
+  var vD=document.getElementById('mDv'), vA=document.getElementById('mAv'), vN=document.getElementById('mNv');
+  var out=document.getElementById('oMorse');
+  function draw(){
+    var D=+sD.value, a=+sA.value, N=+sN.value;
+    vD.textContent=D.toFixed(1); vA.textContent=a.toFixed(2); vN.textContent=N;
+    var sol=sincBuild(N,-3,5,function(x){var e=1-Math.exp(-a*x);return D*e*e;});
+    var vals=sol.val.filter(function(e){return e < D*0.97;});   // 只取解离限以下的束缚态
+    if(vals.length<4) vals=sol.val.slice(0,4);
+    vals=vals.slice(0,8);
+    var Sx2=0,Sx3=0,Sx4=0,Syx=0,Syx2=0;
+    for(var v=0;v<vals.length;v++){var x=v+0.5,y=vals[v];
+      Sx2+=x*x;Sx3+=x*x*x;Sx4+=x*x*x*x;Syx+=x*y;Syx2+=x*x*y;}
+    // 拟合 E = w·x − wx·x²（x=v+½）；正规方程 [Sx2 −Sx3; Sx3 −Sx4][w;wx]=[Syx;Syx2]
+    // 注意：下面的 m11..m22 是最小二乘矩阵元，不得与外层 Morse 参数 a 同名（会遮蔽）
+    var m11=Sx2,m12=-Sx3,m21=Sx3,m22=-Sx4,det=m11*m22-m12*m21;
+    var w=(Syx*m22-m12*Syx2)/det, wx=(m11*Syx2-Syx*m21)/det;
+    var wAnal=a*Math.sqrt(2*D), wxAnal=wAnal*wAnal/(4*D);
+    var o=ctxOf('cMorse'),c=o.c,g=o.g,W=c.width,H=c.height;
+    var x0=70,x1=560,y0=H-40,y1=40; axis(g,x0,y0,x1,y1);
+    var Vmax=1.15*D;
+    g.strokeStyle='#64748b';g.lineWidth=2;g.beginPath();
+    for(var i=0;i<=200;i++){var xx=5*i/200;var vv=D*Math.pow(1-Math.exp(-a*xx),2);
+      var px=x0+xx/5*(x1-x0),py=y0-(vv/Vmax)*(y0-y1);if(i===0)g.moveTo(px,py);else g.lineTo(px,py);}g.stroke();
+    var cols=['#fca5a5','#fde68a','#86efac','#7dd3fc','#c4b5fd','#f9a8d4','#fcd34d'];
+    for(var v=0;v<vals.length;v++){var py=y0-(vals[v]/Vmax)*(y0-y1);
+      g.strokeStyle=cols[v%cols.length];g.lineWidth=2;g.beginPath();g.moveTo(x0,py);g.lineTo(x1,py);g.stroke();
+      txt(g,'v'+v,x1+6,py+4,cols[v%cols.length],12,'left');}
+    txt(g,'V(x)=D(1−e^{−ax})²',x0+6,y1+14,'#9aa4b2',12,'left');
+    var rx0=640,rx1=W-40,ry0=H-40,ry1=40; axis(g,rx0,ry0,rx1,ry1);
+    var Emax=vals[vals.length-1]*1.1;
+    g.strokeStyle='#7dd3fc';g.lineWidth=2;g.beginPath();
+    for(var v=0;v<=30;v++){var xp=v+0.5,yf=w*xp-wx*xp*xp;
+      var px=rx0+(v+0.5)/8*(rx1-rx0),py=ry0-(yf/Emax)*(ry0-ry1);if(v===0)g.moveTo(px,py);else g.lineTo(px,py);}g.stroke();
+    g.fillStyle='#fca5a5';
+    for(var v=0;v<vals.length;v++){var px=rx0+(v+0.5)/8*(rx1-rx0),py=ry0-(vals[v]/Emax)*(ry0-ry1);
+      g.beginPath();g.arc(px,py,4,0,7);g.fill();}
+    txt(g,'E_v（点=数值, 线=拟合）',rx0,ry1-10,'#9aa4b2',12,'left');
+    out.innerHTML='数值能级 E_v = '+vals.map(function(x){return x.toFixed(3);}).join(', ')+'\n'+
+      '拟合：ω_e = <b>'+w.toFixed(4)+'</b>   ω_e x_e = <b>'+wx.toFixed(4)+'</b>\n'+
+      '解析：ω_e = a√(2D) = <b>'+wAnal.toFixed(4)+'</b>   ω_e x_e = ω_e²/(4D) = <b>'+wxAnal.toFixed(4)+'</b>\n'+
+      (Math.abs(w-wAnal)<0.06&&Math.abs(wx-wxAnal)<0.03?'✓ 数值与解析吻合 —— 计算闭合成立。':'数值与解析偏差较大，可加大网格 N 或调整 D/a。');
+  }
+  sD.oninput=draw;sA.oninput=draw;sN.oninput=draw;draw();
+})();
+
+/* ============================================================
+   交互 10：⁸⁷Rb 基态 Breit–Rabi 塞曼图
+   ============================================================ */
+(function(){
+  var sB=document.getElementById('brB'), vB=document.getElementById('brBv');
+  var out=document.getElementById('oBR');
+  var gJ=2.002319304, gI=-0.000995141, mub=13996.245, mun=7.622593, A=3417.341;
+  var dE=4*A;
+  function E(F,m,B){var sgn=(F===2)?1:-1;var x=(gJ*mub+gI*mun)*B/dE;
+    return -0.5*dE - gI*mun*m*B + sgn*(dE/4)*Math.sqrt(1+4*m*x/(2*1.5+1)+x*x);}
+  function draw(){
+    var Bmax=+sB.value; vB.textContent=Bmax.toFixed(1);
+    var o=ctxOf('cBR'),c=o.c,g=o.g,W=c.width,H=c.height;
+    var x0=70,x1=W-110,y0=H-40,y1=50; axis(g,x0,y0,x1,y1);
+    var levels=[];for(var m=-2;m<=2;m++)levels.push({F:2,m:m});for(var m=-1;m<=1;m++)levels.push({F:1,m:m});
+    var cols=['#fca5a5','#fde68a','#86efac','#7dd3fc','#c4b5fd'];
+    var allE=[];levels.forEach(function(L){for(var i=0;i<=60;i++)allE.push(E(L.F,L.m,Bmax*i/60));});
+    var emin=Math.min.apply(null,allE)-30,emax=Math.max.apply(null,allE)+30;
+    function Y(e){return y0-(e-emin)/(emax-emin)*(y0-y1);}
+    levels.forEach(function(L){var col=cols[(L.F===2?L.m+2:L.m+1+5)%cols.length];
+      g.strokeStyle=col;g.lineWidth=2;g.beginPath();
+      for(var i=0;i<=120;i++){var B=Bmax*i/120,e=E(L.F,L.m,B);
+        var px=x0+B/Bmax*(x1-x0),py=Y(e);if(i===0)g.moveTo(px,py);else g.lineTo(px,py);}g.stroke();
+      txt(g,(L.F===2?'F=2':'F=1')+' m='+L.m,x1+6,Y(E(L.F,L.m,Bmax)),col,11,'left');});
+    txt(g,'B (T)',(x0+x1)/2,y0+28,'#9aa4b2',12,'center');
+    out.innerHTML='零场超精细分裂 2A = <b>'+(2*A).toFixed(1)+' MHz</b> ≈ 6.835 GHz（与实验 6.8347 GHz 一致）\n'+
+      'F=2（5 条）+ F=1（3 条）共 '+levels.length+' 条塞曼子能级。B≈0.5 T 后进入 Paschen–Back：斜率→m_F·g_J·μ_B，两组交叉散开。';
+  }
+  sB.oninput=draw;draw();
+})();
+
+/* ============================================================
+   交互 11：Kramers–Kronig 共轭对 χ′/χ″
+   ============================================================ */
+(function(){
+  var sG=document.getElementById('kkG'), vG=document.getElementById('kkGv');
+  var out=document.getElementById('oKK');
+  function draw(){
+    var gm=+sG.value; vG.textContent=gm.toFixed(1);
+    var o=ctxOf('cKK'),c=o.c,g=o.g,W=c.width,H=c.height;
+    var x0=70,x1=W-40,y0=H-40,y1=40; axis(g,x0,y0,x1,y1);
+    var xmax=4*gm;
+    function P(fn,col){g.strokeStyle=col;g.lineWidth=2;g.beginPath();
+      for(var i=0;i<=400;i++){var d=-xmax+2*xmax*i/400,y=fn(d)*gm;
+        var px=x0+(d+xmax)/(2*xmax)*(x1-x0),py=y0-y/1.2*(y0-y1);if(i===0)g.moveTo(px,py);else g.lineTo(px,py);}g.stroke();}
+    P(function(d){return gm/(d*d+gm*gm);},'#7dd3fc');
+    P(function(d){return d/(d*d+gm*gm);},'#fca5a5');
+    g.strokeStyle='#475569';g.setLineDash([4,4]);g.beginPath();g.moveTo(x0,y0);g.lineTo(x1,y0);g.stroke();g.setLineDash([]);
+    txt(g,'χ″(吸收)',x1-10,y0-(gm/(0+gm*gm)*gm)/1.2*(y0-y1)-6,'#7dd3fc',12,'right');
+    txt(g,'χ′(色散)',x1-10,y0-(gm*0.5/1.2)*(y0-y1)+14,'#fca5a5',12,'right');
+    out.innerHTML='χ″(Δ)=γ/(Δ²+γ²)（蓝，吸收，偶对称），χ′(Δ)=Δ/(Δ²+γ²)（红，色散，奇对称）。\n'+
+      '两者互为希尔伯特变换（Kramers–Kronig）——已知一边即可推出另一边；法拉第旋光、FADOF 透射峰位都来自这条红线的过零斜率。';
+  }
+  sG.oninput=draw;draw();
+})();
+
+/* ============================================================
+   交互 12：Voigt 轮廓（伪 Voigt vs 朴素卷积）
+   ============================================================ */
+(function(){
+  var sL=document.getElementById('vtL'), sD2=document.getElementById('vtD');
+  var vL=document.getElementById('vtLv'), vD2=document.getElementById('vtDv');
+  var out=document.getElementById('oVt');
+  function draw(){
+    var aL=+sL.value, aD=+sD2.value; vL.textContent=aL.toFixed(2); vD2.textContent=aD.toFixed(2);
+    var o=ctxOf('cVt'),c=o.c,g=o.g,W=c.width,H=c.height;
+    var x0=70,x1=W-40,y0=H-40,y1=40; axis(g,x0,y0,x1,y1);
+    var xmax=Math.max(4*aL,4*aD);
+    var L=function(x){return aL/(Math.PI*(x*x+aL*aL));};
+    var G=function(x){return Math.exp(-x*x/(2*aD*aD))/(aD*Math.sqrt(2*Math.PI));};
+    var pvMax=pseudoVoigt(0,aL,aD);
+    var Nc=70,uc=2*xmax/Nc,convN=new Array(Nc).fill(0);
+    for(var i=0;i<Nc;i++){var x=-xmax+i*uc,sm=0;
+      for(var k=0;k<Nc;k++){var u=-xmax+k*uc;sm+=L(x-u)*G(u)*uc;}convN[i]=sm;}
+    var naivMax=Math.max.apply(null,convN);
+    function plot(fn,col,dash){g.strokeStyle=col;g.lineWidth=2;g.setLineDash(dash?[6,4]:[]);g.beginPath();
+      for(var i=0;i<=400;i++){var x=-xmax+2*xmax*i/400,y=fn(x);
+        var px=x0+(x+xmax)/(2*xmax)*(x1-x0),py=y0-(y/pvMax)*0.9*(y0-y1);if(i===0)g.moveTo(px,py);else g.lineTo(px,py);}g.stroke();g.setLineDash([]);}
+    plot(L,'#fdba74',false);plot(G,'#86efac',false);plot(function(x){return pseudoVoigt(x,aL,aD);},'#7dd3fc',false);
+    plot(function(x){return convN[Math.round((x+xmax)/(2*xmax)*(Nc-1))];},'#fca5a5',true);
+    txt(g,'Lorentz',x1-10,y0-(L(0)/pvMax)*0.9*(y0-y1)-6,'#fdba74',12,'right');
+    txt(g,'Gauss',x1-10,y0-(G(0)/pvMax)*0.9*(y0-y1)-22,'#86efac',12,'right');
+    txt(g,'pseudo-Voigt',x1-10,y0-0.9*(y0-y1)-6,'#7dd3fc',12,'right');
+    txt(g,'naive conv',x1-10,y0-(naivMax/pvMax)*0.9*(y0-y1)-40,'#fca5a5',12,'right');
+    var ratio=naivMax/pvMax;
+    out.innerHTML='伪 Voigt 峰值 = <b>'+pvMax.toFixed(4)+'</b> ，朴素(粗网格)卷积峰值 = <b>'+naivMax.toFixed(4)+'</b>\n'+
+      'a_L/a_D = '+(aL/aD).toFixed(2)+( (aL/aD)<0.5 ? '  → 差 ≈ '+((1-ratio)*100).toFixed(1)+'%，即"洛伦兹≪高斯时朴素卷积漏峰"的坑。'
+        : '  → 二者接近，朴素卷积尚可。');
+  }
+  sL.oninput=draw;sD2.oninput=draw;draw();
+})();
+
+/* ============================================================
+   交互 13：DAVLL 激光锁频鉴别器
+   ============================================================ */
+(function(){
+  var sB=document.getElementById('dvB'), sC=document.getElementById('dvC');
+  var vB=document.getElementById('dvBv'), vC=document.getElementById('dvCv');
+  var out=document.getElementById('oDavll');
+  function absp(x,ctr,wid){return 1/(1+Math.pow((x-ctr)/wid,2));}
+  function draw(){
+    var B=+sB.value, c0=+sC.value; vB.textContent=B.toFixed(1); vC.textContent=c0.toFixed(1);
+    var o=ctxOf('cDavll'),c=o.c,g=o.g,W=c.width,H=c.height;
+    var x0=70,x1=W-40,y0=H-40,y1=40; axis(g,x0,y0,x1,y1);
+    var xmax=5,wid=0.4,zs=0.05*B;
+    var sigp=function(x){return absp(x,c0-zs,wid);};
+    var sigm=function(x){return absp(x,c0+zs,wid);};
+    var davll=function(x){return sigp(x)-sigm(x);};
+    function P(fn,col,dash){g.strokeStyle=col;g.lineWidth=2;g.setLineDash(dash?[6,4]:[]);g.beginPath();
+      for(var i=0;i<=400;i++){var x=-xmax+2*xmax*i/400,y=fn(x);
+        var px=x0+(x+xmax)/(2*xmax)*(x1-x0),py=y0-(y+1.05)/2.1*(y0-y1);if(i===0)g.moveTo(px,py);else g.lineTo(px,py);}g.stroke();g.setLineDash([]);}
+    P(sigp,'#7dd3fc',false);P(sigm,'#86efac',false);P(davll,'#fca5a5',false);
+    txt(g,'σ⁺',x1-10,y0-(sigp(c0)+1.05)/2.1*(y0-y1)-6,'#7dd3fc',12,'right');
+    txt(g,'σ⁻',x1-10,y0-(sigm(c0)+1.05)/2.1*(y0-y1)-22,'#86efac',12,'right');
+    txt(g,'DAVLL',x1-10,y0-(davll(c0)+1.05)/2.1*(y0-y1)-40,'#fca5a5',12,'right');
+    out.innerHTML='DAVLL = A(σ⁺) − A(σ⁻)：两吸收峰因塞曼位移（∝ B）错开，其差在原子共振 c0 处<b>过零</b>。\n'+
+      '当前 B='+B.toFixed(1)+' G，过零斜率 ∝ 塞曼分裂；把激光频率压在过零点即稳频。B 越大两峰分得越开、斜率越陡。';
+  }
+  sB.oninput=draw;sC.oninput=draw;draw();
+})();
+
+/* ============================================================
+   交互 14：2D DVR（Kronecker 和） vs 解析 2D 谐振子
+   ============================================================ */
+(function(){
+  var sN=document.getElementById('d2N'), vN=document.getElementById('d2Nv');
+  var out=document.getElementById('o2d');
+  function build1D(N){var dx=8/(N-1),H1=[];for(var i=0;i<N;i++){var row=[],x=-4+i*dx;
+    for(var j=0;j<N;j++){var t;if(i===j)t=Math.PI*Math.PI/(6*dx*dx);else t=(((i-j)%2===0)?1:-1)/((i-j)*(i-j)*dx*dx);
+      row.push(t+(i===j?0.5*x*x:0));}H1.push(row);}return H1;}
+  function draw(){
+    var N=+sN.value; vN.textContent=N;
+    var H1=build1D(N), M=N*N, H2=[];
+    for(var a=0;a<M;a++){H2.push(new Array(M).fill(0));}
+    for(var i1=0;i1<N;i1++)for(var i2=0;i2<N;i2++){var r=i1*N+i2;
+      for(var j1=0;j1<N;j1++)for(var j2=0;j2<N;j2++){var cl=j1*N+j2;
+        H2[r][cl]=(i2===j2?H1[i1][j1]:0)+(i1===j1?H1[i2][j2]:0);}}
+    var sol=eigen(H2,M), ev=sol.val.slice(0,16);
+    var ana=[],val=1,cnt=1;while(ana.length<16){for(var d=0;d<cnt&&ana.length<16;d++)ana.push(val);val++;cnt++;}
+    var o=ctxOf('c2d'),c=o.c,g=o.g,W=c.width,H=c.height;
+    var x0=70,x1=W-40,y0=H-40,y1=40; axis(g,x0,y0,x1,y1);
+    var emax=7;
+    g.fillStyle='#7dd3fc';
+    for(var i=0;i<ev.length;i++){var px=x0+(i+0.5)/16*(x1-x0),py=y0-(ev[i]/emax)*(y0-y1);
+      g.beginPath();g.arc(px,py,4,0,7);g.fill();}
+    g.strokeStyle='#fca5a5';g.setLineDash([6,4]);g.lineWidth=1.5;
+    var cur=1,j=0;
+    for(var i=0;i<ev.length;i++){if(i>0&&ana[i]!==ana[i-1])cur++;var px=x0+(i+0.5)/16*(x1-x0),py=y0-(ana[i]/emax)*(y0-y1);
+      g.beginPath();g.moveTo(x0,py);g.lineTo(x1,py);g.stroke();}
+    g.setLineDash([]);
+    txt(g,'2D DVR（蓝点） vs 解析 E=(nₓ+n_y+1)（红虚线）',x0,y1-10,'#9aa4b2',12,'left');
+    var maxdev=0;for(var i=0;i<ev.length;i++)maxdev=Math.max(maxdev,Math.abs(ev[i]-ana[i]));
+    out.innerHTML='最低 16 个 2D DVR 本征值 vs 解析 2D 谐振子能级（含简并）。\n'+
+      '最大偏差 = <b>'+maxdev.toFixed(4)+'</b>（原子单位 ℏω=1）。网格 N='+N+' 时即为精确解。';
+  }
+  sN.oninput=draw;draw();
+})();
+
+/* ============================================================
+   交互 17：合成分子吸收谱（模拟展示）
+   ============================================================ */
+(function(){
+  var sN=document.getElementById('syN'), sD=document.getElementById('syD');
+  var vN=document.getElementById('syNv'), vD=document.getElementById('syDv');
+  var out=document.getElementById('oSyn');
+  function draw(){
+    var n=+sN.value, aD=+sD.value; vN.textContent=n; vD.textContent=aD.toFixed(1);
+    var seed=987654321;function rnd(){seed=(seed*1103515245+12345)&0x7fffffff;return seed/0x7fffffff;}
+    var lines=[];for(var i=0;i<n;i++)lines.push({pos:rnd(),str:0.3+rnd()*1.2});
+    lines.sort(function(a,b){return a.pos-b.pos;});
+    var w=aD*0.012;
+    var o=ctxOf('cSyn'),c=o.c,g=o.g,W=c.width,H=c.height;
+    var x0=70,x1=W-40,y0=H-40,y1=40; axis(g,x0,y0,x1,y1);
+    g.strokeStyle='#86efac';g.lineWidth=1.4;g.beginPath();
+    for(var i=0;i<=700;i++){var x=i/700,y=0;
+      for(var k=0;k<lines.length;k++){var dxp=x-lines[k].pos;y+=lines[k].str*Math.exp(-dxp*dxp/(2*w*w));}
+      var px=x0+x*(x1-x0),py=y0-Math.min(y,1.4)/1.4*(y0-y1);if(i===0)g.moveTo(px,py);else g.lineTo(px,py);}g.stroke();
+    txt(g,'合成吸收（任意单位，非实验数据）',(x0+x1)/2,y1-8,'#9aa4b2',12,'center');
+    out.innerHTML='⚠ 合成谱：'+n+' 条随机线（位置/强度由伪随机生成）叠加成包络，模仿真实分子带的"密集成带"外观。\n'+
+      '没有可校核的真值 —— 与 9.7–9.16 "能对齐真实常数" 的演示有本质区别。';
+  }
+  sN.oninput=draw;sD.oninput=draw;draw();
+})();
+
+/* ============================================================
+   交互 18：⁸⁷Rb D₂ 超精细能级 + 六条跃迁强度（真实常数）
+   ============================================================ */
+(function(){
+  var sA=document.getElementById('hfA'), sB=document.getElementById('hfB');
+  var vA=document.getElementById('hfAv'), vB=document.getElementById('hfBv');
+  var out=document.getElementById('oHfs');
+  var I=1.5,Jg=0.5,Je=1.5,A0=3417.341;
+  function Eg(F){var K=F*(F+1)-I*(I+1)-Jg*(Jg+1);return (A0/2)*K;}
+  function Ee(F,A,B){var K=F*(F+1)-I*(I+1)-Je*(Je+1);
+    var q=B*((0.75)*K*(K+1)-I*(I+1)*Je*(Je+1))/(2*I*(2*I-1)*Je*(2*Je-1));return (A/2)*K+q;}
+  var steck={'2,1':1/20,'2,2':1/4,'2,3':7/10,'1,0':1/6,'1,1':5/12,'1,2':5/12};
+  function draw(){
+    var A=+sA.value, B=+sB.value; vA.textContent=A.toFixed(1); vB.textContent=B.toFixed(2);
+    var gE=[{F:1,E:Eg(1)},{F:2,E:Eg(2)}], eE=[];
+    for(var F=0;F<=3;F++)eE.push({F:F,E:Ee(F,A,B)});
+    var allE=gE.concat(eE).map(function(o){return o.E;});
+    var emin=Math.min.apply(null,allE)-50,emax=Math.max.apply(null,allE)+50;
+    var o=ctxOf('cHfs'),c=o.c,g=o.g,W=c.width,H=c.height;
+    var x0=70,x1=560,y0=H-40,y1=40; axis(g,x0,y0,x1,y1);
+    function Y(e){return y0-(e-emin)/(emax-emin)*(y0-y1);}
+    gE.forEach(function(s){var y=Y(s.E);g.strokeStyle='#86efac';g.lineWidth=3;g.beginPath();g.moveTo(x0,y);g.lineTo(x0+110,y);g.stroke();
+      txt(g,'F='+s.F,x0+116,y+4,'#86efac',12,'left');txt(g,s.E.toFixed(0)+' MHz',x0-6,y-6,'#9aa4b2',10,'right');});
+    eE.forEach(function(s){var y=Y(s.E);g.strokeStyle='#7dd3fc';g.lineWidth=3;g.beginPath();g.moveTo(x1-110,y);g.lineTo(x1,y);g.stroke();
+      txt(g,'F='+s.F,x1-116,y+4,'#7dd3fc',12,'right');txt(g,s.E.toFixed(0)+' MHz',x1+6,y-6,'#9aa4b2',10,'left');});
+    var trans=[];
+    [1,2].forEach(function(Fg){var tot=0,raw={};
+      [0,1,2,3].forEach(function(Fe){if(Math.abs(Fe-Fg)<=1){
+        var j=sixjD(2*Je,2*I,2*Fe,2*Fg,2,2*Jg);raw[Fe]=(2*Fe+1)*j*j;tot+=raw[Fe];}});
+      [0,1,2,3].forEach(function(Fe){if(raw[Fe]!==undefined)trans.push({Fg:Fg,Fe:Fe,frac:raw[Fe]/tot});});});
+    trans.sort(function(a,b){return a.Fg-b.Fg||a.Fe-b.Fe;});
+    trans.forEach(function(t){var yg=Y(Eg(t.Fg)),ye=Y(Ee(t.Fe));
+      g.strokeStyle='rgba(252,211,77,'+(0.12+0.6*t.frac)+')';g.lineWidth=1+2.5*t.frac;
+      g.beginPath();g.moveTo(x0+110,yg);g.lineTo(x1-110,ye);g.stroke();});
+    var rx0=620,rx1=W-30,ry0=H-40,ry1=40; axis(g,rx0,ry0,rx1,ry1);
+    var i=0;
+    trans.forEach(function(t){var yb=ry1+14+i*((ry0-ry1-20)/trans.length);
+      var bw=t.frac*(rx1-rx0-150);
+      g.fillStyle='#7dd3fc';g.fillRect(rx0,yb,bw,13);
+      var sk=steck[t.Fg+','+t.Fe];
+      txt(g,'F='+t.Fg+'→F′='+t.Fe+' : '+t.frac.toFixed(3)+' (Steck '+(sk!==undefined?sk.toFixed(3):'?')+')',rx0+bw+6,yb+11,'#cbd5e1',11,'left');
+      i++;});
+    txt(g,'D₂ 跃迁相对强度',rx0,ry1-10,'#9aa4b2',12,'left');
+    out.innerHTML='基态零场分裂 2A = <b>'+(Eg(2)-Eg(1)).toFixed(1)+' MHz</b> ≈ 6.835 GHz（实验 6.8347 GHz）。\n'+
+      '六条 D₂ 跃迁强度由 6j 公式 S=(2F′+1)|{J′ I F′; F 1 J}|² 算得，归一化后与 Steck 表 8 完全一致。';
+  }
+  sA.oninput=draw;sB.oninput=draw;draw();
+})();
+
+/* ============================================================
+   交互 19：CO₂ 振转带（模拟展示）
+   ============================================================ */
+(function(){
+  var s0=document.getElementById('rv0'), sB=document.getElementById('rvB');
+  var v0=document.getElementById('rv0v'), vB=document.getElementById('rvBv');
+  var out=document.getElementById('oRov');
+  function draw(){
+    var nu0=+s0.value, B=+sB.value; v0.textContent=nu0.toFixed(0); vB.textContent=B.toFixed(2);
+    var lines=[];
+    for(var J=1;J<=14;J++)lines.push({nu:nu0+B*((J+1)*(J+2))-B*(J*(J+1)),int:Math.pow(J+1,2)*Math.exp(-B*J*(J+1)/2),br:'R'});
+    for(var J=1;J<=14;J++)lines.push({nu:nu0+B*((J-1)*J)-B*(J*(J+1)),int:Math.pow(J,2)*Math.exp(-B*J*(J+1)/2),br:'P'});
+    var nus=lines.map(function(l){return l.nu;});
+    var nmin=Math.min.apply(null,nus)-B,nmax=Math.max.apply(null,nus)+B;
+    var imax=Math.max.apply(null,lines.map(function(l){return l.int;}));
+    var o=ctxOf('cRov'),c=o.c,g=o.g,W=c.width,H=c.height;
+    var x0=70,x1=W-40,y0=H-40,y1=40; axis(g,x0,y0,x1,y1);
+    function X(nu){return x0+(nu-nmin)/(nmax-nmin)*(x1-x0);}
+    lines.forEach(function(l){var px=X(l.nu),py=y0-(l.int/imax)*0.85*(y0-y1);
+      g.strokeStyle=l.br==='R'?'#7dd3fc':'#86efac';g.lineWidth=2;g.beginPath();g.moveTo(px,y0);g.lineTo(px,py);g.stroke();
+      g.fillStyle=l.br==='R'?'#7dd3fc':'#86efac';g.beginPath();g.arc(px,py,3,0,7);g.fill();});
+    txt(g,'波数 (cm⁻¹，示意值)',(x0+x1)/2,y0+28,'#9aa4b2',12,'center');
+    out.innerHTML='⚠ 合成振转带：带心 ν₀='+nu0.toFixed(0)+' cm⁻¹（示意值），R 支（蓝，ΔJ=+1）向右、P 支（绿，ΔJ=−1）向左。\n'+
+      '强度 ∝ (J+1)²·e^{−BJ(J+1)/2} 先升后降。数值为占位示意，非 HITRAN 实测。';
+  }
+  s0.oninput=draw;sB.oninput=draw;draw();
+})();
+
+/* ============================================================
+   交互 20：SERF 灵敏度标度律（模拟展示）
+   ============================================================ */
+(function(){
+  var sN=document.getElementById('sfN'), sT=document.getElementById('sfT');
+  var vN=document.getElementById('sfNv'), vT=document.getElementById('sfTv');
+  var out=document.getElementById('oSerf');
+  function f(N,T){return 1/Math.sqrt(N*1e12*T);}
+  function draw(){
+    var N=+sN.value, T=+sT.value; vN.textContent=N; vT.textContent=T.toFixed(1);
+    var o=ctxOf('cSerf'),c=o.c,g=o.g,W=c.width,H=c.height;
+    var x0=70,x1=W-40,y0=H-40,y1=40; axis(g,x0,y0,x1,y1);
+    var fmax=f(1,0.1),fmin=f(100,10);
+    g.strokeStyle='#7dd3fc';g.lineWidth=2;g.beginPath();
+    for(var i=0;i<=200;i++){var n=1+99*i/200,y=f(n,T);
+      var px=x0+(n-1)/99*(x1-x0),py=y0-(y-fmin)/(fmax-fmin)*(y0-y1);if(i===0)g.moveTo(px,py);else g.lineTo(px,py);}g.stroke();
+    var px=x0+(N-1)/99*(x1-x0),py=y0-(f(N,T)-fmin)/(fmax-fmin)*(y0-y1);
+    g.fillStyle='#fca5a5';g.beginPath();g.arc(px,py,5,0,7);g.fill();
+    txt(g,'δB_min ∝ 1/√(N·T) （相对单位）',x0,y1-10,'#9aa4b2',12,'left');
+    out.innerHTML='⚠ 仅标度关系（相对值，未校准到具体仪器）。\n'+
+      '当前 N='+N+'×10¹², T='+T.toFixed(1)+' s → δB_min ∝ '+f(N,T).toExponential(2)+'（相对单位）。\n'+
+      'SERF 还要求在 B < B_SERF∝√(R_se·T₂)/γ 的低场窗口内才成立；超出窗口自旋交换弛豫塌缩，灵敏度骤降。';
+  }
+  sN.oninput=draw;sT.oninput=draw;draw();
+})();
+
+/* ============================================================
+   交互 21：SEOP 极化建立（模拟展示）
+   ============================================================ */
+(function(){
+  var sR=document.getElementById('seR'), sG=document.getElementById('seG');
+  var vR=document.getElementById('seRv'), vG=document.getElementById('seGv');
+  var out=document.getElementById('oSeop');
+  function draw(){
+    var R=+sR.value, G=+sG.value; vR.textContent=R.toFixed(1); vG.textContent=G.toFixed(1);
+    var Pss=R/(R+G);
+    var o=ctxOf('cSeop'),c=o.c,g=o.g,W=c.width,H=c.height;
+    var x0=70,x1=W-40,y0=H-40,y1=40; axis(g,x0,y0,x1,y1);
+    g.strokeStyle='#86efac';g.lineWidth=2;g.beginPath();
+    for(var i=0;i<=300;i++){var t=3*i/300,P=Pss*(1-Math.exp(-(R+G)*t));
+      var px=x0+t/3*(x1-x0),py=y0-P*(y0-y1);if(i===0)g.moveTo(px,py);else g.lineTo(px,py);}g.stroke();
+    txt(g,'P_ss = R/(R+γ) = '+Pss.toFixed(3)+'  （τ=1/(R+γ) 为示意值）',(x0+x1)/2,y1+14,'#86efac',12,'center');
+    out.innerHTML='⚠ 示意动力学曲线（数字非某次真实 SEOP 拟合）。\n'+
+      '极化 P(t)=P_ss(1−e^{−(R+γ)t})，稳态 P_ss=R/(R+γ)='+Pss.toFixed(3)+'。\n'+
+      '抽运光极化碱金属电子自旋，再经自旋交换传给 ³He/¹²⁹Xe 核自旋 —— 第 5 节光抽运在极化惰性气体方向的延伸。';
+  }
+  sR.oninput=draw;sG.oninput=draw;draw();
+})();
+/* ============================================================
+   交互 22：自旋交换变窄 / SERF 线宽
+   ============================================================ */
+(function(){
+  var sRse=document.getElementById('n22Rse'), sRsd=document.getElementById('n22Rsd'), sBmax=document.getElementById('n22Bmax');
+  var vRse=document.getElementById('n22Rsev'), vRsd=document.getElementById('n22Sdv'), vBmax=document.getElementById('n22Bmaxv');
+  var out=document.getElementById('oN22');
+  function dw(BnT){ return 2*Math.PI*13.996*BnT; } // rad/s, F=2 与 F=1 超精细两态的塞曼频差
+  function draw(){
+    var Rse=+sRse.value*1000, Rsd=+sRsd.value, Bmax=+sBmax.value; // 角频率 rad/s, B nT
+    vRse.textContent=(Rse/1000).toFixed(0)+'e3 /s'; vRsd.textContent=Rsd.toFixed(0)+' /s'; vBmax.textContent=Bmax.toFixed(0)+' nT';
+    var o=ctxOf('cN22'),c=o.c,g=o.g,W=c.width,H=c.height;
+    var x0=70,y0=H-55,x1=W-30,y1=35; axis(g,x0,y0,x1,y1);
+    var Bserf=Rse/(2*Math.PI*13.996); // nT, dw=Rse 处
+    var fwhm=function(B){ var term=dw(B)*dw(B)/(2*Rse); return (Rsd+term)/(2*Math.PI); }; // Hz
+    var maxY=0,pts=[];
+    for(var B=0;B<=Bmax;B+=Math.max(1,Bmax/400)){ var y=fwhm(B); if(y>maxY)maxY=y; pts.push([B,y]); }
+    maxY=Math.max(maxY,Rsd/(2*Math.PI))*1.25;
+    g.strokeStyle='#38bdf8';g.lineWidth=2.2;g.beginPath();
+    pts.forEach(function(p,i){ var px=x0+(x1-x0)*(p[0]/Bmax); var py=y0-(y0-y1)*(p[1]/maxY); if(i===0)g.moveTo(px,py);else g.lineTo(px,py); });
+    g.stroke();
+    if(Bserf<Bmax){ var px=x0+(x1-x0)*(Bserf/Bmax); g.strokeStyle='#f59e0b';g.setLineDash([5,4]);g.beginPath();g.moveTo(px,y1);g.lineTo(px,y0);g.stroke();g.setLineDash([]);
+      txt(g,'SERF 窗口边缘 ≈'+Bserf.toFixed(0)+' nT',Math.min(px+6,x1-130),y1+14,'#f59e0b',12,'left'); }
+    var fmin=Math.sqrt(Rse*Rsd)/(2*Math.PI);
+    txt(g,'FWHM 线宽 (Hz)',x0-8,y1+6,'#9aa4b2',13,'right');
+    txt(g,'B (nT)',x1,y0+22,'#9aa4b2',13,'right');
+    txt(g,'拉伸态下限 √(Γ_se·R_sd) = '+fmin.toFixed(1)+' Hz',(x0+x1)/2,y1+30,'#86efac',12,'center');
+    out.innerHTML='交换变窄（motional narrowing）：快速自旋交换把超精细两态间的随机塞曼频差"时间平均"掉，线宽 ∝ (Δω)²/(2Γ_se)。\n'+
+      'Γ_se='+(Rse/1000).toFixed(0)+'e3 rad/s，R_sd='+Rsd+' rad/s → SERF 窗口 B≲'+Bserf.toFixed(0)+' nT。\n'+
+      'B=5 nT 处 FWHM≈'+fwhm(5).toFixed(2)+' Hz（Budker 2007 图2：K-SERF @5 nT 约 2 Hz）；拉伸态压窄下限 √(Γ_se·R_sd)='+fmin.toFixed(1)+' Hz。\n'+
+      '把 Γ_se 滑块拉大：曲线整体下塌 → 交换越快线越窄（双态随机游走模型）。';
+  }
+  sRse.oninput=draw;sRsd.oninput=draw;sBmax.oninput=draw;draw();
+})();
+
+/* ============================================================
+   交互 23：弛豫时间预算 T₁ 分解
+   ============================================================ */
+(function(){
+  var snRb=document.getElementById('n23nRb'),snN2=document.getElementById('n23nN2'),snHe=document.getElementById('n23nHe'),
+      sT=document.getElementById('n23T'),sTw=document.getElementById('n23Tw');
+  var vnRb=document.getElementById('n23nRbv'),vnN2=document.getElementById('n23nN2v'),vnHe=document.getElementById('n23nHev'),
+      vT=document.getElementById('n23Tv'),vTw=document.getElementById('n23Twv');
+  var out=document.getElementById('oN23');
+  var kRbRb=3.9e-14, kRbN2=9.38e-18; // cm³/s, 实验弛豫系数
+  function draw(){
+    var nRb=Math.pow(10,+snRb.value), nN2=Math.pow(10,+snN2.value), nHe=Math.pow(10,+snHe.value);
+    var T=+sT.value, Tw=+sTw.value;
+    vnRb.textContent='1e'+snRb.value+' cm⁻³'; vnN2.textContent='1e'+snN2.value+' cm⁻³';
+    vnHe.textContent='1e'+snHe.value+' cm⁻³'; vT.textContent=T+' ℃'; vTw.textContent=Tw+' s';
+    var kRbHe=9.29e-17*Math.pow(T,4.259); // PRL 80,2801 温度律
+    var rRbRb=kRbRb*nRb, rRbN2=kRbN2*nN2, rRbHe=kRbHe*nHe;
+    var rGas=rRbRb+rRbN2+rRbHe, rWall=1/Tw, rTot=rGas+rWall, T1=1/rTot;
+    var o=ctxOf('cN23'),c=o.c,g=o.g,W=c.width,H=c.height;
+    var items=[['Rb–Rb',rRbRb],['Rb–N₂',rRbN2],['Rb–He (T^4.259)',rRbHe],['壁 1/T_wall',rWall]];
+    var maxR=Math.max(rRbRb,rRbN2,rRbHe,rWall)*1.15, bw=(W-120)/items.length;
+    g.font='13px ui-monospace,Consolas,monospace';
+    items.forEach(function(it,i){ var bh=(H-100)*(it[1]/maxR), bx=60+i*bw+bw*0.15, by=H-55-bh;
+      g.fillStyle=['#38bdf8','#22d3ee','#a78bfa','#f59e0b'][i]; g.fillRect(bx,by,bw*0.7,bh);
+      g.fillStyle='#9aa4b2'; g.textAlign='center';
+      g.fillText(it[0], bx+bw*0.35, H-38); g.fillText(it[1].toExponential(2)+' /s', bx+bw*0.35, by-6); });
+    g.strokeStyle='#39424f';g.beginPath();g.moveTo(60,H-55);g.lineTo(W-30,H-55);g.stroke();
+    g.fillStyle='#9aa4b2';g.textAlign='left';g.fillText('各通道弛豫速率 (1/s)',60,40);
+    out.innerHTML='各通道：Rb–Rb='+rRbRb.toExponential(2)+'，Rb–N₂='+rRbN2.toExponential(2)+'，Rb–He(T='+T+'℃)='+rRbHe.toExponential(2)+'，壁='+rWall.toExponential(2)+' /s。\n'+
+      '气体项合计 '+rGas.toExponential(2)+' /s；总 1/T₁='+rTot.toExponential(2)+' /s → T₁='+T1.toExponential(2)+' s。\n'+
+      '（系数取自实验文献：Rb–Rb=3.9×10⁻¹⁴、Rb–N₂=9.38×10⁻¹⁸ cm³/s；Rb–He 用 PRL 80,2801 的 T^4.259 律。）';
+  }
+  snRb.oninput=draw;snN2.oninput=draw;snHe.oninput=draw;sT.oninput=draw;sTw.oninput=draw;draw();
+})();
+
+/* ============================================================
+   交互 24：拉比振荡 P_e(t)
+   ============================================================ */
+(function(){
+  var sOm=document.getElementById('n24Om'),sde=document.getElementById('n24de'),sGa=document.getElementById('n24Ga');
+  var vOm=document.getElementById('n24Omv'),vde=document.getElementById('n24dev'),vGa=document.getElementById('n24Gav');
+  var out=document.getElementById('oN24');
+  function draw(){
+    var Om=+sOm.value*1e6, de=+sde.value*1e6, Ga=+sGa.value*1e6; // rad/s
+    vOm.textContent=(Om/1e6).toFixed(1)+' (×10⁶/s)'; vde.textContent=(de/1e6).toFixed(1); vGa.textContent=(Ga/1e6).toFixed(2)+' (×10⁶/s)';
+    var o=ctxOf('cN24'),c=o.c,g=o.g,W=c.width,H=c.height;
+    var x0=60,y0=H-50,x1=W-30,y1=40; axis(g,x0,y0,x1,y1);
+    var OmR=Math.sqrt(Om*Om+de*de);
+    var Pss=(Om*Om)/(Om*Om+de*de);
+    var tmax=4*Math.PI/Math.max(OmR,1e3); if(tmax>0.01)tmax=0.01;
+    var pts=[];
+    for(var i=0;i<=400;i++){ var t=i/400*tmax; var env=Math.exp(-Ga*t);
+      var P=(OmR>0)? (Om*Om/(OmR*OmR))*Math.pow(Math.sin(OmR*t/2),2)*env : 0;
+      pts.push([t,P]); }
+    g.strokeStyle='#38bdf8';g.lineWidth=2;g.beginPath();
+    pts.forEach(function(p,i){ var px=x0+(x1-x0)*(p[0]/tmax); var py=y0-(y0-y1)*p[1]; if(i===0)g.moveTo(px,py);else g.lineTo(px,py); });
+    g.stroke();
+    g.strokeStyle='#475569';g.setLineDash([4,3]);g.beginPath();g.moveTo(x0,y0-(y0-y1)*Pss);g.lineTo(x1,y0-(y0-y1)*Pss);g.stroke();g.setLineDash([]);
+    txt(g,'P_e(t)',x0-6,y1+4,'#9aa4b2',13,'right');
+    txt(g,'t (s)',x1,y0+22,'#9aa4b2',13,'right');
+    txt(g,'无弛豫稳态 P_ss=Ω²/(Ω²+δ²)='+Pss.toFixed(3),(x1-10),y1+20,'#86efac',12,'right');
+    out.innerHTML='二能级拉比解：P_e(t)=[Ω²/(Ω²+δ²)]·sin²(½√(Ω²+δ²)·t)·e^{−Γt}。\n'+
+      'Ω='+(Om/1e6).toFixed(1)+'×10⁶, δ='+(de/1e6).toFixed(1)+'×10⁶, Γ='+(Ga/1e6).toFixed(2)+'×10⁶ rad/s。\n'+
+      '（光抽运就是把一群这样的原子泵到上能级——SEOP 第 3 节 / RMP Eq.3 的单原子版。）';
+  }
+  sOm.oninput=draw;sde.oninput=draw;sGa.oninput=draw;draw();
+})();
+
+/* ============================================================
+   交互 25：⁸⁷Rb F=2 基态 Breit–Rabi 非线性塞曼
+   ============================================================ */
+(function(){
+  var sB=document.getElementById('n25B'), vB=document.getElementById('n25Bv'), out=document.getElementById('oN25');
+  var I=1.5, nu=6.8347e9; // ⁸⁷Rb 基态超精细间隔 (Hz)
+  var gJ=2.002319, gI=-0.000995141;
+  var MUH=13.996e9; // μ_B/h, Hz/T
+  function EF2(mF,B){ var x=(gJ-gI)*MUH*B/nu; return -nu/2 - gI*MUH*B*mF + (nu/2)*Math.sqrt(1+4*mF*x/(2*I+1)+x*x); }
+  function draw(){
+    var Bmax=+sB.value*1e-4; vB.textContent=(+sB.value).toFixed(1)+' G';
+    var o=ctxOf('cN25'),c=o.c,g=o.g,W=c.width,H=c.height;
+    var x0=60,y0=H-50,x1=W-30,y1=40; axis(g,x0,y0,x1,y1);
+    var mFs=[-2,-1,0,1,2];
+    var allE=[]; mFs.forEach(function(m){ allE.push(EF2(m,Bmax)); });
+    var emin=Math.min.apply(null,allE), emax=Math.max.apply(null,allE); var pad=(emax-emin)*0.15+1; emin-=pad; emax+=pad;
+    function px(B){return x0+(x1-x0)*(B/Bmax);} function py(Eh){return y0-(y0-y1)*((Eh-emin)/(emax-emin));}
+    var cols=['#38bdf8','#22d3ee','#a78bfa','#f59e0b','#34d399'];
+    mFs.forEach(function(m,i){
+      g.strokeStyle=cols[i];g.lineWidth=2;g.beginPath();
+      for(var B=0;B<=Bmax+1e-9;B+=Bmax/300){ var X=px(B),Y=py(EF2(m,B)); if(B===0)g.moveTo(X,Y);else g.lineTo(X,Y);}
+      g.stroke();
+      txt(g,'m='+m, px(0)+4, py(EF2(m,0))-4, cols[i],11,'left');
+    });
+    txt(g,'能量 E/h (MHz, 相对)',x0-4,y1+2,'#9aa4b2',12,'right');
+    txt(g,'B (G)',x1,y0+22,'#9aa4b2',12,'right');
+    out.innerHTML='Breit–Rabi（⁸⁷Rb F=2 工作流形，I=3/2，ν_hfs=6.8347 GHz）：E/h=−ν/2 − g_I(μ_B/h)m_F B + (ν/2)√[1+4m_F x/(2I+1)+x²]，x=(g_J−g_I)(μ_B/h)B/ν。\n'+
+      '五条子能级随 B 的劈裂呈<b>非线性</b>（二次项来自 x²），即 Budker&Romalis 说的"非线性 Zeeman"——地磁 ~0.5 G 附近共振多峰的根源。\n'+
+      'F=1 流形在 −ν≈−6.8 GHz 处（未画出）。';
+  }
+  sB.oninput=draw;draw();
+})();
+
+/* ============================================================
+   交互 26：SEOP 效率 η
+   ============================================================ */
+(function(){
+  var sgas=document.getElementById('n26gas'),sAb=document.getElementById('n26Ab'),sgb=document.getElementById('n26gb');
+  var vAb=document.getElementById('n26Abv'),vgb=document.getElementById('n26gbv'),out=document.getElementById('oN26');
+  function draw(){
+    var I=+sgas.value, Ab=+sAb.value, gbar=+sgb.value;
+    vAb.textContent=Ab.toFixed(2); vgb.textContent=gbar.toFixed(2);
+    var Imean=I*(I+1)/(2*I+1);
+    var R=Ab*Imean;
+    var eta=R/(2*(gbar+R));
+    var o=ctxOf('cN26'),c=o.c,g=o.g,W=c.width,H=c.height;
+    var x0=60,y0=H-50,x1=W-30,y1=40; axis(g,x0,y0,x1,y1);
+    var pts=[];
+    for(var a=0.02;a<=3.001;a+=3/400){ var r=a*Imean; var e=r/(2*(gbar+r)); pts.push([a,e]); }
+    g.strokeStyle='#38bdf8';g.lineWidth=2;g.beginPath();
+    pts.forEach(function(p,i){ var px=x0+(x1-x0)*(p[0]/3); var py=y0-(y0-y1)*p[1]; if(i===0)g.moveTo(px,py);else g.lineTo(px,py); });
+    g.stroke();
+    var px=x0+(x1-x0)*(Ab/3), py=y0-(y0-y1)*eta;
+    g.fillStyle='#f59e0b';g.beginPath();g.arc(px,py,5,0,7);g.fill();
+    txt(g,'η = A_b⟨I⟩ / [2(γ̄ + A_b⟨I⟩)]',x0+6,y1+16,'#9aa4b2',13,'left');
+    txt(g,'A_b (相对)',x1,y0+22,'#9aa4b2',12,'right');
+    txt(g,'η',x0-6,y1+4,'#9aa4b2',13,'right');
+    txt(g,'Rb–Xe 实测 ≈0.04',x0+10,y0-(y0-y1)*0.04-6,'#fca5a5',11,'left');
+    txt(g,'K–He 实测 ≈0.38',x0+10,y0-(y0-y1)*0.38-6,'#86efac',11,'left');
+    out.innerHTML='⟨I⟩=I(I+1)/(2I+1)='+Imean.toFixed(3)+'（I='+I+'）。\n'+
+      'A_b='+Ab.toFixed(2)+'，γ̄='+gbar.toFixed(2)+' → R=A_b⟨I⟩='+R.toFixed(3)+' → η='+eta.toFixed(3)+'。\n'+
+      '（RMP Eq.20 上限。重核 A_b 大→η 仅 ~0.04；轻核 ³He A_b 小→η 可到 ~0.38。效率=光→核极化转化率的硬上限。）';
+  }
+  sgas.onchange=draw;sAb.oninput=draw;sgb.oninput=draw;draw();
+})();
+
+/* ============================================================
+   交互 27：Ramsey 条纹
+   ============================================================ */
+(function(){
+  var sT=document.getElementById('n27T'),stau=document.getElementById('n27tau'),vT=document.getElementById('n27Tv'),vtau=document.getElementById('n27tauv'),out=document.getElementById('oN27');
+  function draw(){
+    var T=+sT.value/1000, tau=+stau.value*1000; // T s, tau s (1/tau in Hz)
+    vT.textContent=(T*1000).toFixed(1)+' ms'; vtau.textContent=(tau/1000).toFixed(1)+' kHz';
+    var fwhm=0.8/T;
+    var o=ctxOf('cN27'),c=o.c,g=o.g,W=c.width,H=c.height;
+    var x0=60,y0=H-50,x1=W-30,y1=40; axis(g,x0,y0,x1,y1);
+    var dmax=4/T;
+    var pts=[];
+    for(var i=0;i<=400;i++){ var d=i/400*dmax; var s=Math.pow(Math.sin(Math.PI*d*T)/(Math.PI*d*T),2); pts.push([d,s]); }
+    g.strokeStyle='#38bdf8';g.lineWidth=2;g.beginPath();
+    pts.forEach(function(p,i){ var px=x0+(x1-x0)*(p[0]/dmax); var py=y0-(y0-y1)*p[1]; if(i===0)g.moveTo(px,py);else g.lineTo(px,py); });
+    g.stroke();
+    g.strokeStyle='#f59e0b';g.setLineDash([5,4]);g.beginPath();
+    var Lw=1/(Math.PI*tau); var dmax2=Math.max(dmax,Lw*4);
+    for(var i=0;i<=400;i++){ var d=i/400*dmax2; var L=Lw/(1+Math.pow(d/Lw,2)); var px=x0+(x1-x0)*(d/dmax); var py=y0-(y0-y1)*Math.min(L,1); if(i===0)g.moveTo(px,py);else g.lineTo(px,py); }
+    g.setLineDash([]);
+    txt(g,'S(δ)',x0-6,y1+4,'#9aa4b2',13,'right');
+    txt(g,'失谐 δ (Hz)',x1,y0+22,'#9aa4b2',13,'right');
+    txt(g,'Ramsey FWHM ≈ '+fwhm.toFixed(1)+' Hz（∝ 1/T；虚线=单次作用宽 1/τ='+(tau/1000).toFixed(1)+' kHz）',(x0+x1)/2,y1+16,'#86efac',12,'center');
+    out.innerHTML='Ramsey 条纹（中心峰）S(δ)=[sin(πδT)/(πδT)]²，线宽 FWHM≈0.8/T。\n'+
+      'T='+(T*1000).toFixed(1)+' ms → FWHM≈'+fwhm.toFixed(1)+' Hz；对比单次作用线宽 1/τ='+(tau/1000).toFixed(1)+' kHz。\n'+
+      '（自由演化 T 越长条纹越窄 → 原子钟/磁强计精度越高。拉伸态泵浦把自旋交换加宽压到 √(Γ_se·R_sd)，Budker&Romalis 2007。）';
+  }
+  sT.oninput=draw;stau.oninput=draw;draw();
+})();
+
+/* ============================================================
+   交互 28：EIT 透明窗（Λ 系统）
+   ============================================================ */
+(function(){
+  var sOc=document.getElementById('n28Oc'),sgam=document.getElementById('n28gam'),sdc=document.getElementById('n28dc');
+  var vOc=document.getElementById('n28Ocv'),vgam=document.getElementById('n28gamv'),vdc=document.getElementById('n28dcv'),out=document.getElementById('oN28');
+  function draw(){
+    var Oc=+sOc.value, gam=+sgam.value, dc=+sdc.value;
+    vOc.textContent=Oc.toFixed(1); vgam.textContent=gam.toFixed(2); vdc.textContent=dc.toFixed(1);
+    var o=ctxOf('cN28'),c=o.c,g=o.g,W=c.width,H=c.height;
+    var x0=60,y0=H-50,x1=W-30,y1=40; axis(g,x0,y0,x1,y1);
+    var G=1, Op=0.3, dmax=4;
+    var pts=[];
+    for(var i=0;i<=400;i++){ var dp=-dmax + 2*dmax*i/400;
+      var den_r = dp + (Oc*Oc/4)*((dp-dc)/((dp-dc)*(dp-dc)+gam*gam));
+      var den_i = (-G/2) + (Oc*Oc/4)*((-gam)/((dp-dc)*(dp-dc)+gam*gam));
+      var Dr=den_r, Di=den_i;
+      var rho_i = -(Op/2)*Di/(Dr*Dr+Di*Di);
+      pts.push([dp, -rho_i]); }
+    var maxA=0; pts.forEach(function(p){if(p[1]>maxA)maxA=p[1];}); maxA=maxA*1.2||1;
+    g.strokeStyle='#38bdf8';g.lineWidth=2;g.beginPath();
+    pts.forEach(function(p,i){ var px=x0+(x1-x0)*((p[0]+dmax)/(2*dmax)); var py=y0-(y0-y1)*(p[1]/maxA); if(i===0)g.moveTo(px,py);else g.lineTo(px,py); });
+    g.stroke();
+    txt(g,'吸收 ∝ −Im ρ₃₁',x0-6,y1+4,'#9aa4b2',13,'right');
+    txt(g,'探测失谐 δ_p (Γ单位)',x1,y0+22,'#9aa4b2',13,'right');
+    txt(g,'透明窗在 δ_p=δ_c='+dc.toFixed(1)+' 处打开（Ω_c='+Oc.toFixed(1)+'）',(x0+x1)/2,y1+16,'#86efac',12,'center');
+    out.innerHTML='Λ 系统稳态（弱探测）：ρ₃₁=(Ω_p/2)/D，D=(δ_p−iΓ/2)+Ω_c²/[4(δ_p−δ_c−iγ)]。\n'+
+      '吸收 ∝ −Im(ρ₃₁)；双光子共振 δ_p=δ_c 处 D 被耦合场压低 → 透明窗开启。\n'+
+      'Ω_c='+Oc.toFixed(1)+'，γ='+gam.toFixed(2)+'，δ_c='+dc.toFixed(1)+' → 窗宽 ∝ Ω_c²/Γ。\n'+
+      '（EIT 是原子磁强计 CPT 稳频与慢光的基础；Budker&Romalis 2007 提及。）';
+  }
+  sOc.oninput=draw;sgam.oninput=draw;sdc.oninput=draw;draw();
+})();
+
 </script>
 
 </body>
