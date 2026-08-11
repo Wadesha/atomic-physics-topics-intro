@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>交互 5 · 完整振动态表（IV3 = 0,1）</title>
+<link rel="stylesheet" href="common.css">
+<style>
+  body{max-width:1180px;margin:0 auto;padding:22px 18px 64px;}
+  .topbar{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-bottom:6px;font-size:14px;}
+  .topbar a{color:var(--acc,#38bdf8);text-decoration:none;}
+  .topbar a:hover{text-decoration:underline;}
+  .pagetitle{font-size:21px;margin:8px 0 2px;}
+  .sub{color:var(--mut,#9aa4b2);font-size:14px;margin:0 0 14px;}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <a href="index.html">← 子站总目录</a>
+  <a href="../index.html">↩ 完整导览主页</a>
+</header>
+<h1 class="pagetitle">交互 5：完整振动态表（IV3 = 0,1） </h1>
+<p class="sub">JS 端实时对角化整张表</p>
+<main>
+
+<div class="demo">
+    <h4>交互 5：完整振动态表（IV3 = 0,1）<span class="badge">JS 端实时对角化整张表</span></h4>
+    <div class="ctl">
+      <label>最大 l 上限 <input id="lvL" type="range" min="0" max="6" step="1" value="4"><span class="val" id="lvLv">4</span></label>
+      <label><input id="lvMark" type="checkbox" checked> 高亮已知实验态（★）</label>
+      <button id="lvRun">生成振动态表</button>
+    </div>
+    <div class="out" id="oLevel" style="white-space:pre;max-height:360px;overflow:auto;font-size:12px;line-height:1.5"></div>
+  </div>
+</main>
+<footer class="footer">本页为原子物理 / 量子光学主题自底向上导览的独立交互演示（子站）。数值结论以程序实际输出为准。</footer>
+<script src="common.js"></script>
+<script>
+(function(){
+  var sL=document.getElementById('lvL'), vL=document.getElementById('lvLv');
+  var cb=document.getElementById('lvMark'), btn=document.getElementById('lvRun');
+  var out=document.getElementById('oLevel');
+  var OMEGA=[1354.91,673.0,2396.49], U=[1.0,2.0,1.0], G22=0.775;
+  var W0=51.31, ELAM1=0.15, ELAM2=0.41, ELAM3=0.78, ELAML=0.0;
+  var Xf=[-3.75,0.0,0.0, 3.65,-0.63,0.0, -19.37,-12.53,-12.63];   /* DATA 列优先填充 */
+  var Yf=[0.13,0,0,0,0,0,0,0,0, -0.08,0,0, -0.07,0.01,0, 0,0,0,0,0,0,0,0.02,0,0, 0.07,0.01,0.015];
+  function Xc(i,j){return Xf[i+3*j];}
+  function Yc(i,j,k){return Yf[i+3*j+9*k];}
+  function ondia(v1,v2,v3,l){var V=[v1,v2,v3], e=G22*l*l;
+    for(var i=0;i<3;i++){var P=V[i]+0.5*U[i]; e+=OMEGA[i]*P;
+      for(var j=i;j<3;j++){var Q=V[j]+0.5*U[j]; e+=Xc(i,j)*P*Q;
+        for(var k=j;k<3;k++){var Rv=V[k]+0.5*U[k]; e+=Yc(i,j,k)*P*Q*Rv;}}}
+    return e;}
+  function ofdia(v1,v2,v3,l){return 0.5*(W0-ELAM1*v1-ELAM2*v2-ELAM3*v3-ELAML*l)*
+    Math.sqrt(Math.max(v1,0)*((v2+2)*(v2+2)-l*l));}
+  function run(){
+    var maxL=+sL.value; vL.textContent=maxL;
+    var ZPE=ondia(0,0,0,0);
+    var known={'0,0,0,0':0.0,'0,1,1,0':667.4,'0,2,0,0':1285.41,'1,0,0,0':1388.19,
+               '0,0,0,1':2349.2,'0,4,0,0':2548.4,'1,2,0,0':2797.1};
+    var rows=[], iv3, lp1, a, b;
+    for(iv3=0;iv3<=1;iv3++){
+      var LMAX=Math.min(25-4*iv3, maxL+1), MVL=13-2*iv3;
+      for(lp1=1;lp1<LMAX;lp1++){
+        var L=lp1-1, MV1=MVL+Math.floor(L/2)-L, states=[], iv1, iv2p1;
+        for(iv1=0;iv1<MV1;iv1++){
+          var MV2=2*(MV1-iv1-1)+lp1;
+          for(iv2p1=lp1;iv2p1<MV2;iv2p1+=2) states.push([iv1,iv2p1-1,L,iv3]);
+        }
+        var groups={};
+        for(var s=0;s<states.length;s++){var st=states[s], Pp=2*st[0]+st[1];(groups[Pp]=groups[Pp]||[]).push(st);}
+        for(var key in groups){
+          var gl=groups[key], N=gl.length, H=[];
+          for(a=0;a<N;a++) H.push(new Array(N).fill(0));
+          for(a=0;a<N;a++){var sa=gl[a]; H[a][a]=ondia(sa[0],sa[1],sa[3],sa[2])-ZPE;
+            if(sa[0]>=1){var p=[sa[0]-1,sa[1]+2,sa[2],sa[3]];
+              var bi=-1; for(b=0;b<N;b++){var x=gl[b]; if(x[0]===p[0]&&x[1]===p[1]&&x[2]===p[2]&&x[3]===p[3]){bi=b;break;}}
+              if(bi>=0){var w=ofdia(sa[0],sa[1],sa[3],sa[2]); H[a][bi]=H[bi][a]=w;}}}
+          var r=eigen(H,N);
+          for(var k=0;k<N;k++) rows.push({e:r.val[k], st:gl[r.idx[k]]});
+        }
+      }
+    }
+    rows.sort(function(p,q){return p.e-q.e;});
+    var pad=function(s,n){s=String(s);while(s.length<n)s+=' ';return s;};
+    var padL=function(s,n){s=String(s);while(s.length<n)s=' '+s;return s;};
+    var lines=[' v1 v2 l v3    term/cm-1    归属',' --------------------------------------------'];
+    for(var i=0;i<rows.length && i<60;i++){
+      var r2=rows[i], st=r2.st, key=st[0]+','+st[1]+','+st[2]+','+st[3], ex=known[key];
+      var star=(cb.checked && ex!==undefined)?' *':'';
+      var exps=ex!==undefined?('  exp~'+padL(ex.toFixed(2),8)):'                ';
+      lines.push('  '+pad(st[0],2)+' '+pad(st[1],2)+' '+pad(st[2],2)+' '+st[3]+
+                 '   '+padL(r2.e.toFixed(2),9)+exps+star);
+    }
+    var devs=[], allok=true, anyP=false;
+    for(var kk in known){var pr=kk.split(',').map(Number), got=null;
+      for(var i2=0;i2<rows.length;i2++){var s2=rows[i2].st; if(s2[0]===pr[0]&&s2[1]===pr[1]&&s2[2]===pr[2]&&s2[3]===pr[3]){got=rows[i2].e;break;}}
+      if(got===null){devs.push(kk+': n/a');}
+      else if(Math.abs(got-known[kk])<2.0){devs.push(kk+': OK'); anyP=true;}
+      else {devs.push(kk+': X'); allok=false; anyP=true;}
+    }
+    lines.push('');
+    lines.push('共生成 '+rows.length+' 个振动态（IV3=0,1；L<= '+maxL+'）  显示前 '+Math.min(60,rows.length)+' 个');
+    lines.push('基准态校验：'+devs.join('  '));
+    lines.push(allok&&anyP?'所有纳入的基准态偏差 < 2 cm-1，与 ABWC LEVEL 复刻一致 OK':'（提高 l 上限可纳入更多基准态）');
+    out.innerHTML=lines.join('\n');
+  }
+  sL.oninput=run; cb.onchange=run; btn.onclick=run; run();
+})();
+</script>
+</body>
+</html>
