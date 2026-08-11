@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>交互 1 · 能级排斥（avoided crossing）</title>
+<link rel="stylesheet" href="common.css">
+<style>
+  body{max-width:1180px;margin:0 auto;padding:22px 18px 64px;}
+  .topbar{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-bottom:6px;font-size:14px;}
+  .topbar a{color:var(--acc,#38bdf8);text-decoration:none;}
+  .topbar a:hover{text-decoration:underline;}
+  .pagetitle{font-size:21px;margin:8px 0 2px;}
+  .sub{color:var(--mut,#9aa4b2);font-size:14px;margin:0 0 14px;}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <a href="index.html">← 子站总目录</a>
+  <a href="../index.html">↩ 完整导览主页</a>
+</header>
+<h1 class="pagetitle">交互 1：能级排斥（avoided crossing） </h1>
+<p class="sub">JS 实时对角化，非查表</p>
+<main>
+
+<div class="demo">
+    <h4>交互 1：能级排斥（avoided crossing）<span class="badge">JS 实时对角化，非查表</span></h4>
+    <div class="ctl">
+      <label>耦合 W₀ <input id="fW" type="range" min="0" max="120" step="0.01" value="51.16"><span class="val" id="fWv">51.31</span> cm⁻¹</label>
+      <label>失谐 Δ = G(100)−G(020) <input id="fD" type="range" min="-200" max="200" step="0.02" value="9.56"><span class="val" id="fDv">+9.56</span> cm⁻¹</label>
+      <button id="fReset">回到 CO₂ 真值</button>
+    </div>
+    <canvas id="cFermi" width="1200" height="420"></canvas>
+    <div class="out" id="oFermi"></div>
+  </div>
+</main>
+<footer class="footer">本页为原子物理 / 量子光学主题自底向上导览的独立交互演示（子站）。数值结论以程序实际输出为准。</footer>
+<script src="common.js"></script>
+<script>
+(function(){
+  var sW=document.getElementById('fW'), sD=document.getElementById('fD');
+  var vW=document.getElementById('fWv'), vD=document.getElementById('fDv');
+  var out=document.getElementById('oFermi');
+  var CO2_W=51.16, CO2_D=9.56, CO2_MID=1336.815;  /* ONDIA 全精度：G(100)=1341.595, G(020)=1332.035 */
+
+  function solve(mid,d,W){
+    var H=[[mid+d/2, W],[W, mid-d/2]];
+    return eigen(H,2);
+  }
+  function draw(){
+    var W=+sW.value, D=+sD.value;
+    vW.textContent=W.toFixed(2); vD.textContent=(D>=0?'+':'')+D.toFixed(2);
+    var o=ctxOf('cFermi'), g=o.g, cw=o.c.width, ch=o.c.height;
+    var L=70,Rr=cw-30,T=28,B=ch-42;
+    var dmin=-200,dmax=200, emin=CO2_MID-190, emax=CO2_MID+190;
+    var X=function(d){return L+(d-dmin)/(dmax-dmin)*(Rr-L);};
+    var Y=function(e){return B-(e-emin)/(emax-emin)*(B-T);};
+    axis(g,L,T,Rr,B);
+    /* 网格 */
+    g.strokeStyle='#1b212a';g.lineWidth=1;
+    for(var e=CO2_MID-150;e<=CO2_MID+150;e+=50){g.beginPath();g.moveTo(L,Y(e));g.lineTo(Rr,Y(e));g.stroke();
+      txt(g,e.toFixed(0),L-8,Y(e)+4,'#5f6b7a',11,'right');}
+    for(var d=dmin;d<=dmax;d+=100){g.beginPath();g.moveTo(X(d),T);g.lineTo(X(d),B);g.stroke();
+      txt(g,(d>0?'+':'')+d,X(d),B+18,'#5f6b7a',11,'center');}
+    /* 未耦合（虚线交叉） */
+    g.setLineDash([5,5]);g.strokeStyle='#4b5563';g.lineWidth=1.6;
+    g.beginPath();g.moveTo(X(dmin),Y(CO2_MID+dmin/2));g.lineTo(X(dmax),Y(CO2_MID+dmax/2));g.stroke();
+    g.beginPath();g.moveTo(X(dmin),Y(CO2_MID-dmin/2));g.lineTo(X(dmax),Y(CO2_MID-dmax/2));g.stroke();
+    g.setLineDash([]);
+    /* 耦合后（实线排斥）—— 每点真做一次 2x2 Jacobi */
+    var up=[],lo=[];
+    for(var k=0;k<=200;k++){
+      var dd=dmin+(dmax-dmin)*k/200, r=solve(CO2_MID,dd,W);
+      lo.push([X(dd),Y(r.val[0])]); up.push([X(dd),Y(r.val[1])]);
+    }
+    function poly(pts,col){g.strokeStyle=col;g.lineWidth=2.6;g.beginPath();
+      pts.forEach(function(p,i){i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]);});g.stroke();}
+    poly(up,'#fca5a5'); poly(lo,'#7dd3fc');
+    /* 当前点 */
+    var cur=solve(CO2_MID,D,W);
+    [[cur.val[1],'#fca5a5'],[cur.val[0],'#7dd3fc']].forEach(function(p){
+      g.fillStyle=p[1];g.beginPath();g.arc(X(D),Y(p[0]),5.5,0,6.2832);g.fill();
+      g.strokeStyle='#0a0c10';g.lineWidth=2;g.stroke();});
+    /* 裂距标注 */
+    g.strokeStyle='#86efac';g.lineWidth=1.4;g.setLineDash([3,3]);
+    g.beginPath();g.moveTo(X(D),Y(cur.val[0]));g.lineTo(X(D),Y(cur.val[1]));g.stroke();g.setLineDash([]);
+    txt(g,'Δ='+(cur.val[1]-cur.val[0]).toFixed(2),X(D)+9,(Y(cur.val[0])+Y(cur.val[1]))/2+4,'#86efac',12.5);
+    txt(g,'能量 / cm⁻¹',L-8,T-10,'#9aa4b2',12,'right');
+    txt(g,'失谐 Δ = G(100) − G(020)  / cm⁻¹',(L+Rr)/2,ch-10,'#9aa4b2',12,'center');
+    txt(g,'虚线 = 无耦合（会交叉）   实线 = 有费米耦合（互相排斥）',Rr,T+2,'#5f6b7a',11.5,'right');
+    /* 混合柱 */
+    var c00=cur.vec[0][0]*cur.vec[0][0], c11=cur.vec[1][0]*cur.vec[1][0];
+    var bx=L+14,by=T+16,bw=190,bh=13;
+    txt(g,'下能级成分',bx,by-4,'#9aa4b2',11.5);
+    g.fillStyle='#7dd3fc';g.fillRect(bx,by,bw*c00,bh);
+    g.fillStyle='#334155';g.fillRect(bx+bw*c00,by,bw*(1-c00),bh);
+    txt(g,'|100⟩ '+(100*c00).toFixed(1)+'%   |020⟩ '+(100*(1-c00)).toFixed(1)+'%',bx,by+bh+14,'#c7d2de',11.5);
+
+    var isCO2=(Math.abs(W-51.16)<0.06 && Math.abs(D-CO2_D)<0.12);
+    out.innerHTML='2×2 矩阵 H = [['+(CO2_MID+D/2).toFixed(2)+', '+W.toFixed(2)+'], ['+W.toFixed(2)+', '+(CO2_MID-D/2).toFixed(2)+']]\n'+
+      'Jacobi 扫描 '+cur.sweeps+' 轮  →  E_low = <b>'+cur.val[0].toFixed(2)+'</b> cm⁻¹   E_high = <b>'+cur.val[1].toFixed(2)+'</b> cm⁻¹   裂距 <i>'+
+      (cur.val[1]-cur.val[0]).toFixed(2)+'</i> cm⁻¹\n'+
+      '解析核对 √(Δ²+4W²) = '+Math.sqrt(D*D+4*W*W).toFixed(2)+' cm⁻¹  ——  '+
+      (Math.abs((cur.val[1]-cur.val[0])-Math.sqrt(D*D+4*W*W))<0.01?'✓ 一致':'✗ 不符')+'\n'+
+      (W===0?'W=0：两条线直接交叉，没有排斥，也没有混合——费米共振消失。'
+            :(Math.abs(D)>150?'大失谐：耦合不起作用，本征态几乎回到纯 |100⟩ / |020⟩，混合度趋近 0/100%。'
+                             :(isCO2?'← 当前正是 ONDIA/OFDIA 算出的 CO₂ 真值，与 Python 端跑出的 1285.43 / 1388.20 完全一致':'近简并区：混合最强，裂距被 W 主导（Δ→0 时裂距 = 2W）。')));
+  }
+  sW.oninput=draw; sD.oninput=draw;
+  document.getElementById('fReset').onclick=function(){sW.value=51.16;sD.value=9.56;draw();};
+  draw();
+})();
+</script>
+</body>
+</html>
