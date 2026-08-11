@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>交互 21 · SEOP 极化建立 P(t)（合成）</title>
+<link rel="stylesheet" href="common.css">
+<style>
+  body{max-width:1180px;margin:0 auto;padding:22px 18px 64px;}
+  .topbar{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-bottom:6px;font-size:14px;}
+  .topbar a{color:var(--acc,#38bdf8);text-decoration:none;}
+  .topbar a:hover{text-decoration:underline;}
+  .pagetitle{font-size:21px;margin:8px 0 2px;}
+  .sub{color:var(--mut,#9aa4b2);font-size:14px;margin:0 0 14px;}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <a href="index.html">← 子站总目录</a>
+  <a href="../index.html">↩ 完整导览主页</a>
+</header>
+<h1 class="pagetitle">交互 21：SEOP 极化建立 P(t)（合成） <span class="badge sim" style="background:#7f1d1d;color:#fecaca;border-color:#991b1b">模拟展示 · 非实验数据</span></h1>
+<p class="sub">JS 实时计算 · 非查表</p>
+<main>
+<p class="simwarn">⚠ 本演示为<b>示意性动力学曲线</b>，用典型时间常数画出极化建立过程，数字不是某次真实 SEOP 实验的拟合结果。</p>
+<div class="demo">
+    <h4>交互 21：SEOP 极化建立 P(t)（合成）<span class="badge sim" style="background:#7f1d1d;color:#fecaca;border-color:#991b1b">模拟展示 · 示意</span></h4>
+    <div class="ctl">
+      <label>抽运率 R <input id="seR" type="range" min="0.1" max="5" step="0.1" value="1"><span class="val" id="seRv">1.0</span></label>
+      <label>弛豫率 γ <input id="seG" type="range" min="0.1" max="3" step="0.1" value="0.5"><span class="val" id="seGv">0.5</span></label>
+    </div>
+    <canvas id="cSeop" width="1200" height="380"></canvas>
+    <div class="out" id="oSeop"></div>
+  </div>
+</main>
+<footer class="footer">本页为原子物理 / 量子光学主题自底向上导览的独立交互演示（子站）。数值结论以程序实际输出为准。</footer>
+<script src="common.js"></script>
+<script>
+(function(){
+  var sR=document.getElementById('seR'), sG=document.getElementById('seG');
+  var vR=document.getElementById('seRv'), vG=document.getElementById('seGv');
+  var out=document.getElementById('oSeop');
+  function draw(){
+    var R=+sR.value, G=+sG.value; vR.textContent=R.toFixed(1); vG.textContent=G.toFixed(1);
+    var Pss=R/(R+G);
+    var o=ctxOf('cSeop'),c=o.c,g=o.g,W=c.width,H=c.height;
+    var x0=70,x1=W-40,y0=H-40,y1=40; axis(g,x0,y0,x1,y1);
+    g.strokeStyle='#86efac';g.lineWidth=2;g.beginPath();
+    for(var i=0;i<=300;i++){var t=3*i/300,P=Pss*(1-Math.exp(-(R+G)*t));
+      var px=x0+t/3*(x1-x0),py=y0-P*(y0-y1);if(i===0)g.moveTo(px,py);else g.lineTo(px,py);}g.stroke();
+    txt(g,'P_ss = R/(R+γ) = '+Pss.toFixed(3)+'  （τ=1/(R+γ) 为示意值）',(x0+x1)/2,y1+14,'#86efac',12,'center');
+    out.innerHTML='⚠ 示意动力学曲线（数字非某次真实 SEOP 拟合）。\n'+
+      '极化 P(t)=P_ss(1−e^{−(R+γ)t})，稳态 P_ss=R/(R+γ)='+Pss.toFixed(3)+'。\n'+
+      '抽运光极化碱金属电子自旋，再经自旋交换传给 ³He/¹²⁹Xe 核自旋 —— 第 5 节光抽运在极化惰性气体方向的延伸。';
+  }
+  sR.oninput=draw;sG.oninput=draw;draw();
+})();
+</script>
+</body>
+</html>
