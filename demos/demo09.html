@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>交互 9 · Morse 能级 → 拟合反推 ω_e / ω_e x_e</title>
+<link rel="stylesheet" href="common.css">
+<style>
+  body{max-width:1180px;margin:0 auto;padding:22px 18px 64px;}
+  .topbar{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-bottom:6px;font-size:14px;}
+  .topbar a{color:var(--acc,#38bdf8);text-decoration:none;}
+  .topbar a:hover{text-decoration:underline;}
+  .pagetitle{font-size:21px;margin:8px 0 2px;}
+  .sub{color:var(--mut,#9aa4b2);font-size:14px;margin:0 0 14px;}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <a href="index.html">← 子站总目录</a>
+  <a href="../index.html">↩ 完整导览主页</a>
+</header>
+<h1 class="pagetitle">交互 9：Morse 能级 → 拟合反推 ω_e / ω_e x_e </h1>
+<p class="sub">实时 D / a / N</p>
+<main>
+
+<div class="demo">
+    <h4>交互 9：Morse 能级 → 拟合反推 ω_e / ω_e x_e<span class="badge">实时 D / a / N</span></h4>
+    <div class="ctl">
+      <label>势阱深度 D <input id="mD" type="range" min="4" max="20" step="0.5" value="10"><span class="val" id="mDv">10.0</span></label>
+      <label>参数 a <input id="mA" type="range" min="0.5" max="2" step="0.05" value="1"><span class="val" id="mAv">1.00</span></label>
+      <label>网格 N <input id="mN" type="range" min="80" max="260" step="20" value="200"><span class="val" id="mNv">200</span></label>
+    </div>
+    <canvas id="cMorse" width="1200" height="430"></canvas>
+    <div class="out" id="oMorse"></div>
+  </div>
+</main>
+<footer class="footer">本页为原子物理 / 量子光学主题自底向上导览的独立交互演示（子站）。数值结论以程序实际输出为准。</footer>
+<script src="common.js"></script>
+<script>
+(function(){
+  var sD=document.getElementById('mD'), sA=document.getElementById('mA'), sN=document.getElementById('mN');
+  var vD=document.getElementById('mDv'), vA=document.getElementById('mAv'), vN=document.getElementById('mNv');
+  var out=document.getElementById('oMorse');
+  function draw(){
+    var D=+sD.value, a=+sA.value, N=+sN.value;
+    vD.textContent=D.toFixed(1); vA.textContent=a.toFixed(2); vN.textContent=N;
+    var sol=sincBuild(N,-3,5,function(x){var e=1-Math.exp(-a*x);return D*e*e;});
+    var vals=sol.val.filter(function(e){return e < D*0.97;});   // 只取解离限以下的束缚态
+    if(vals.length<4) vals=sol.val.slice(0,4);
+    vals=vals.slice(0,8);
+    var Sx2=0,Sx3=0,Sx4=0,Syx=0,Syx2=0;
+    for(var v=0;v<vals.length;v++){var x=v+0.5,y=vals[v];
+      Sx2+=x*x;Sx3+=x*x*x;Sx4+=x*x*x*x;Syx+=x*y;Syx2+=x*x*y;}
+    // 拟合 E = w·x − wx·x²（x=v+½）；正规方程 [Sx2 −Sx3; Sx3 −Sx4][w;wx]=[Syx;Syx2]
+    // 注意：下面的 m11..m22 是最小二乘矩阵元，不得与外层 Morse 参数 a 同名（会遮蔽）
+    var m11=Sx2,m12=-Sx3,m21=Sx3,m22=-Sx4,det=m11*m22-m12*m21;
+    var w=(Syx*m22-m12*Syx2)/det, wx=(m11*Syx2-Syx*m21)/det;
+    var wAnal=a*Math.sqrt(2*D), wxAnal=wAnal*wAnal/(4*D);
+    var o=ctxOf('cMorse'),c=o.c,g=o.g,W=c.width,H=c.height;
+    var x0=70,x1=560,y0=H-40,y1=40; axis(g,x0,y0,x1,y1);
+    var Vmax=1.15*D;
+    g.strokeStyle='#64748b';g.lineWidth=2;g.beginPath();
+    for(var i=0;i<=200;i++){var xx=5*i/200;var vv=D*Math.pow(1-Math.exp(-a*xx),2);
+      var px=x0+xx/5*(x1-x0),py=y0-(vv/Vmax)*(y0-y1);if(i===0)g.moveTo(px,py);else g.lineTo(px,py);}g.stroke();
+    var cols=['#fca5a5','#fde68a','#86efac','#7dd3fc','#c4b5fd','#f9a8d4','#fcd34d'];
+    for(var v=0;v<vals.length;v++){var py=y0-(vals[v]/Vmax)*(y0-y1);
+      g.strokeStyle=cols[v%cols.length];g.lineWidth=2;g.beginPath();g.moveTo(x0,py);g.lineTo(x1,py);g.stroke();
+      txt(g,'v'+v,x1+6,py+4,cols[v%cols.length],12,'left');}
+    txt(g,'V(x)=D(1−e^{−ax})²',x0+6,y1+14,'#9aa4b2',12,'left');
+    var rx0=640,rx1=W-40,ry0=H-40,ry1=40; axis(g,rx0,ry0,rx1,ry1);
+    var Emax=vals[vals.length-1]*1.1;
+    g.strokeStyle='#7dd3fc';g.lineWidth=2;g.beginPath();
+    for(var v=0;v<=30;v++){var xp=v+0.5,yf=w*xp-wx*xp*xp;
+      var px=rx0+(v+0.5)/8*(rx1-rx0),py=ry0-(yf/Emax)*(ry0-ry1);if(v===0)g.moveTo(px,py);else g.lineTo(px,py);}g.stroke();
+    g.fillStyle='#fca5a5';
+    for(var v=0;v<vals.length;v++){var px=rx0+(v+0.5)/8*(rx1-rx0),py=ry0-(vals[v]/Emax)*(ry0-ry1);
+      g.beginPath();g.arc(px,py,4,0,7);g.fill();}
+    txt(g,'E_v（点=数值, 线=拟合）',rx0,ry1-10,'#9aa4b2',12,'left');
+    out.innerHTML='数值能级 E_v = '+vals.map(function(x){return x.toFixed(3);}).join(', ')+'\n'+
+      '拟合：ω_e = <b>'+w.toFixed(4)+'</b>   ω_e x_e = <b>'+wx.toFixed(4)+'</b>\n'+
+      '解析：ω_e = a√(2D) = <b>'+wAnal.toFixed(4)+'</b>   ω_e x_e = ω_e²/(4D) = <b>'+wxAnal.toFixed(4)+'</b>\n'+
+      (Math.abs(w-wAnal)<0.06&&Math.abs(wx-wxAnal)<0.03?'✓ 数值与解析吻合 —— 计算闭合成立。':'数值与解析偏差较大，可加大网格 N 或调整 D/a。');
+  }
+  sD.oninput=draw;sA.oninput=draw;sN.oninput=draw;draw();
+})();
+</script>
+</body>
+</html>
