@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>交互 8 · 极化增长曲线 + 线宽 U 形</title>
+<link rel="stylesheet" href="common.css">
+<style>
+  body{max-width:1180px;margin:0 auto;padding:22px 18px 64px;}
+  .topbar{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-bottom:6px;font-size:14px;}
+  .topbar a{color:var(--acc,#38bdf8);text-decoration:none;}
+  .topbar a:hover{text-decoration:underline;}
+  .pagetitle{font-size:21px;margin:8px 0 2px;}
+  .sub{color:var(--mut,#9aa4b2);font-size:14px;margin:0 0 14px;}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <a href="index.html">← 子站总目录</a>
+  <a href="../index.html">↩ 完整导览主页</a>
+</header>
+<h1 class="pagetitle">交互 8：极化增长曲线 + 线宽 U 形 </h1>
+<p class="sub">实时 R / γ</p>
+<main>
+
+<div class="demo">
+    <h4>交互 8：极化增长曲线 + 线宽 U 形<span class="badge">实时 R / γ</span></h4>
+    <div class="ctl">
+      <label>抽运率 R <input id="opR" type="range" min="0.1" max="40" step="0.1" value="2"><span class="val" id="opRv">2.0</span></label>
+      <label>弛豫率 γ <input id="opG" type="range" min="0.2" max="3" step="0.1" value="1"><span class="val" id="opGv">1.0</span></label>
+    </div>
+    <canvas id="cOp" width="1200" height="440"></canvas>
+    <div class="out" id="oOp"></div>
+  </div>
+</main>
+<footer class="footer">本页为原子物理 / 量子光学主题自底向上导览的独立交互演示（子站）。数值结论以程序实际输出为准。</footer>
+<script src="common.js"></script>
+<script>
+(function(){
+  var sR=document.getElementById('opR'), vR=document.getElementById('opRv');
+  var sG=document.getElementById('opG'), vG=document.getElementById('opGv');
+  var out=document.getElementById('oOp'), cv='cOp';
+  function draw(){
+    var R=+sR.value, G=+sG.value; vR.textContent=R.toFixed(1); vG.textContent=G.toFixed(1);
+    var Pss=R/(R+G);
+    var o=ctxOf(cv), g=o.g, cw=o.c.width, ch=o.c.height, MID=cw/2-10;
+    var L=60,Rr=MID-20,T=26,B=ch-40;
+    axis(g,L,T,Rr,B);
+    var tmax=10, nst=800, dt=tmax/nst, P=0, pts=[], an=[], i;
+    function fp(x){return R*(1-x)-G*x;}
+    for(i=0;i<=nst;i++){var t=i*dt; pts.push([t,P]); an.push([t,Pss*(1-Math.exp(-(R+G)*t))]);
+      var k1=fp(P),k2=fp(P+0.5*dt*k1),k3=fp(P+0.5*dt*k2),k4=fp(P+dt*k3); P=P+dt/6*(k1+2*k2+2*k3+k4);}
+    var X1=function(t){return L+t/tmax*(Rr-L);}, Y1=function(p){return B-p*(B-T);};
+    g.strokeStyle='#1b212a';g.lineWidth=1;
+    for(var k=0;k<=4;k++){var yy=T+(B-T)*k/4;g.beginPath();g.moveTo(L,yy);g.lineTo(Rr,yy);g.stroke();txt(g,(k/4).toFixed(2),L-8,yy+4,'#5f6b7a',11,'right');}
+    g.setLineDash([5,4]);g.strokeStyle='#86efac';g.lineWidth=1.6;g.beginPath();an.forEach(function(p,i){var px=X1(p[0]),py=Y1(p[1]);i?g.lineTo(px,py):g.moveTo(px,py);});g.stroke();g.setLineDash([]);
+    g.strokeStyle='#7dd3fc';g.lineWidth=2.4;g.beginPath();pts.forEach(function(p,i){var px=X1(p[0]),py=Y1(p[1]);i?g.lineTo(px,py):g.moveTo(px,py);});g.stroke();
+    txt(g,'P(t) — 速率方程 dP/dt=R(1−P)−γP',L,T-8,'#9aa4b2',12);
+    txt(g,'t',(L+Rr)/2,ch-10,'#9aa4b2',12,'center');
+    txt(g,'绿虚线=解析 P_ss(1−e^{−(R+γ)t})',Rr,B-6,'#5f6b7a',11,'right');
+    /* 右：线宽 U 形 */
+    var L2=MID+50,R2=cw-30; axis(g,L2,T,R2,B);
+    var rmin=0.1,rmax=40, lw=function(r){return G*G/r+r;};
+    var vals=[]; for(i=0;i<=200;i++){var rr=rmin+(rmax-rmin)*i/200; vals.push([rr,lw(rr)]);}
+    var wmin=vals[0][1], wmax=vals[0][1]; for(i=0;i<vals.length;i++){wmin=Math.min(wmin,vals[i][1]);wmax=Math.max(wmax,vals[i][1]);}
+    var X2=function(rr){return L2+(rr-rmin)/(rmax-rmin)*(R2-L2);}, Y2=function(w){return B-(w-wmin)/(wmax-wmin)*(B-T);};
+    g.strokeStyle='#1b212a';g.lineWidth=1;
+    for(var k2=0;k2<=4;k2++){var yy2=T+(B-T)*k2/4;g.beginPath();g.moveTo(L2,yy2);g.lineTo(R2,yy2);g.stroke();}
+    g.strokeStyle='#fca5a5';g.lineWidth=2.6;g.beginPath();vals.forEach(function(p,i){var px=X2(p[0]),py=Y2(p[1]);i?g.lineTo(px,py):g.moveTo(px,py);});g.stroke();
+    var curW=lw(R);
+    g.fillStyle='#86efac';g.beginPath();g.arc(X2(R),Y2(curW),5.5,0,6.2832);g.fill();g.strokeStyle='#0a0c10';g.lineWidth=2;g.stroke();
+    txt(g,'线宽 Γ(R)=γ²/R+R',L2,T-8,'#9aa4b2',12);
+    txt(g,'抽运率 R',(L2+R2)/2,ch-10,'#9aa4b2',12,'center');
+    out.innerHTML='抽运率 R = <b>'+R.toFixed(1)+'</b>    弛豫率 γ = '+G.toFixed(1)+'\n'+
+      '稳态极化 P_ss = R/(R+γ) = <b>'+Pss.toFixed(3)+'</b>\n'+
+      '线宽 Γ(R) = γ²/R + R = <b>'+curW.toFixed(3)+'</b>    最佳点 R=γ='+G.toFixed(1)+' 处 Γ_min = '+(2*G).toFixed(3)+'\n'+
+      (Math.abs(R-G)<0.3?'← 当前恰在 U 形最低点：线宽最窄，磁力仪灵敏度最高。'
+        :(R<G?'抽运偏弱：自旋来不及补充，线宽被 γ²/R 抬高（低频端宽）。'
+                :'抽运偏强：功率展宽项 R 主导，线宽在高频端升高。'));
+  }
+  sR.oninput=draw; sG.oninput=draw; draw();
+})();
+</script>
+</body>
+</html>
