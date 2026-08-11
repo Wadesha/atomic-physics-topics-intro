@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>交互 27 · Ramsey 条纹</title>
+<link rel="stylesheet" href="common.css">
+<style>
+  body{max-width:1180px;margin:0 auto;padding:22px 18px 64px;}
+  .topbar{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-bottom:6px;font-size:14px;}
+  .topbar a{color:var(--acc,#38bdf8);text-decoration:none;}
+  .topbar a:hover{text-decoration:underline;}
+  .pagetitle{font-size:21px;margin:8px 0 2px;}
+  .sub{color:var(--mut,#9aa4b2);font-size:14px;margin:0 0 14px;}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <a href="index.html">← 子站总目录</a>
+  <a href="../index.html">↩ 完整导览主页</a>
+</header>
+<h1 class="pagetitle">交互 27：Ramsey 条纹 </h1>
+<p class="sub">实时 自由演化 T</p>
+<main>
+
+<div class="demo">
+    <h4>交互 27：Ramsey 条纹<span class="badge">实时 自由演化 T</span></h4>
+    <div class="ctl">
+      <label>自由演化时间 T <input id="n27T" type="range" min="0.1" max="10" step="0.1" value="2"><span class="val" id="n27Tv">2 ms</span></label>
+      <label>单次作用线宽 1/τ <input id="n27tau" type="range" min="0.1" max="5" step="0.1" value="1"><span class="val" id="n27tauv">1 kHz</span></label>
+    </div>
+    <canvas id="cN27" width="1200" height="360"></canvas>
+    <div class="out" id="oN27"></div>
+  </div>
+</main>
+<footer class="footer">本页为原子物理 / 量子光学主题自底向上导览的独立交互演示（子站）。数值结论以程序实际输出为准。</footer>
+<script src="common.js"></script>
+<script>
+(function(){
+  var sT=document.getElementById('n27T'),stau=document.getElementById('n27tau'),vT=document.getElementById('n27Tv'),vtau=document.getElementById('n27tauv'),out=document.getElementById('oN27');
+  function draw(){
+    var T=+sT.value/1000, tau=+stau.value*1000; // T s, tau s (1/tau in Hz)
+    vT.textContent=(T*1000).toFixed(1)+' ms'; vtau.textContent=(tau/1000).toFixed(1)+' kHz';
+    var fwhm=0.8/T;
+    var o=ctxOf('cN27'),c=o.c,g=o.g,W=c.width,H=c.height;
+    var x0=60,y0=H-50,x1=W-30,y1=40; axis(g,x0,y0,x1,y1);
+    var dmax=4/T;
+    var pts=[];
+    for(var i=0;i<=400;i++){ var d=i/400*dmax; var s=Math.pow(Math.sin(Math.PI*d*T)/(Math.PI*d*T),2); pts.push([d,s]); }
+    g.strokeStyle='#38bdf8';g.lineWidth=2;g.beginPath();
+    pts.forEach(function(p,i){ var px=x0+(x1-x0)*(p[0]/dmax); var py=y0-(y0-y1)*p[1]; if(i===0)g.moveTo(px,py);else g.lineTo(px,py); });
+    g.stroke();
+    g.strokeStyle='#f59e0b';g.setLineDash([5,4]);g.beginPath();
+    var Lw=1/(Math.PI*tau); var dmax2=Math.max(dmax,Lw*4);
+    for(var i=0;i<=400;i++){ var d=i/400*dmax2; var L=Lw/(1+Math.pow(d/Lw,2)); var px=x0+(x1-x0)*(d/dmax); var py=y0-(y0-y1)*Math.min(L,1); if(i===0)g.moveTo(px,py);else g.lineTo(px,py); }
+    g.setLineDash([]);
+    txt(g,'S(δ)',x0-6,y1+4,'#9aa4b2',13,'right');
+    txt(g,'失谐 δ (Hz)',x1,y0+22,'#9aa4b2',13,'right');
+    txt(g,'Ramsey FWHM ≈ '+fwhm.toFixed(1)+' Hz（∝ 1/T；虚线=单次作用宽 1/τ='+(tau/1000).toFixed(1)+' kHz）',(x0+x1)/2,y1+16,'#86efac',12,'center');
+    out.innerHTML='Ramsey 条纹（中心峰）S(δ)=[sin(πδT)/(πδT)]²，线宽 FWHM≈0.8/T。\n'+
+      'T='+(T*1000).toFixed(1)+' ms → FWHM≈'+fwhm.toFixed(1)+' Hz；对比单次作用线宽 1/τ='+(tau/1000).toFixed(1)+' kHz。\n'+
+      '（自由演化 T 越长条纹越窄 → 原子钟/磁强计精度越高。拉伸态泵浦把自旋交换加宽压到 √(Γ_se·R_sd)，Budker&Romalis 2007。）';
+  }
+  sT.oninput=draw;stau.oninput=draw;draw();
+})();
+</script>
+</body>
+</html>
