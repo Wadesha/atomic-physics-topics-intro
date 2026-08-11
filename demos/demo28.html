@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>交互 28 · EIT 透明窗</title>
+<link rel="stylesheet" href="common.css">
+<style>
+  body{max-width:1180px;margin:0 auto;padding:22px 18px 64px;}
+  .topbar{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-bottom:6px;font-size:14px;}
+  .topbar a{color:var(--acc,#38bdf8);text-decoration:none;}
+  .topbar a:hover{text-decoration:underline;}
+  .pagetitle{font-size:21px;margin:8px 0 2px;}
+  .sub{color:var(--mut,#9aa4b2);font-size:14px;margin:0 0 14px;}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <a href="index.html">← 子站总目录</a>
+  <a href="../index.html">↩ 完整导览主页</a>
+</header>
+<h1 class="pagetitle">交互 28：EIT 透明窗 </h1>
+<p class="sub">实时 Ω_c / γ / δ_c</p>
+<main>
+
+<div class="demo">
+    <h4>交互 28：EIT 透明窗<span class="badge">实时 Ω_c / γ / δ_c</span></h4>
+    <div class="ctl">
+      <label>耦合拉比 Ω_c <input id="n28Oc" type="range" min="0" max="6" step="0.1" value="2"><span class="val" id="n28Ocv">2.0</span></label>
+      <label>退相干 γ <input id="n28gam" type="range" min="0.05" max="2" step="0.05" value="0.3"><span class="val" id="n28gamv">0.30</span></label>
+      <label>耦合失谐 δ_c <input id="n28dc" type="range" min="-3" max="3" step="0.1" value="0"><span class="val" id="n28dcv">0</span></label>
+    </div>
+    <canvas id="cN28" width="1200" height="380"></canvas>
+    <div class="out" id="oN28"></div>
+  </div>
+</main>
+<footer class="footer">本页为原子物理 / 量子光学主题自底向上导览的独立交互演示（子站）。数值结论以程序实际输出为准。</footer>
+<script src="common.js"></script>
+<script>
+(function(){
+  var sOc=document.getElementById('n28Oc'),sgam=document.getElementById('n28gam'),sdc=document.getElementById('n28dc');
+  var vOc=document.getElementById('n28Ocv'),vgam=document.getElementById('n28gamv'),vdc=document.getElementById('n28dcv'),out=document.getElementById('oN28');
+  function draw(){
+    var Oc=+sOc.value, gam=+sgam.value, dc=+sdc.value;
+    vOc.textContent=Oc.toFixed(1); vgam.textContent=gam.toFixed(2); vdc.textContent=dc.toFixed(1);
+    var o=ctxOf('cN28'),c=o.c,g=o.g,W=c.width,H=c.height;
+    var x0=60,y0=H-50,x1=W-30,y1=40; axis(g,x0,y0,x1,y1);
+    var G=1, Op=0.3, dmax=4;
+    var pts=[];
+    for(var i=0;i<=400;i++){ var dp=-dmax + 2*dmax*i/400;
+      var den_r = dp + (Oc*Oc/4)*((dp-dc)/((dp-dc)*(dp-dc)+gam*gam));
+      var den_i = (-G/2) + (Oc*Oc/4)*((-gam)/((dp-dc)*(dp-dc)+gam*gam));
+      var Dr=den_r, Di=den_i;
+      var rho_i = -(Op/2)*Di/(Dr*Dr+Di*Di);
+      pts.push([dp, -rho_i]); }
+    var maxA=0; pts.forEach(function(p){if(p[1]>maxA)maxA=p[1];}); maxA=maxA*1.2||1;
+    g.strokeStyle='#38bdf8';g.lineWidth=2;g.beginPath();
+    pts.forEach(function(p,i){ var px=x0+(x1-x0)*((p[0]+dmax)/(2*dmax)); var py=y0-(y0-y1)*(p[1]/maxA); if(i===0)g.moveTo(px,py);else g.lineTo(px,py); });
+    g.stroke();
+    txt(g,'吸收 ∝ −Im ρ₃₁',x0-6,y1+4,'#9aa4b2',13,'right');
+    txt(g,'探测失谐 δ_p (Γ单位)',x1,y0+22,'#9aa4b2',13,'right');
+    txt(g,'透明窗在 δ_p=δ_c='+dc.toFixed(1)+' 处打开（Ω_c='+Oc.toFixed(1)+'）',(x0+x1)/2,y1+16,'#86efac',12,'center');
+    out.innerHTML='Λ 系统稳态（弱探测）：ρ₃₁=(Ω_p/2)/D，D=(δ_p−iΓ/2)+Ω_c²/[4(δ_p−δ_c−iγ)]。\n'+
+      '吸收 ∝ −Im(ρ₃₁)；双光子共振 δ_p=δ_c 处 D 被耦合场压低 → 透明窗开启。\n'+
+      'Ω_c='+Oc.toFixed(1)+'，γ='+gam.toFixed(2)+'，δ_c='+dc.toFixed(1)+' → 窗宽 ∝ Ω_c²/Γ。\n'+
+      '（EIT 是原子磁强计 CPT 稳频与慢光的基础；Budker&Romalis 2007 提及。）';
+  }
+  sOc.oninput=draw;sgam.oninput=draw;sdc.oninput=draw;draw();
+})();
+</script>
+</body>
+</html>
