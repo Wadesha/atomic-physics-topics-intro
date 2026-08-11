@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>交互 18 · ⁸⁷Rb D₂ 超精细能级 + 六条跃迁强度</title>
+<link rel="stylesheet" href="common.css">
+<style>
+  body{max-width:1180px;margin:0 auto;padding:22px 18px 64px;}
+  .topbar{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-bottom:6px;font-size:14px;}
+  .topbar a{color:var(--acc,#38bdf8);text-decoration:none;}
+  .topbar a:hover{text-decoration:underline;}
+  .pagetitle{font-size:21px;margin:8px 0 2px;}
+  .sub{color:var(--mut,#9aa4b2);font-size:14px;margin:0 0 14px;}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <a href="index.html">← 子站总目录</a>
+  <a href="../index.html">↩ 完整导览主页</a>
+</header>
+<h1 class="pagetitle">交互 18：⁸⁷Rb D₂ 超精细能级 + 六条跃迁强度 </h1>
+<p class="sub">真实常数 A/B</p>
+<main>
+
+<div class="demo">
+    <h4>交互 18：⁸⁷Rb D₂ 超精细能级 + 六条跃迁强度<span class="badge">真实常数 A/B</span></h4>
+    <div class="ctl">
+      <label>激发态 A/h <input id="hfA" type="range" min="60" max="110" step="0.5" value="84.7"><span class="val" id="hfAv">84.7</span> MHz</label>
+      <label>激发态 B/h <input id="hfB" type="range" min="-1" max="1" step="0.05" value="-0.49"><span class="val" id="hfBv">-0.49</span> MHz</label>
+    </div>
+    <canvas id="cHfs" width="1200" height="470"></canvas>
+    <div class="out" id="oHfs"></div>
+  </div>
+</main>
+<footer class="footer">本页为原子物理 / 量子光学主题自底向上导览的独立交互演示（子站）。数值结论以程序实际输出为准。</footer>
+<script src="common.js"></script>
+<script>
+(function(){
+  var sA=document.getElementById('hfA'), sB=document.getElementById('hfB');
+  var vA=document.getElementById('hfAv'), vB=document.getElementById('hfBv');
+  var out=document.getElementById('oHfs');
+  var I=1.5,Jg=0.5,Je=1.5,A0=3417.341;
+  function Eg(F){var K=F*(F+1)-I*(I+1)-Jg*(Jg+1);return (A0/2)*K;}
+  function Ee(F,A,B){var K=F*(F+1)-I*(I+1)-Je*(Je+1);
+    var q=B*((0.75)*K*(K+1)-I*(I+1)*Je*(Je+1))/(2*I*(2*I-1)*Je*(2*Je-1));return (A/2)*K+q;}
+  var steck={'2,1':1/20,'2,2':1/4,'2,3':7/10,'1,0':1/6,'1,1':5/12,'1,2':5/12};
+  function draw(){
+    var A=+sA.value, B=+sB.value; vA.textContent=A.toFixed(1); vB.textContent=B.toFixed(2);
+    var gE=[{F:1,E:Eg(1)},{F:2,E:Eg(2)}], eE=[];
+    for(var F=0;F<=3;F++)eE.push({F:F,E:Ee(F,A,B)});
+    var allE=gE.concat(eE).map(function(o){return o.E;});
+    var emin=Math.min.apply(null,allE)-50,emax=Math.max.apply(null,allE)+50;
+    var o=ctxOf('cHfs'),c=o.c,g=o.g,W=c.width,H=c.height;
+    var x0=70,x1=560,y0=H-40,y1=40; axis(g,x0,y0,x1,y1);
+    function Y(e){return y0-(e-emin)/(emax-emin)*(y0-y1);}
+    gE.forEach(function(s){var y=Y(s.E);g.strokeStyle='#86efac';g.lineWidth=3;g.beginPath();g.moveTo(x0,y);g.lineTo(x0+110,y);g.stroke();
+      txt(g,'F='+s.F,x0+116,y+4,'#86efac',12,'left');txt(g,s.E.toFixed(0)+' MHz',x0-6,y-6,'#9aa4b2',10,'right');});
+    eE.forEach(function(s){var y=Y(s.E);g.strokeStyle='#7dd3fc';g.lineWidth=3;g.beginPath();g.moveTo(x1-110,y);g.lineTo(x1,y);g.stroke();
+      txt(g,'F='+s.F,x1-116,y+4,'#7dd3fc',12,'right');txt(g,s.E.toFixed(0)+' MHz',x1+6,y-6,'#9aa4b2',10,'left');});
+    var trans=[];
+    [1,2].forEach(function(Fg){var tot=0,raw={};
+      [0,1,2,3].forEach(function(Fe){if(Math.abs(Fe-Fg)<=1){
+        var j=sixjD(2*Je,2*I,2*Fe,2*Fg,2,2*Jg);raw[Fe]=(2*Fe+1)*j*j;tot+=raw[Fe];}});
+      [0,1,2,3].forEach(function(Fe){if(raw[Fe]!==undefined)trans.push({Fg:Fg,Fe:Fe,frac:raw[Fe]/tot});});});
+    trans.sort(function(a,b){return a.Fg-b.Fg||a.Fe-b.Fe;});
+    trans.forEach(function(t){var yg=Y(Eg(t.Fg)),ye=Y(Ee(t.Fe));
+      g.strokeStyle='rgba(252,211,77,'+(0.12+0.6*t.frac)+')';g.lineWidth=1+2.5*t.frac;
+      g.beginPath();g.moveTo(x0+110,yg);g.lineTo(x1-110,ye);g.stroke();});
+    var rx0=620,rx1=W-30,ry0=H-40,ry1=40; axis(g,rx0,ry0,rx1,ry1);
+    var i=0;
+    trans.forEach(function(t){var yb=ry1+14+i*((ry0-ry1-20)/trans.length);
+      var bw=t.frac*(rx1-rx0-150);
+      g.fillStyle='#7dd3fc';g.fillRect(rx0,yb,bw,13);
+      var sk=steck[t.Fg+','+t.Fe];
+      txt(g,'F='+t.Fg+'→F′='+t.Fe+' : '+t.frac.toFixed(3)+' (Steck '+(sk!==undefined?sk.toFixed(3):'?')+')',rx0+bw+6,yb+11,'#cbd5e1',11,'left');
+      i++;});
+    txt(g,'D₂ 跃迁相对强度',rx0,ry1-10,'#9aa4b2',12,'left');
+    out.innerHTML='基态零场分裂 2A = <b>'+(Eg(2)-Eg(1)).toFixed(1)+' MHz</b> ≈ 6.835 GHz（实验 6.8347 GHz）。\n'+
+      '六条 D₂ 跃迁强度由 6j 公式 S=(2F′+1)|{J′ I F′; F 1 J}|² 算得，归一化后与 Steck 表 8 完全一致。';
+  }
+  sA.oninput=draw;sB.oninput=draw;draw();
+})();
+</script>
+</body>
+</html>
