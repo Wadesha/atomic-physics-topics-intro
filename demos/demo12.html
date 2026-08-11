@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>交互 12 · 洛伦兹 / 高斯 / 伪 Voigt / 朴素卷积</title>
+<link rel="stylesheet" href="common.css">
+<style>
+  body{max-width:1180px;margin:0 auto;padding:22px 18px 64px;}
+  .topbar{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-bottom:6px;font-size:14px;}
+  .topbar a{color:var(--acc,#38bdf8);text-decoration:none;}
+  .topbar a:hover{text-decoration:underline;}
+  .pagetitle{font-size:21px;margin:8px 0 2px;}
+  .sub{color:var(--mut,#9aa4b2);font-size:14px;margin:0 0 14px;}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <a href="index.html">← 子站总目录</a>
+  <a href="../index.html">↩ 完整导览主页</a>
+</header>
+<h1 class="pagetitle">交互 12：洛伦兹 / 高斯 / 伪 Voigt / 朴素卷积 </h1>
+<p class="sub">实时 a_L / a_D</p>
+<main>
+
+<div class="demo">
+    <h4>交互 12：洛伦兹 / 高斯 / 伪 Voigt / 朴素卷积<span class="badge">实时 a_L / a_D</span></h4>
+    <div class="ctl">
+      <label>洛伦兹宽 a_L <input id="vtL" type="range" min="0.1" max="2" step="0.05" value="0.3"><span class="val" id="vtLv">0.30</span></label>
+      <label>高斯宽 a_D <input id="vtD" type="range" min="0.3" max="3" step="0.05" value="1"><span class="val" id="vtDv">1.00</span></label>
+    </div>
+    <canvas id="cVt" width="1200" height="410"></canvas>
+    <div class="out" id="oVt"></div>
+  </div>
+</main>
+<footer class="footer">本页为原子物理 / 量子光学主题自底向上导览的独立交互演示（子站）。数值结论以程序实际输出为准。</footer>
+<script src="common.js"></script>
+<script>
+(function(){
+  var sL=document.getElementById('vtL'), sD2=document.getElementById('vtD');
+  var vL=document.getElementById('vtLv'), vD2=document.getElementById('vtDv');
+  var out=document.getElementById('oVt');
+  function draw(){
+    var aL=+sL.value, aD=+sD2.value; vL.textContent=aL.toFixed(2); vD2.textContent=aD.toFixed(2);
+    var o=ctxOf('cVt'),c=o.c,g=o.g,W=c.width,H=c.height;
+    var x0=70,x1=W-40,y0=H-40,y1=40; axis(g,x0,y0,x1,y1);
+    var xmax=Math.max(4*aL,4*aD);
+    var L=function(x){return aL/(Math.PI*(x*x+aL*aL));};
+    var G=function(x){return Math.exp(-x*x/(2*aD*aD))/(aD*Math.sqrt(2*Math.PI));};
+    var pvMax=pseudoVoigt(0,aL,aD);
+    var Nc=70,uc=2*xmax/Nc,convN=new Array(Nc).fill(0);
+    for(var i=0;i<Nc;i++){var x=-xmax+i*uc,sm=0;
+      for(var k=0;k<Nc;k++){var u=-xmax+k*uc;sm+=L(x-u)*G(u)*uc;}convN[i]=sm;}
+    var naivMax=Math.max.apply(null,convN);
+    function plot(fn,col,dash){g.strokeStyle=col;g.lineWidth=2;g.setLineDash(dash?[6,4]:[]);g.beginPath();
+      for(var i=0;i<=400;i++){var x=-xmax+2*xmax*i/400,y=fn(x);
+        var px=x0+(x+xmax)/(2*xmax)*(x1-x0),py=y0-(y/pvMax)*0.9*(y0-y1);if(i===0)g.moveTo(px,py);else g.lineTo(px,py);}g.stroke();g.setLineDash([]);}
+    plot(L,'#fdba74',false);plot(G,'#86efac',false);plot(function(x){return pseudoVoigt(x,aL,aD);},'#7dd3fc',false);
+    plot(function(x){return convN[Math.round((x+xmax)/(2*xmax)*(Nc-1))];},'#fca5a5',true);
+    txt(g,'Lorentz',x1-10,y0-(L(0)/pvMax)*0.9*(y0-y1)-6,'#fdba74',12,'right');
+    txt(g,'Gauss',x1-10,y0-(G(0)/pvMax)*0.9*(y0-y1)-22,'#86efac',12,'right');
+    txt(g,'pseudo-Voigt',x1-10,y0-0.9*(y0-y1)-6,'#7dd3fc',12,'right');
+    txt(g,'naive conv',x1-10,y0-(naivMax/pvMax)*0.9*(y0-y1)-40,'#fca5a5',12,'right');
+    var ratio=naivMax/pvMax;
+    out.innerHTML='伪 Voigt 峰值 = <b>'+pvMax.toFixed(4)+'</b> ，朴素(粗网格)卷积峰值 = <b>'+naivMax.toFixed(4)+'</b>\n'+
+      'a_L/a_D = '+(aL/aD).toFixed(2)+( (aL/aD)<0.5 ? '  → 差 ≈ '+((1-ratio)*100).toFixed(1)+'%，即"洛伦兹≪高斯时朴素卷积漏峰"的坑。'
+        : '  → 二者接近，朴素卷积尚可。');
+  }
+  sL.oninput=draw;sD2.oninput=draw;draw();
+})();
+</script>
+</body>
+</html>
