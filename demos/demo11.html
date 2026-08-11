@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>交互 11 · χ′(Δ) 与 χ″(Δ) 共轭对</title>
+<link rel="stylesheet" href="common.css">
+<style>
+  body{max-width:1180px;margin:0 auto;padding:22px 18px 64px;}
+  .topbar{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-bottom:6px;font-size:14px;}
+  .topbar a{color:var(--acc,#38bdf8);text-decoration:none;}
+  .topbar a:hover{text-decoration:underline;}
+  .pagetitle{font-size:21px;margin:8px 0 2px;}
+  .sub{color:var(--mut,#9aa4b2);font-size:14px;margin:0 0 14px;}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <a href="index.html">← 子站总目录</a>
+  <a href="../index.html">↩ 完整导览主页</a>
+</header>
+<h1 class="pagetitle">交互 11：χ′(Δ) 与 χ″(Δ) 共轭对 </h1>
+<p class="sub">实时 γ</p>
+<main>
+
+<div class="demo">
+    <h4>交互 11：χ′(Δ) 与 χ″(Δ) 共轭对<span class="badge">实时 γ</span></h4>
+    <div class="ctl">
+      <label>线宽 γ <input id="kkG" type="range" min="0.2" max="3" step="0.1" value="1"><span class="val" id="kkGv">1.0</span></label>
+    </div>
+    <canvas id="cKK" width="1200" height="400"></canvas>
+    <div class="out" id="oKK"></div>
+  </div>
+</main>
+<footer class="footer">本页为原子物理 / 量子光学主题自底向上导览的独立交互演示（子站）。数值结论以程序实际输出为准。</footer>
+<script src="common.js"></script>
+<script>
+(function(){
+  var sG=document.getElementById('kkG'), vG=document.getElementById('kkGv');
+  var out=document.getElementById('oKK');
+  function draw(){
+    var gm=+sG.value; vG.textContent=gm.toFixed(1);
+    var o=ctxOf('cKK'),c=o.c,g=o.g,W=c.width,H=c.height;
+    var x0=70,x1=W-40,y0=H-40,y1=40; axis(g,x0,y0,x1,y1);
+    var xmax=4*gm;
+    function P(fn,col){g.strokeStyle=col;g.lineWidth=2;g.beginPath();
+      for(var i=0;i<=400;i++){var d=-xmax+2*xmax*i/400,y=fn(d)*gm;
+        var px=x0+(d+xmax)/(2*xmax)*(x1-x0),py=y0-y/1.2*(y0-y1);if(i===0)g.moveTo(px,py);else g.lineTo(px,py);}g.stroke();}
+    P(function(d){return gm/(d*d+gm*gm);},'#7dd3fc');
+    P(function(d){return d/(d*d+gm*gm);},'#fca5a5');
+    g.strokeStyle='#475569';g.setLineDash([4,4]);g.beginPath();g.moveTo(x0,y0);g.lineTo(x1,y0);g.stroke();g.setLineDash([]);
+    txt(g,'χ″(吸收)',x1-10,y0-(gm/(0+gm*gm)*gm)/1.2*(y0-y1)-6,'#7dd3fc',12,'right');
+    txt(g,'χ′(色散)',x1-10,y0-(gm*0.5/1.2)*(y0-y1)+14,'#fca5a5',12,'right');
+    out.innerHTML='χ″(Δ)=γ/(Δ²+γ²)（蓝，吸收，偶对称），χ′(Δ)=Δ/(Δ²+γ²)（红，色散，奇对称）。\n'+
+      '两者互为希尔伯特变换（Kramers–Kronig）——已知一边即可推出另一边；法拉第旋光、FADOF 透射峰位都来自这条红线的过零斜率。';
+  }
+  sG.oninput=draw;draw();
+})();
+</script>
+</body>
+</html>
