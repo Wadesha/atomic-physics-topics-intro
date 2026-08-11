@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>交互 24 · 拉比振荡 P_e(t)</title>
+<link rel="stylesheet" href="common.css">
+<style>
+  body{max-width:1180px;margin:0 auto;padding:22px 18px 64px;}
+  .topbar{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-bottom:6px;font-size:14px;}
+  .topbar a{color:var(--acc,#38bdf8);text-decoration:none;}
+  .topbar a:hover{text-decoration:underline;}
+  .pagetitle{font-size:21px;margin:8px 0 2px;}
+  .sub{color:var(--mut,#9aa4b2);font-size:14px;margin:0 0 14px;}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <a href="index.html">← 子站总目录</a>
+  <a href="../index.html">↩ 完整导览主页</a>
+</header>
+<h1 class="pagetitle">交互 24：拉比振荡 P_e(t) </h1>
+<p class="sub">实时 Ω / δ / Γ</p>
+<main>
+
+<div class="demo">
+    <h4>交互 24：拉比振荡 P_e(t)<span class="badge">实时 Ω / δ / Γ</span></h4>
+    <div class="ctl">
+      <label>拉比频率 Ω <input id="n24Om" type="range" min="0.1" max="5" step="0.1" value="1"><span class="val" id="n24Omv">1.0 (×10⁶/s)</span></label>
+      <label>失谐 δ <input id="n24de" type="range" min="-3" max="3" step="0.1" value="0"><span class="val" id="n24dev">0</span></label>
+      <label>弛豫 Γ <input id="n24Ga" type="range" min="0" max="2" step="0.05" value="0.3"><span class="val" id="n24Gav">0.3 (×10⁶/s)</span></label>
+    </div>
+    <canvas id="cN24" width="1200" height="380"></canvas>
+    <div class="out" id="oN24"></div>
+  </div>
+</main>
+<footer class="footer">本页为原子物理 / 量子光学主题自底向上导览的独立交互演示（子站）。数值结论以程序实际输出为准。</footer>
+<script src="common.js"></script>
+<script>
+(function(){
+  var sOm=document.getElementById('n24Om'),sde=document.getElementById('n24de'),sGa=document.getElementById('n24Ga');
+  var vOm=document.getElementById('n24Omv'),vde=document.getElementById('n24dev'),vGa=document.getElementById('n24Gav');
+  var out=document.getElementById('oN24');
+  function draw(){
+    var Om=+sOm.value*1e6, de=+sde.value*1e6, Ga=+sGa.value*1e6; // rad/s
+    vOm.textContent=(Om/1e6).toFixed(1)+' (×10⁶/s)'; vde.textContent=(de/1e6).toFixed(1); vGa.textContent=(Ga/1e6).toFixed(2)+' (×10⁶/s)';
+    var o=ctxOf('cN24'),c=o.c,g=o.g,W=c.width,H=c.height;
+    var x0=60,y0=H-50,x1=W-30,y1=40; axis(g,x0,y0,x1,y1);
+    var OmR=Math.sqrt(Om*Om+de*de);
+    var Pss=(Om*Om)/(Om*Om+de*de);
+    var tmax=4*Math.PI/Math.max(OmR,1e3); if(tmax>0.01)tmax=0.01;
+    var pts=[];
+    for(var i=0;i<=400;i++){ var t=i/400*tmax; var env=Math.exp(-Ga*t);
+      var P=(OmR>0)? (Om*Om/(OmR*OmR))*Math.pow(Math.sin(OmR*t/2),2)*env : 0;
+      pts.push([t,P]); }
+    g.strokeStyle='#38bdf8';g.lineWidth=2;g.beginPath();
+    pts.forEach(function(p,i){ var px=x0+(x1-x0)*(p[0]/tmax); var py=y0-(y0-y1)*p[1]; if(i===0)g.moveTo(px,py);else g.lineTo(px,py); });
+    g.stroke();
+    g.strokeStyle='#475569';g.setLineDash([4,3]);g.beginPath();g.moveTo(x0,y0-(y0-y1)*Pss);g.lineTo(x1,y0-(y0-y1)*Pss);g.stroke();g.setLineDash([]);
+    txt(g,'P_e(t)',x0-6,y1+4,'#9aa4b2',13,'right');
+    txt(g,'t (s)',x1,y0+22,'#9aa4b2',13,'right');
+    txt(g,'无弛豫稳态 P_ss=Ω²/(Ω²+δ²)='+Pss.toFixed(3),(x1-10),y1+20,'#86efac',12,'right');
+    out.innerHTML='二能级拉比解：P_e(t)=[Ω²/(Ω²+δ²)]·sin²(½√(Ω²+δ²)·t)·e^{−Γt}。\n'+
+      'Ω='+(Om/1e6).toFixed(1)+'×10⁶, δ='+(de/1e6).toFixed(1)+'×10⁶, Γ='+(Ga/1e6).toFixed(2)+'×10⁶ rad/s。\n'+
+      '（光抽运就是把一群这样的原子泵到上能级——SEOP 第 3 节 / RMP Eq.3 的单原子版。）';
+  }
+  sOm.oninput=draw;sde.oninput=draw;sGa.oninput=draw;draw();
+})();
+</script>
+</body>
+</html>
