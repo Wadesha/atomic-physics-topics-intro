@@ -191,8 +191,10 @@
     <p style="margin:0">让磁场降到近零（B ≲ 1 nT）、同时提高原子密度（高温）→ 拉莫尔频率 ≪ 自旋交换速率 →
     <b>自旋交换不再造成弛豫</b> → 相干时间可达 1 秒量级 → 灵敏度冲到亚飞特斯拉（fT/√Hz）。</p>
   </div>
-  <p class="note">至此，底层（能级/角动量）→ 物质（碱金属）→ 相互作用（光抽运/塞曼/法拉第）→ 动力学（弛豫/自旋交换）已全部就位。
-  接下来三条应用支线都是在这块地基上长出来的。</p>
+  <h3>4.5 自旋交换光泵浦（SEOP）：极化的"工业级"实现</h3>
+  <p>第 3.4 节的光抽运只是原理；真正把碱金属蒸气"刷"到高密度极化、并进一步转移给其它种类，靠的是 <b>自旋交换光泵浦（Spin-Exchange Optical Pumping, SEOP）</b>。它正好把第 4.3 节那个"既会造成退相干、也能被利用"的自旋交换机制用到了极致：先用圆偏振激光把 Rb 泵到高极化，再利用碱金属间极快的自旋交换碰撞，把极化"搬运"到第二种碱金属（如 K）或惰性气体核（³He / ¹²⁹Xe）。结果是既得到超高密度的极化碱蒸气（SERF 磁强计的"燃料"），也得到了极化惰性气体（用于气体 NMR / 超极化 MRI）。</p>
+  <p>这一技术把"自旋交换 = 天敌"反转成"自旋交换 = 工具"，是 SERF 分支能落地的关键工程基础。资料里的博士论文群正好构成它的完整知识链：UMW（Walker 1999、Kadlecek、Babcock 2005、Lancor 2011）的一组题为《实用自旋交换光泵浦的物理》《自旋交换光泵浦研究》；Princeton / Happer 组（Erickson 2000、Ledbetter–Romalis 2005、Jau 2005、Gong 2008、Seltzer 2008《Atomic Magnetometry》、Ghosh–Romalis 2009、Olsen 2011、Vasilakis–Romalis 2011）则是现代 SERF / 共磁强计（comagnetometer）的谱系。</p>
+  <p class="note">至此，底层（能级/角动量）→ 物质（碱金属）→ 相互作用（光抽运/塞曼/法拉第）→ 动力学（弛豫/自旋交换/SEOP）→ 三条应用支线，全部就位。</p>
 </section>
 
 <!-- ============ BRANCH A ============ -->
@@ -207,7 +209,7 @@
       <li><b>基础物理</b>：寻找轴子(axion)等。</li>
     </ul>
   </div>
-
+  <p class="note">延伸：本资料中的 Princeton / Happer 组博士论文系列（Seltzer 2008《Atomic Magnetometry》、Ledbetter–Romalis、Vasilakis–Romalis 等）正是现代 SERF 与共磁强计（comagnetometer，用于搜寻轴子、中子 EDM）的一手谱系；UMW 的 SEOP 系列则对应上节的极化工程。分子支线（C/D 费米共振、DVR）在此文件夹内暂无对应博士论文。</p>
 </section>
 
 <!-- ============ BRANCH B ============ -->
@@ -239,38 +241,69 @@
 
 <!-- ============ LAYER 4: COMPUTE ============ -->
 <section id="l4">
-  <h2>8 · 计算方法层：代码说明、演示效果与物理意义</h2>
-  <p>前面所有能级与光谱，最终都要靠<b>数值计算</b>来拟合或验证。这一层不是"又一个主题"，而是把第 7 节的分子光谱从"定性图像"变成"可复现数字"的工具——核心是两类 FORTRAN 程序（均出自 CPC Program Library，ISSN 0010-4655）：对角化类与 DVR（离散变量表示）类。</p>
-  <h3>8.1 代码说明：ABWC / VIBOCO（对角化法）</h3>
-  <div class="card g">
+    <h2>8 · 计算方法层：代码说明、演示效果与物理意义</h2>
+  <p>前面所有能级与光谱，最终都要靠<b>数值计算</b>来拟合或验证。这一层不是"又一个主题"，而是把第 7 节的分子光谱从"定性图像"变成"可复现数字"的工具——核心是两类 FORTRAN 程序（均出自 CPC Program Library，ISSN 0010-4655）：<b>对角化类</b>与 <b>DVR（离散变量表示）类</b>。下面按"每个子程序、每一步在算什么"逐处拆解。</p>
+
+  <h3>8.1 代码说明 · ABWC / VIBOCO（对角化法，CO₂ 振动哈密顿量）</h3>
+  <p>来源：W. C. Maguire, <i>Computer Physics Communications</i> <b>10</b> (1975) 368–374，FORTRAN IV，801 张卡片，NASA/Goddard。程序名 VIBOCO，目录号 ABWC。整套只有 3 个子程序：<code>LEVEL</code> → <code>MINV</code> → <code>EIGEN</code>。</p>
+
+  <h4>8.1.1 基函数与未扰动能级（SUBROUTINE LEVEL）</h4>
+  <p>在 <code>LEVEL</code> 里，振动基用简正模量子数 |v₁, v₂, l, v₃⟩ 标记：v₁/v₃ 是对称/反对称伸缩，v₂ 是弯曲振动（二重简并，l 为弯曲角动量量子数，|l|≤v₂ 且与 v₂ 同奇偶）。能量展开为</p>
+  <div class="formula">G(v,l) = G₂₂·l² + Σᵢ ωᵢ(vᵢ+½uᵢ) + Σᵢⱼ Xᵢⱼ(vᵢ+½uᵢ)(vⱼ+½uⱼ) + Σᵢⱼₖ Yᵢⱼₖ(…)</div>
+  <p>代码里 <code>OMEGA=(1354.91, 673., 2396.49)</code> 即三个模的谐振频率 ω₁/ω₂/ω₃，<code>U=(1.,2.,1.)</code> 是每模简并度（弯曲模 u₂=2），<code>X</code>、<code>Y</code> 是非谐常数矩阵。三重循环遍历 v₃、l、v₁、v₂，用一个 ≤13×13 的矩阵 <code>ONDIA</code> 存对角元（未扰动能级）。转动常数 B_v 用 Dunham 型展开 <code>BROT = CONE(1) − ΣCONE(i+1)vᵢ + …</code> 一并算出。</p>
+
+  <h4>8.1.2 费米共振的非对角元（OFDIA）</h4>
+  <p>关键一行（程序里的 <code>OFDIA</code>）：</p>
+  <div class="formula">OFDIA = ½·(W₀ − λ₁v₁ − λ₂v₂ − λ₃v₃ − λ_L·l)·√[ v₁·((v₂+2)·2 − l²) ]</div>
+  <p>这就是费米共振的耦合矩阵元：它把 (v₁,v₂) 与 (v₁−1, v₂+2) 两个态连起来（Δv₁=−1, Δv₂=+2）。<code>W₀=51.31</code> 是基础耦合强度，<code>λ₁/λ₂/λ₃=(.15,.41,.78)</code> 表示耦合随各模振动量子数缓慢变化；方根因子是角动量耦合的矩阵元（含弯曲角动量 l）。把它填进矩阵的<b>非对角</b>位置，费米共振就被"写进"哈密顿量了。</p>
+
+  <h4>8.1.3 求逆与对角化（SUBROUTINE MINV / EIGEN）</h4>
+  <p><code>MINV</code> 做矩阵求逆（用于把振动本征函数变换到转动表象）；<code>EIGEN</code> 是经典的 <b>Jacobi 特征值算法</b>：先生成单位阵 R，计算非对角元总范数 ANORM 作为阈值基准，然后逐对 (L,M) 平面旋转——按阈值 <code>THR</code> 筛选 <code>|A(LM)|</code> 足够大的非对角元，算出旋转角 sin/cos（语句 60–78），反复迭代把所有非对角元"磨"到接近 0。最终矩阵对角元是<b>本征值</b>（修正后能级），R 的列是<b>本征矢</b>（即各未扰动态的混合系数）。</p>
+
+  <h4>8.1.4 输入与输出</h4>
+  <div class="card">
     <ul>
-      <li><b>来源</b>：W. C. Maguire, <i>Computer Physics Communications</i> <b>10</b> (1975) 368–374，FORTRAN IV，801 张卡片，NASA/Goddard。</li>
-      <li><b>做什么</b>：对线性三原子分子 CO₂ 的<b>振动哈密顿量</b>做矩阵对角化，哈密顿量里<b>显式写入费米共振项</b>（ν₁ 与 2ν₂ 之间的非对角耦合 W）。</li>
-      <li><b>输出什么</b>：各 (v₁,v₂,v₃) 振动态的<b>振动能级 G(v)</b>、<b>转动常数 B_v</b>，以及<b>混合系数（mixing coefficients）</b>——即费米共振把两个本征态混到了什么程度。</li>
+      <li><b>输入</b>：v₃ 从 0 循环到 6（<code>DO IV3P1=1,7</code>），每层自动收窄矩阵维数（LMAX=25−4v₃），最多 13×13。</li>
+      <li><b>输出</b>：各 (v₁,v₂,l,v₃) 的振动能级 G(v)、转动常数 B_v，以及费米共振双线的<b>混合系数</b>（本征矢分量）——直接看到 ν₁ 与 2ν₂ 如何"交换"能量与跃迁强度。</li>
     </ul>
   </div>
-  <h3>8.2 代码说明：ACNC / ACNE（DVR 法）</h3>
-  <div class="card g">
+
+  <h3>8.2 代码说明 · ACNC / ACNE（DVR 法，三角分子振-转光谱）</h3>
+  <p>来源：J. Tennyson 组的 CPC 程序（参见 Tennyson & Henderson <i>J. Chem. Phys.</i> <b>91</b>, 3815 (1989)；Sutcliffe & Tennyson <i>Int. J. Quantum Chem.</i> <b>29</b>, 183 (1991)）。<code>ACNC</code>（程序名 JAMES）是 1D/2D DVR，<code>ACNE</code>（JRH）是 3D DVR。全程用<b>原子单位</b>（Hartree/Bohr），势能由用户子程序 <code>POT/POTV</code> 提供（输入 R₁、R₂（Bohr）与 X=cosθ，返回 Hartree 势能）。</p>
+
+  <h4>8.2.1 坐标与"两阶段收缩"策略（SUBROUTINE DVR1D / DVR3D）</h4>
+  <p>用 scattering 或 Radau 坐标描述三角分子，把弯曲角 θ 放在 <b>DVR（离散变量表示）</b>里。核心算法是<b>两阶段</b>：</p>
+  <div class="card">
     <ul>
-      <li><b>做什么</b>：用 <b>DVR（Discrete Variable Representation，离散变量表示）</b>求解三角分子的<b>振-转（ro-vibrational）薛定谔方程</b>。以 H₂S 为例：ACNC 是 1D/2D DVR（模块 <code>DVR1D → ROTLEV → DIPOLE → SPECTRA</code>），ACNE 是 3D DVR（<code>DVR3D</code>）。</li>
-      <li><b>流程</b>：用 Radau/散射坐标把坐标空间离散成网格 → <code>DVR1D</code> 求振动态 → <code>ROTLEV</code> 求转动态 → <code>DIPOLE</code> 求偶极跃迁矩 → <code>SPECTRA</code> 合成理论光谱。</li>
+      <li><b>阶段 1</b>：对 DVR 角坐标的每个离散网格点 θₐ，单独解 2D (R₁,R₂) 子问题，得到一组本征函数，写盘（<code>BLOCKS</code> 负责对角化，本征函数落盘以省内存）。</li>
+      <li><b>阶段 2（收缩）</b>：用 <code>CHOOSE</code>/<code>CUTOFF</code> 从所有 2D 解里挑出最低若干（LOWEIG）或能量低于截断 EMAX 的本征矢，作为<b>截断基</b>；再在这个收缩基里搭建并对角化最终的 3D 哈密顿量（<code>DGCORE</code>）。</li>
     </ul>
   </div>
+  <p>三种模式：A 冻结角（ZTWOD）、B 原子–刚体双原子（NCOORD=2）、C 完整 3 维（NCOORD=3）；Radau 坐标下还可把 z 轴沿角平分线（ZBISC=T）。</p>
+
+  <h4>8.2.2 动能积分与势能（KEINTS / KEINT2 / POT / POTV）</h4>
+  <p>哈密顿量 H = T（动能）+ V（势能）。动能部分由 <code>KEINTS</code>/<code>KEINT2</code> 计算动能积分（基于 DVR 网格点的 Gauss–Laguerre / Legendre 求积，<code>LAGPT</code>/<code>LAGUER</code>/<code>LEGV</code>/<code>ASLEG</code>）；势能 <code>POT/POTV</code> 在网格点上求值——因为 DVR 中势能算符天然接近对角，直接填在对角。网格点 {xₐ} 通过 <code>ALLPTS</code> 生成，每个点"钉"一个局域基函数（见第 8.4 节 DVR 物理）。</p>
+
+  <h4>8.2.3 基矢收缩 / 矩阵变换（SUBROUTINE MKEHAM）</h4>
+  <p><code>MKEHAM</code> 把阶段 1 的 2D 本征矢当作收缩基，做相似变换 H_new = Vᵀ H V：它先把选中的向量从盘读回（<code>GETROW</code>），再按 <code>IND(I,J)=max·(max−1)/2+min</code> 的三角指针，把非对角块项用向量变换累加进 HAMIL，并补上对角块。这一步就是"用 2D 解当基，搭 3D 矩阵"的数学实现。</p>
+
+  <h4>8.2.4 对角化（JACOBI / F02ABF / QRITR / EGVQR）</h4>
+  <p>最终 3D 矩阵用特征值例程对角化：主力是 NAG 的 <code>F02ABF</code>（在核对角化），配套自带的 <code>JACOBI</code>（与 ABWC 同族的 Jacobi 旋转）、<code>QRITR</code>（QR 迭代）、<code>EGVQR</code> 作为备援。输出本征值（振-转能级，同时打印 Hartree 与 cm⁻¹ 两种单位）与本征矢。</p>
+
   <h3>8.3 演示效果（跑一遍能看到什么）</h3>
   <div class="card">
     <ul>
-      <li><b>ABWC 跑出来是一张"能级 + 混合系数表"</b>：例如 CO₂ 各 (v₁,v₂,v₃) 态的 G(v)、B_v，以及费米共振双线 1285 / 1388 cm⁻¹ 对应的本征矢混合比例——直接看到两个本征态如何被费米共振"交换"能量与跃迁强度。</li>
-      <li><b>ACNC/ACNE 跑出来是一条"合成光谱"</b>：给定 J 与能量窗口，<code>SPECTRA</code> 模块输出带线宽与强度的理论 IR/拉曼谱线，可直接与实验光谱叠加对比；ACNE 的 3D DVR 还能给出分子光电子能谱（见同批 DVR 方案材料）。</li>
+      <li><b>ABWC</b> 跑出"能级 + 混合系数表"：CO₂ 各 (v₁,v₂,l,v₃) 的 G(v)、B_v，以及费米共振双线 1285/1388 cm⁻¹ 对应的本征矢混合比例——直接看到两个本征态如何被费米共振"交换"能量与跃迁强度。</li>
+      <li><b>ACNC/ACNE</b> 跑出"合成光谱"：给定 J 与能量窗口，<code>SPECTRA</code> 模块输出带线宽与强度的理论 IR/拉曼谱线，可与实验光谱叠加对比；3D-DVR 还能给出分子光电子能谱（见同批 DVR 方案材料）。</li>
     </ul>
   </div>
+
   <h3>8.4 对应的物理意义</h3>
   <ul>
-    <li><b>费米共振是"本征态混合"而非"频率偶然接近"</b>：两个能级因非对角项 W 耦合后，本征值相互排斥（avoided crossing，最小间距 = 2|W|）、本征矢混合。ABWC 的<b>混合系数</b>正是这个混合的定量度量——它让 CO₂ 的 ν₁ 与 2ν₂ "借走"彼此的跃迁强度（intensity borrowing）。</li>
-    <li><b>DVR 的物理本质 = 在真实构型空间里直接解薛定谔方程</b>：把连续坐标离散成网格点，在每个网格点"钉"一个局域基函数，使势能算符变成几乎对角的矩阵，对角化变得高效。这是多原子分子振转能级计算的标准数值方法。</li>
-    <li><b>这一层是第 7 节的"实验台"</b>：理论哈密顿量 → 代码对角化 → 合成光谱 → 与实测比对，闭环验证费米共振与振动-转动耦合的模型是否正确。</li>
+    <li><b>费米共振是"本征态混合"而非"频率偶然接近"</b>：ABWC 的 <code>OFDIA</code> 把非对角耦合写进哈密顿量，<code>EIGEN</code> 对角化后本征值相互排斥（avoided crossing）、本征矢混合——混合系数正是这个混合的定量度量，它让 CO₂ 的 ν₁ 与 2ν₂ "借走"彼此的跃迁强度（intensity borrowing）。</li>
+    <li><b>DVR 的物理本质 = 在真实构型空间直接解薛定谔方程</b>：把连续坐标离散成网格点，每个点钉一个局域基函数，势能算符变近对角、对角化高效。ACNC/ACNE 的"两阶段收缩"更是把高维问题拆成可并行的小矩阵，是计算多原子振转能级的标准数值方法。</li>
+    <li><b>这一层是第 7 节的"实验台"</b>：理论哈密顿量 → 代码对角化 → 合成光谱 → 与实测比对，闭环验证费米共振与振动-转动耦合模型。</li>
   </ul>
-
-</section>
 
 <!-- ============ MAP ============ -->
 <section id="map">
