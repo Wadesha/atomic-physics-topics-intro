@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>交互 25 · ⁸⁷Rb 基态 Breit–Rabi 塞曼图</title>
+<link rel="stylesheet" href="common.css">
+<style>
+  body{max-width:1180px;margin:0 auto;padding:22px 18px 64px;}
+  .topbar{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-bottom:6px;font-size:14px;}
+  .topbar a{color:var(--acc,#38bdf8);text-decoration:none;}
+  .topbar a:hover{text-decoration:underline;}
+  .pagetitle{font-size:21px;margin:8px 0 2px;}
+  .sub{color:var(--mut,#9aa4b2);font-size:14px;margin:0 0 14px;}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <a href="index.html">← 子站总目录</a>
+  <a href="../index.html">↩ 完整导览主页</a>
+</header>
+<h1 class="pagetitle">交互 25：⁸⁷Rb 基态 Breit–Rabi 塞曼图 </h1>
+<p class="sub">实时 B_max (G)</p>
+<main>
+
+<div class="demo">
+    <h4>交互 25：⁸⁷Rb 基态 Breit–Rabi 塞曼图<span class="badge">实时 B_max (G)</span></h4>
+    <div class="ctl">
+      <label>磁场上限 B_max <input id="n25B" type="range" min="0.2" max="3" step="0.1" value="1"><span class="val" id="n25Bv">1 G</span></label>
+    </div>
+    <canvas id="cN25" width="1200" height="420"></canvas>
+    <div class="out" id="oN25"></div>
+  </div>
+</main>
+<footer class="footer">本页为原子物理 / 量子光学主题自底向上导览的独立交互演示（子站）。数值结论以程序实际输出为准。</footer>
+<script src="common.js"></script>
+<script>
+(function(){
+  var sB=document.getElementById('n25B'), vB=document.getElementById('n25Bv'), out=document.getElementById('oN25');
+  var I=1.5, nu=6.8347e9; // ⁸⁷Rb 基态超精细间隔 (Hz)
+  var gJ=2.002319, gI=-0.000995141;
+  var MUH=13.996e9; // μ_B/h, Hz/T
+  function EF2(mF,B){ var x=(gJ-gI)*MUH*B/nu; return -nu/2 - gI*MUH*B*mF + (nu/2)*Math.sqrt(1+4*mF*x/(2*I+1)+x*x); }
+  function draw(){
+    var Bmax=+sB.value*1e-4; vB.textContent=(+sB.value).toFixed(1)+' G';
+    var o=ctxOf('cN25'),c=o.c,g=o.g,W=c.width,H=c.height;
+    var x0=60,y0=H-50,x1=W-30,y1=40; axis(g,x0,y0,x1,y1);
+    var mFs=[-2,-1,0,1,2];
+    var allE=[]; mFs.forEach(function(m){ allE.push(EF2(m,Bmax)); });
+    var emin=Math.min.apply(null,allE), emax=Math.max.apply(null,allE); var pad=(emax-emin)*0.15+1; emin-=pad; emax+=pad;
+    function px(B){return x0+(x1-x0)*(B/Bmax);} function py(Eh){return y0-(y0-y1)*((Eh-emin)/(emax-emin));}
+    var cols=['#38bdf8','#22d3ee','#a78bfa','#f59e0b','#34d399'];
+    mFs.forEach(function(m,i){
+      g.strokeStyle=cols[i];g.lineWidth=2;g.beginPath();
+      for(var B=0;B<=Bmax+1e-9;B+=Bmax/300){ var X=px(B),Y=py(EF2(m,B)); if(B===0)g.moveTo(X,Y);else g.lineTo(X,Y);}
+      g.stroke();
+      txt(g,'m='+m, px(0)+4, py(EF2(m,0))-4, cols[i],11,'left');
+    });
+    txt(g,'能量 E/h (MHz, 相对)',x0-4,y1+2,'#9aa4b2',12,'right');
+    txt(g,'B (G)',x1,y0+22,'#9aa4b2',12,'right');
+    out.innerHTML='Breit–Rabi（⁸⁷Rb F=2 工作流形，I=3/2，ν_hfs=6.8347 GHz）：E/h=−ν/2 − g_I(μ_B/h)m_F B + (ν/2)√[1+4m_F x/(2I+1)+x²]，x=(g_J−g_I)(μ_B/h)B/ν。\n'+
+      '五条子能级随 B 的劈裂呈<b>非线性</b>（二次项来自 x²），即 Budker&Romalis 说的"非线性 Zeeman"——地磁 ~0.5 G 附近共振多峰的根源。\n'+
+      'F=1 流形在 −ν≈−6.8 GHz 处（未画出）。';
+  }
+  sB.oninput=draw;draw();
+})();
+</script>
+</body>
+</html>
