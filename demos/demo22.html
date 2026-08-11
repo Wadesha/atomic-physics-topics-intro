@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>交互 22 · 自旋交换变窄 / SERF 线宽</title>
+<link rel="stylesheet" href="common.css">
+<style>
+  body{max-width:1180px;margin:0 auto;padding:22px 18px 64px;}
+  .topbar{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-bottom:6px;font-size:14px;}
+  .topbar a{color:var(--acc,#38bdf8);text-decoration:none;}
+  .topbar a:hover{text-decoration:underline;}
+  .pagetitle{font-size:21px;margin:8px 0 2px;}
+  .sub{color:var(--mut,#9aa4b2);font-size:14px;margin:0 0 14px;}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <a href="index.html">← 子站总目录</a>
+  <a href="../index.html">↩ 完整导览主页</a>
+</header>
+<h1 class="pagetitle">交互 22：自旋交换变窄 / SERF 线宽 </h1>
+<p class="sub">实时 Γ_se / R_sd / B</p>
+<main>
+
+<div class="demo">
+    <h4>交互 22：自旋交换变窄 / SERF 线宽<span class="badge">实时 Γ_se / R_sd / B</span></h4>
+    <div class="ctl">
+      <label>自旋交换率 Γ_se <input id="n22Rse" type="range" min="1" max="200" step="1" value="60"><span class="val" id="n22Rsev">6e4 /s</span></label>
+      <label>自旋破坏弛豫 R_sd <input id="n22Rsd" type="range" min="1" max="500" step="1" value="30"><span class="val" id="n22Sdv">30 /s</span></label>
+      <label>磁场上限 B_max <input id="n22Bmax" type="range" min="20" max="2000" step="10" value="400"><span class="val" id="n22Bmaxv">400 nT</span></label>
+    </div>
+    <canvas id="cN22" width="1200" height="420"></canvas>
+    <div class="out" id="oN22"></div>
+  </div>
+</main>
+<footer class="footer">本页为原子物理 / 量子光学主题自底向上导览的独立交互演示（子站）。数值结论以程序实际输出为准。</footer>
+<script src="common.js"></script>
+<script>
+(function(){
+  var sRse=document.getElementById('n22Rse'), sRsd=document.getElementById('n22Rsd'), sBmax=document.getElementById('n22Bmax');
+  var vRse=document.getElementById('n22Rsev'), vRsd=document.getElementById('n22Sdv'), vBmax=document.getElementById('n22Bmaxv');
+  var out=document.getElementById('oN22');
+  function dw(BnT){ return 2*Math.PI*13.996*BnT; } // rad/s, F=2 与 F=1 超精细两态的塞曼频差
+  function draw(){
+    var Rse=+sRse.value*1000, Rsd=+sRsd.value, Bmax=+sBmax.value; // 角频率 rad/s, B nT
+    vRse.textContent=(Rse/1000).toFixed(0)+'e3 /s'; vRsd.textContent=Rsd.toFixed(0)+' /s'; vBmax.textContent=Bmax.toFixed(0)+' nT';
+    var o=ctxOf('cN22'),c=o.c,g=o.g,W=c.width,H=c.height;
+    var x0=70,y0=H-55,x1=W-30,y1=35; axis(g,x0,y0,x1,y1);
+    var Bserf=Rse/(2*Math.PI*13.996); // nT, dw=Rse 处
+    var fwhm=function(B){ var term=dw(B)*dw(B)/(2*Rse); return (Rsd+term)/(2*Math.PI); }; // Hz
+    var maxY=0,pts=[];
+    for(var B=0;B<=Bmax;B+=Math.max(1,Bmax/400)){ var y=fwhm(B); if(y>maxY)maxY=y; pts.push([B,y]); }
+    maxY=Math.max(maxY,Rsd/(2*Math.PI))*1.25;
+    g.strokeStyle='#38bdf8';g.lineWidth=2.2;g.beginPath();
+    pts.forEach(function(p,i){ var px=x0+(x1-x0)*(p[0]/Bmax); var py=y0-(y0-y1)*(p[1]/maxY); if(i===0)g.moveTo(px,py);else g.lineTo(px,py); });
+    g.stroke();
+    if(Bserf<Bmax){ var px=x0+(x1-x0)*(Bserf/Bmax); g.strokeStyle='#f59e0b';g.setLineDash([5,4]);g.beginPath();g.moveTo(px,y1);g.lineTo(px,y0);g.stroke();g.setLineDash([]);
+      txt(g,'SERF 窗口边缘 ≈'+Bserf.toFixed(0)+' nT',Math.min(px+6,x1-130),y1+14,'#f59e0b',12,'left'); }
+    var fmin=Math.sqrt(Rse*Rsd)/(2*Math.PI);
+    txt(g,'FWHM 线宽 (Hz)',x0-8,y1+6,'#9aa4b2',13,'right');
+    txt(g,'B (nT)',x1,y0+22,'#9aa4b2',13,'right');
+    txt(g,'拉伸态下限 √(Γ_se·R_sd) = '+fmin.toFixed(1)+' Hz',(x0+x1)/2,y1+30,'#86efac',12,'center');
+    out.innerHTML='交换变窄（motional narrowing）：快速自旋交换把超精细两态间的随机塞曼频差"时间平均"掉，线宽 ∝ (Δω)²/(2Γ_se)。\n'+
+      'Γ_se='+(Rse/1000).toFixed(0)+'e3 rad/s，R_sd='+Rsd+' rad/s → SERF 窗口 B≲'+Bserf.toFixed(0)+' nT。\n'+
+      'B=5 nT 处 FWHM≈'+fwhm(5).toFixed(2)+' Hz（Budker 2007 图2：K-SERF @5 nT 约 2 Hz）；拉伸态压窄下限 √(Γ_se·R_sd)='+fmin.toFixed(1)+' Hz。\n'+
+      '把 Γ_se 滑块拉大：曲线整体下塌 → 交换越快线越窄（双态随机游走模型）。';
+  }
+  sRse.oninput=draw;sRsd.oninput=draw;sBmax.oninput=draw;draw();
+})();
+</script>
+</body>
+</html>
