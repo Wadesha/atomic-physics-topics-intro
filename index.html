@@ -81,7 +81,7 @@
     <li><a href="#b1">分支A·SERF 磁力仪</a></li>
     <li><a href="#b2">分支B·FADOF 滤光器</a></li>
     <li><a href="#b3">分支C·分子光谱/费米共振</a></li>
-    <li><a href="#l4">计算方法层·计算程序</a></li>
+    <li><a href="#l4">计算方法层：代码与物理意义</a></li>
     <li><a href="#map">统一地图</a></li>
   </ol>
 </nav>
@@ -207,7 +207,7 @@
       <li><b>基础物理</b>：寻找轴子(axion)等。</li>
     </ul>
   </div>
-  <p class="note">对应资料：<code>全光学高灵敏度铷原子磁力仪的研究_李曙光.pdf</code>、<code>141022SERF磁力仪.docx</code>、<code>铷氦/[Wagshul]PRA49.3854.pdf</code>。</p>
+
 </section>
 
 <!-- ============ BRANCH B ============ -->
@@ -234,52 +234,62 @@
   <p>CO₂ 弯曲振动的倍频 2ν₂ ≈ 1334 cm⁻¹，与对称伸缩 ν₁ ≈ 1337 cm⁻¹ <b>能量几乎相等且对称性相同</b>。二者发生量子力学混合，原本单一的对称伸缩峰裂成两个强峰：</p>
   <div class="formula">观测峰 ≈ 1285 cm⁻¹ 与 1388 cm⁻¹ （拉曼），原强峰消失</div>
   <p>表现：频率"避免交叉"（avoided crossing，最小间距 = 2|W|，W 为耦合常数）；弱/禁戒的倍频带向强基频带"借"强度（intensity borrowing）。研究方法常用<b>同位素取代法</b>与<b>变换溶剂法</b>。</p>
-  <p class="note">对应资料：<code>130128FermiResonanceSHAOZhuchen.pdf</code>、<code>文档/20130106CPC/</code>（CO₂ 红外吸收、Raman 与费米共振，及 ABWC/ACES/ACNC 等 Fortran 计算程序）。</p>
+
 </section>
 
 <!-- ============ LAYER 4: COMPUTE ============ -->
 <section id="l4">
-  <h2>8 · 计算方法层：<code>文档\计算程序</code> 是什么</h2>
-  <p>前面所有光谱与能级，最终都要靠<b>计算</b>来验证或拟合。资料里的 <code>C:\Users\wade\OneDrive\ACADEMIC\文档\计算程序</code> 就是这套计算的<b>文献与工具箱</b>。它包含：</p>
-  <table>
-    <tr><th>内容</th><th>说明</th></tr>
-    <tr><td>一批 <code>1-s2.0-00104655…-main.pdf</code></td><td><i>Computer Physics Communications</i>（CPC，ISSN 0010-4655）期刊论文/程序说明——这就是"CPC"的来历，涉及量子化学与分子振动计算程序。</td></tr>
-    <tr><td><code>130122费米共振对分子振动能级和光谱的影响.pdf</code></td><td>直接讲费米共振如何影响分子振动能级与光谱的论文。</td></tr>
-    <tr><td><code>abwc.pdf</code></td><td>ABWC 程序使用手册（ABWC 即上面出现的计算程序之一）。</td></tr>
-    <tr><td><code>gcc.pdf</code>、<code>gfortran-95.pdf</code></td><td>Fortran 编译器（GCC / gfortran）手册——编译运行这些科学计算程序的工具链。</td></tr>
-    <tr><td><code>.thumbnails/</code></td><td>系统生成的缩略图缓存，无实质内容。</td></tr>
-  </table>
-  <p>真正的 Fortran 源代码（<code>ABWC</code>、<code>ACES</code>、<code>ACNC</code>、<code>ACNE</code>、<code>ACRW</code>、<code>ACWD</code>、<code>ACXC</code>、<code>ADAC</code>、<code>ADAL</code> …）与输入/输出数据，存放在同级的 <code>文档/20130106CPC/</code> 目录中。</p>
-  <h3>怎么"写进 HTML"</h3>
-  <p>上面这张表已经把它写进本页第 8 节：先说明它是<b>分子光谱/费米共振的计算文献与工具箱</b>，再逐类列出文件、点明 CPC=Computer Physics Communications、并指回源代码目录。它在本体系里的位置是<b>最顶上的"计算方法层"</b>——为第 7 节（费米共振）提供数值验证手段，是连接"物理原理"与"可复现结果"的最后一环。</p>
-  <div class="filelist">文档\计算程序\
-├─ 1-s2.0-00104655…-main.pdf   (×10，CPC 期刊论文/程序说明)
-├─ 130122费米共振对分子振动能级和光谱的影响.pdf
-├─ abwc.pdf                     (ABWC 程序手册)
-├─ gcc.pdf / gfortran-95.pdf   (Fortran 编译器手册)
-└─ .thumbnails\                (缩略图缓存，无实质内容)
+  <h2>8 · 计算方法层：代码说明、演示效果与物理意义</h2>
+  <p>前面所有能级与光谱，最终都要靠<b>数值计算</b>来拟合或验证。这一层不是"又一个主题"，而是把第 7 节的分子光谱从"定性图像"变成"可复现数字"的工具——核心是两类 FORTRAN 程序（均出自 CPC Program Library，ISSN 0010-4655）：对角化类与 DVR（离散变量表示）类。</p>
+  <h3>8.1 代码说明：ABWC / VIBOCO（对角化法）</h3>
+  <div class="card g">
+    <ul>
+      <li><b>来源</b>：W. C. Maguire, <i>Computer Physics Communications</i> <b>10</b> (1975) 368–374，FORTRAN IV，801 张卡片，NASA/Goddard。</li>
+      <li><b>做什么</b>：对线性三原子分子 CO₂ 的<b>振动哈密顿量</b>做矩阵对角化，哈密顿量里<b>显式写入费米共振项</b>（ν₁ 与 2ν₂ 之间的非对角耦合 W）。</li>
+      <li><b>输出什么</b>：各 (v₁,v₂,v₃) 振动态的<b>振动能级 G(v)</b>、<b>转动常数 B_v</b>，以及<b>混合系数（mixing coefficients）</b>——即费米共振把两个本征态混到了什么程度。</li>
+    </ul>
+  </div>
+  <h3>8.2 代码说明：ACNC / ACNE（DVR 法）</h3>
+  <div class="card g">
+    <ul>
+      <li><b>做什么</b>：用 <b>DVR（Discrete Variable Representation，离散变量表示）</b>求解三角分子的<b>振-转（ro-vibrational）薛定谔方程</b>。以 H₂S 为例：ACNC 是 1D/2D DVR（模块 <code>DVR1D → ROTLEV → DIPOLE → SPECTRA</code>），ACNE 是 3D DVR（<code>DVR3D</code>）。</li>
+      <li><b>流程</b>：用 Radau/散射坐标把坐标空间离散成网格 → <code>DVR1D</code> 求振动态 → <code>ROTLEV</code> 求转动态 → <code>DIPOLE</code> 求偶极跃迁矩 → <code>SPECTRA</code> 合成理论光谱。</li>
+    </ul>
+  </div>
+  <h3>8.3 演示效果（跑一遍能看到什么）</h3>
+  <div class="card">
+    <ul>
+      <li><b>ABWC 跑出来是一张"能级 + 混合系数表"</b>：例如 CO₂ 各 (v₁,v₂,v₃) 态的 G(v)、B_v，以及费米共振双线 1285 / 1388 cm⁻¹ 对应的本征矢混合比例——直接看到两个本征态如何被费米共振"交换"能量与跃迁强度。</li>
+      <li><b>ACNC/ACNE 跑出来是一条"合成光谱"</b>：给定 J 与能量窗口，<code>SPECTRA</code> 模块输出带线宽与强度的理论 IR/拉曼谱线，可直接与实验光谱叠加对比；ACNE 的 3D DVR 还能给出分子光电子能谱（见同批 DVR 方案材料）。</li>
+    </ul>
+  </div>
+  <h3>8.4 对应的物理意义</h3>
+  <ul>
+    <li><b>费米共振是"本征态混合"而非"频率偶然接近"</b>：两个能级因非对角项 W 耦合后，本征值相互排斥（avoided crossing，最小间距 = 2|W|）、本征矢混合。ABWC 的<b>混合系数</b>正是这个混合的定量度量——它让 CO₂ 的 ν₁ 与 2ν₂ "借走"彼此的跃迁强度（intensity borrowing）。</li>
+    <li><b>DVR 的物理本质 = 在真实构型空间里直接解薛定谔方程</b>：把连续坐标离散成网格点，在每个网格点"钉"一个局域基函数，使势能算符变成几乎对角的矩阵，对角化变得高效。这是多原子分子振转能级计算的标准数值方法。</li>
+    <li><b>这一层是第 7 节的"实验台"</b>：理论哈密顿量 → 代码对角化 → 合成光谱 → 与实测比对，闭环验证费米共振与振动-转动耦合的模型是否正确。</li>
+  </ul>
 
-文档\20130106CPC\              (实际 Fortran 源代码与数据：ABWC/ACES/ACNC/ACNE/ACRW/ACWD/ACXC/ADAC/ADAL …)</div>
 </section>
 
 <!-- ============ MAP ============ -->
 <section id="map">
   <h2>9 · 统一地图</h2>
-  <p>把上面的层次收成一张图：最底下是共用地基，往上长出物质与相互作用，再往上分出三条应用支流，最顶是计算方法层。</p>
+  <p>把上面的层次收成一张图：最底下是共用地基，往上长出物质与相互作用，再往上分出应用支流；数值计算横贯分子支流的"验证层"。</p>
   <div class="stack">
-    <div class="layer"><div class="lt">计算方法层</div><div class="ld">文档\计算程序 / 20130106CPC（Fortran 光谱计算程序）——验证与拟合所有光谱</div></div>
-    <div class="layer"><div class="lt">应用支流</div><div class="ld">A. SERF 磁力仪（读磁场）&nbsp;·&nbsp; B. FADOF 滤光器（选频率）&nbsp;·&nbsp; C. 分子光谱/费米共振（CO₂ 振动耦合）</div></div>
-    <div class="layer"><div class="lt">自旋动力学</div><div class="ld">4. 极化 · Bloch方程 · 弛豫(T₁/T₂) · 自旋交换 · SERF 条件（R_se≫ω_L 且 B≈0）</div></div>
+    <div class="layer"><div class="lt">计算方法层（横贯）</div><div class="ld">对角化(ABWC/VIBOCO) + DVR(ACNC/ACNE)：把能级/光谱从定性变成可复现数字</div></div>
+    <div class="layer"><div class="lt">应用支流</div><div class="ld">A. SERF 磁力仪（读磁场）· B. FADOF 滤光器（选频率）· C. 分子振动/费米共振（CO₂ 耦合）· D. 量子动力学 / DVR 模拟（合成光谱、光电子谱）</div></div>
+    <div class="layer"><div class="lt">自旋动力学（原子支路的根）</div><div class="ld">4. 极化 · Bloch方程 · 弛豫(T₁/T₂) · 自旋交换 · SERF 条件 —— 其中"自旋弛豫"与"自旋交换"本身也是独立研究主题</div></div>
     <div class="layer"><div class="lt">光—物质相互作用</div><div class="ld">3. 吸收/色散 · 塞曼效应 · 法拉第旋光 · 光抽运</div></div>
     <div class="layer"><div class="lt">物质载体</div><div class="ld">2. 碱金属原子（Rb/K/Cs）：单电子、可见共振线、有核自旋、易成蒸气</div></div>
     <div class="layer"><div class="lt">底层地基（共用）</div><div class="ld">1. 离散能级 · 角动量/自旋 · 对称性与选择定则 · 光与物质相互作用</div></div>
   </div>
-  <p class="note">所以回答你的问题：<b>这五个主题绝非没有共同基础</b>——它们共享同一套量子力学与光谱学地基，区别只在于"往上走了哪条支流"：原子磁强仪与 FADOF 走原子自旋支路，费米共振走分子振动支路，而计算程序为后者提供数值工具。</p>
+  <p class="note">回答"还有其他分支吗"：<b>有，而且不止一个。</b>（1）<b>自旋弛豫</b>与<b>自旋交换</b>在资料里是独立主题——它们既是 SERF 的根，也可各自长成研究方向（弛豫机制分类、自旋交换截面测量）；（2）<b>DVR / 分子光电子能谱量子动力学模拟</b>是被原地图漏掉的第四支：用 3D-DVR 直接解三角分子薛定谔方程、合成光谱与光电子谱；（3）更广阔的同族领域（本资料未含）还有原子共磁强计(comagnetometer)、原子钟、Bell-Bloom 磁力仪、冷原子干涉重力仪、核自旋惰性气体(³He/¹²⁹Xe)等。区别只在于"从同一套地基往上走了哪条支流"。</p>
 </section>
 
 <div class="footer">
   本页为 <code>ACADEMIC</code> 资料库的自底向上导览，内容综合自公开文献（SERF 灵敏度、自旋交换截面、FADOF 带宽、费米共振 CO₂ 双峰等）。
-  做严肃研究请以原始论文为准。对应原始文件见 <code>项目归档/</code> 下各主题子目录的 index.html。
+  做严肃研究请以原始论文为准；本文数值结论应以程序实际输出为准。
 </div>
 </main>
 </div>
