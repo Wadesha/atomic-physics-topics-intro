@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>交互 20 · SERF 灵敏度标度律（合成）</title>
+<link rel="stylesheet" href="common.css">
+<style>
+  body{max-width:1180px;margin:0 auto;padding:22px 18px 64px;}
+  .topbar{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-bottom:6px;font-size:14px;}
+  .topbar a{color:var(--acc,#38bdf8);text-decoration:none;}
+  .topbar a:hover{text-decoration:underline;}
+  .pagetitle{font-size:21px;margin:8px 0 2px;}
+  .sub{color:var(--mut,#9aa4b2);font-size:14px;margin:0 0 14px;}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <a href="index.html">← 子站总目录</a>
+  <a href="../index.html">↩ 完整导览主页</a>
+</header>
+<h1 class="pagetitle">交互 20：SERF 灵敏度标度律（合成） <span class="badge sim" style="background:#7f1d1d;color:#fecaca;border-color:#991b1b">模拟展示 · 非实验数据</span></h1>
+<p class="sub">JS 实时计算 · 非查表</p>
+<main>
+<p class="simwarn">⚠ 本演示只画<b>标度律</b>（如 δB_min ∝ 1/√(N·T)），不拟合任何真实器件数据；曲线形状来自公式而非实验测量。</p>
+<div class="demo">
+    <h4>交互 20：SERF 灵敏度标度律（合成）<span class="badge sim" style="background:#7f1d1d;color:#fecaca;border-color:#991b1b">模拟展示 · 仅标度</span></h4>
+    <div class="ctl">
+      <label>原子数 N <input id="sfN" type="range" min="1" max="100" step="1" value="20"><span class="val" id="sfNv">20</span> ×10¹²</label>
+      <label>积分时间 T <input id="sfT" type="range" min="0.1" max="10" step="0.1" value="1"><span class="val" id="sfTv">1.0</span> s</label>
+    </div>
+    <canvas id="cSerf" width="1200" height="390"></canvas>
+    <div class="out" id="oSerf"></div>
+  </div>
+</main>
+<footer class="footer">本页为原子物理 / 量子光学主题自底向上导览的独立交互演示（子站）。数值结论以程序实际输出为准。</footer>
+<script src="common.js"></script>
+<script>
+(function(){
+  var sN=document.getElementById('sfN'), sT=document.getElementById('sfT');
+  var vN=document.getElementById('sfNv'), vT=document.getElementById('sfTv');
+  var out=document.getElementById('oSerf');
+  function f(N,T){return 1/Math.sqrt(N*1e12*T);}
+  function draw(){
+    var N=+sN.value, T=+sT.value; vN.textContent=N; vT.textContent=T.toFixed(1);
+    var o=ctxOf('cSerf'),c=o.c,g=o.g,W=c.width,H=c.height;
+    var x0=70,x1=W-40,y0=H-40,y1=40; axis(g,x0,y0,x1,y1);
+    var fmax=f(1,0.1),fmin=f(100,10);
+    g.strokeStyle='#7dd3fc';g.lineWidth=2;g.beginPath();
+    for(var i=0;i<=200;i++){var n=1+99*i/200,y=f(n,T);
+      var px=x0+(n-1)/99*(x1-x0),py=y0-(y-fmin)/(fmax-fmin)*(y0-y1);if(i===0)g.moveTo(px,py);else g.lineTo(px,py);}g.stroke();
+    var px=x0+(N-1)/99*(x1-x0),py=y0-(f(N,T)-fmin)/(fmax-fmin)*(y0-y1);
+    g.fillStyle='#fca5a5';g.beginPath();g.arc(px,py,5,0,7);g.fill();
+    txt(g,'δB_min ∝ 1/√(N·T) （相对单位）',x0,y1-10,'#9aa4b2',12,'left');
+    out.innerHTML='⚠ 仅标度关系（相对值，未校准到具体仪器）。\n'+
+      '当前 N='+N+'×10¹², T='+T.toFixed(1)+' s → δB_min ∝ '+f(N,T).toExponential(2)+'（相对单位）。\n'+
+      'SERF 还要求在 B < B_SERF∝√(R_se·T₂)/γ 的低场窗口内才成立；超出窗口自旋交换弛豫塌缩，灵敏度骤降。';
+  }
+  sN.oninput=draw;sT.oninput=draw;draw();
+})();
+</script>
+</body>
+</html>
