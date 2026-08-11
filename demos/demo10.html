@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>交互 10 · ⁸⁷Rb 基态 8 条塞曼子能级 vs 磁场</title>
+<link rel="stylesheet" href="common.css">
+<style>
+  body{max-width:1180px;margin:0 auto;padding:22px 18px 64px;}
+  .topbar{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-bottom:6px;font-size:14px;}
+  .topbar a{color:var(--acc,#38bdf8);text-decoration:none;}
+  .topbar a:hover{text-decoration:underline;}
+  .pagetitle{font-size:21px;margin:8px 0 2px;}
+  .sub{color:var(--mut,#9aa4b2);font-size:14px;margin:0 0 14px;}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <a href="index.html">← 子站总目录</a>
+  <a href="../index.html">↩ 完整导览主页</a>
+</header>
+<h1 class="pagetitle">交互 10：⁸⁷Rb 基态 8 条塞曼子能级 vs 磁场 </h1>
+<p class="sub">实时 B_max</p>
+<main>
+
+<div class="demo">
+    <h4>交互 10：⁸⁷Rb 基态 8 条塞曼子能级 vs 磁场<span class="badge">实时 B_max</span></h4>
+    <div class="ctl">
+      <label>最大磁场 B <input id="brB" type="range" min="0.1" max="2" step="0.1" value="1"><span class="val" id="brBv">1.0</span> T</label>
+    </div>
+    <canvas id="cBR" width="1200" height="430"></canvas>
+    <div class="out" id="oBR"></div>
+  </div>
+</main>
+<footer class="footer">本页为原子物理 / 量子光学主题自底向上导览的独立交互演示（子站）。数值结论以程序实际输出为准。</footer>
+<script src="common.js"></script>
+<script>
+(function(){
+  var sB=document.getElementById('brB'), vB=document.getElementById('brBv');
+  var out=document.getElementById('oBR');
+  var gJ=2.002319304, gI=-0.000995141, mub=13996.245, mun=7.622593, A=3417.341;
+  var dE=4*A;
+  function E(F,m,B){var sgn=(F===2)?1:-1;var x=(gJ*mub+gI*mun)*B/dE;
+    return -0.5*dE - gI*mun*m*B + sgn*(dE/4)*Math.sqrt(1+4*m*x/(2*1.5+1)+x*x);}
+  function draw(){
+    var Bmax=+sB.value; vB.textContent=Bmax.toFixed(1);
+    var o=ctxOf('cBR'),c=o.c,g=o.g,W=c.width,H=c.height;
+    var x0=70,x1=W-110,y0=H-40,y1=50; axis(g,x0,y0,x1,y1);
+    var levels=[];for(var m=-2;m<=2;m++)levels.push({F:2,m:m});for(var m=-1;m<=1;m++)levels.push({F:1,m:m});
+    var cols=['#fca5a5','#fde68a','#86efac','#7dd3fc','#c4b5fd'];
+    var allE=[];levels.forEach(function(L){for(var i=0;i<=60;i++)allE.push(E(L.F,L.m,Bmax*i/60));});
+    var emin=Math.min.apply(null,allE)-30,emax=Math.max.apply(null,allE)+30;
+    function Y(e){return y0-(e-emin)/(emax-emin)*(y0-y1);}
+    levels.forEach(function(L){var col=cols[(L.F===2?L.m+2:L.m+1+5)%cols.length];
+      g.strokeStyle=col;g.lineWidth=2;g.beginPath();
+      for(var i=0;i<=120;i++){var B=Bmax*i/120,e=E(L.F,L.m,B);
+        var px=x0+B/Bmax*(x1-x0),py=Y(e);if(i===0)g.moveTo(px,py);else g.lineTo(px,py);}g.stroke();
+      txt(g,(L.F===2?'F=2':'F=1')+' m='+L.m,x1+6,Y(E(L.F,L.m,Bmax)),col,11,'left');});
+    txt(g,'B (T)',(x0+x1)/2,y0+28,'#9aa4b2',12,'center');
+    out.innerHTML='零场超精细分裂 2A = <b>'+(2*A).toFixed(1)+' MHz</b> ≈ 6.835 GHz（与实验 6.8347 GHz 一致）\n'+
+      'F=2（5 条）+ F=1（3 条）共 '+levels.length+' 条塞曼子能级。B≈0.5 T 后进入 Paschen–Back：斜率→m_F·g_J·μ_B，两组交叉散开。';
+  }
+  sB.oninput=draw;draw();
+})();
+</script>
+</body>
+</html>
