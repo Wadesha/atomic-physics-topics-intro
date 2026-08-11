@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>交互 7 · T(Δ) 随轴向磁场 B 开启</title>
+<link rel="stylesheet" href="common.css">
+<style>
+  body{max-width:1180px;margin:0 auto;padding:22px 18px 64px;}
+  .topbar{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-bottom:6px;font-size:14px;}
+  .topbar a{color:var(--acc,#38bdf8);text-decoration:none;}
+  .topbar a:hover{text-decoration:underline;}
+  .pagetitle{font-size:21px;margin:8px 0 2px;}
+  .sub{color:var(--mut,#9aa4b2);font-size:14px;margin:0 0 14px;}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <a href="index.html">← 子站总目录</a>
+  <a href="../index.html">↩ 完整导览主页</a>
+</header>
+<h1 class="pagetitle">交互 7：T(Δ) 随轴向磁场 B 开启 </h1>
+<p class="sub">实时画 T–Δ 曲线</p>
+<main>
+
+<div class="demo">
+    <h4>交互 7：T(Δ) 随轴向磁场 B 开启<span class="badge">实时画 T–Δ 曲线</span></h4>
+    <div class="ctl">
+      <label>轴向磁场 B <input id="faB" type="range" min="0" max="500" step="5" value="0"><span class="val" id="faBv">0 nT</span></label>
+      <label>失谐区间 ±<input id="faR" type="range" min="1" max="6" step="0.5" value="3"><span class="val" id="faRv">3</span></label>
+    </div>
+    <canvas id="cFadof" width="1200" height="420"></canvas>
+    <div class="out" id="oFadof"></div>
+  </div>
+</main>
+<footer class="footer">本页为原子物理 / 量子光学主题自底向上导览的独立交互演示（子站）。数值结论以程序实际输出为准。</footer>
+<script src="common.js"></script>
+<script>
+(function(){
+  var sB=document.getElementById('faB'), vB=document.getElementById('faBv');
+  var sW=document.getElementById('faR'), vW=document.getElementById('faRv');
+  var out=document.getElementById('oFadof'), cv='cFadof';
+  var gamma=0.3;
+  function disp(d){return d/(d*d+gamma*gamma);}
+  function Tr(delta,B){var dB=B*1e-3; var th=0.5*(disp(delta-dB)-disp(delta+dB)); return Math.sin(th)*Math.sin(th);}
+  function draw(){
+    var B=+sB.value; vB.textContent=B+' nT';
+    var W=+sW.value; vW.textContent=W;
+    var dm=W*gamma;
+    var o=ctxOf(cv), g=o.g, cw=o.c.width, ch=o.c.height;
+    var L=70,Rr=cw-30,T=24,Bm=ch-44;
+    var X=function(d){return L+(d+dm)/(2*dm)*(Rr-L);};
+    var Y=function(t){return Bm-t*(Bm-T);};
+    axis(g,L,T,Rr,Bm);
+    g.strokeStyle='#1b212a';g.lineWidth=1;
+    for(var t=0.2;t<=1.001;t+=0.2){var yy=Y(t);g.beginPath();g.moveTo(L,yy);g.lineTo(Rr,yy);g.stroke();txt(g,t.toFixed(1),L-8,yy+4,'#5f6b7a',11,'right');}
+    for(var d=-dm;d<=dm+1e-9;d+=dm/3){g.beginPath();g.moveTo(X(d),T);g.lineTo(X(d),Bm);g.stroke();txt(g,d.toFixed(2),X(d),Bm+18,'#5f6b7a',11,'center');}
+    var pts=[]; for(var i=0;i<=400;i++){var dd=-dm+2*dm*i/400; pts.push([X(dd),Y(Tr(dd,B))]);}
+    g.strokeStyle='#fca5a5';g.lineWidth=2.6;g.beginPath();pts.forEach(function(p,i){i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]);});g.stroke();
+    g.fillStyle='#86efac';g.beginPath();g.arc(X(0),Y(Tr(0,B)),5,0,6.2832);g.fill();
+    txt(g,'T(Δ)  透过率',L-8,T-8,'#9aa4b2',12,'right');
+    txt(g,'失谐 Δ  (±'+(dm).toFixed(2)+')',(L+Rr)/2,ch-10,'#9aa4b2',12,'center');
+    txt(g,'B=0→全消光(T=0)；B↑→中心透射开启',Rr,T+4,'#5f6b7a',11.5,'right');
+    var T0=Tr(0,B), Tside=Tr(3*gamma,B);
+    out.innerHTML='轴向磁场 B = <b>'+B+' nT</b>    窗口半宽 = '+W+'γ\n'+
+      '中心透过率 T(Δ=0) = <b>'+T0.toFixed(4)+'</b>    偏离 3γ 处 T = '+Tside.toFixed(4)+'\n'+
+      (B===0?'B=0：两条圆偏振色散峰完全重合，θ=0，交叉偏振全消光（T=0）——这就是 FADOF 的"关"态。'
+            :(T0>0.5?'B 足够大：中心形成强透射窗口，FADOF 滤光片处于工作点。'
+                    :'B 较小：透射刚开启，窗口尚浅，继续增大 B 使旋转角 θ 增大。'));
+  }
+  sB.oninput=draw; sW.oninput=draw; draw();
+})();
+</script>
+</body>
+</html>
