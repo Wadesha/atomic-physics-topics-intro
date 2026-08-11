@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>交互 13 · DAVLL 信号 vs 失谐/磁场</title>
+<link rel="stylesheet" href="common.css">
+<style>
+  body{max-width:1180px;margin:0 auto;padding:22px 18px 64px;}
+  .topbar{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-bottom:6px;font-size:14px;}
+  .topbar a{color:var(--acc,#38bdf8);text-decoration:none;}
+  .topbar a:hover{text-decoration:underline;}
+  .pagetitle{font-size:21px;margin:8px 0 2px;}
+  .sub{color:var(--mut,#9aa4b2);font-size:14px;margin:0 0 14px;}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <a href="index.html">← 子站总目录</a>
+  <a href="../index.html">↩ 完整导览主页</a>
+</header>
+<h1 class="pagetitle">交互 13：DAVLL 信号 vs 失谐/磁场 </h1>
+<p class="sub">实时 B / Δ₀</p>
+<main>
+
+<div class="demo">
+    <h4>交互 13：DAVLL 信号 vs 失谐/磁场<span class="badge">实时 B / Δ₀</span></h4>
+    <div class="ctl">
+      <label>磁场 B <input id="dvB" type="range" min="0" max="3" step="0.1" value="1"><span class="val" id="dvBv">1.0</span> G</label>
+      <label>中心失谐 Δ₀ <input id="dvC" type="range" min="-2" max="2" step="0.1" value="0"><span class="val" id="dvCv">0.0</span></label>
+    </div>
+    <canvas id="cDavll" width="1200" height="400"></canvas>
+    <div class="out" id="oDavll"></div>
+  </div>
+</main>
+<footer class="footer">本页为原子物理 / 量子光学主题自底向上导览的独立交互演示（子站）。数值结论以程序实际输出为准。</footer>
+<script src="common.js"></script>
+<script>
+(function(){
+  var sB=document.getElementById('dvB'), sC=document.getElementById('dvC');
+  var vB=document.getElementById('dvBv'), vC=document.getElementById('dvCv');
+  var out=document.getElementById('oDavll');
+  function absp(x,ctr,wid){return 1/(1+Math.pow((x-ctr)/wid,2));}
+  function draw(){
+    var B=+sB.value, c0=+sC.value; vB.textContent=B.toFixed(1); vC.textContent=c0.toFixed(1);
+    var o=ctxOf('cDavll'),c=o.c,g=o.g,W=c.width,H=c.height;
+    var x0=70,x1=W-40,y0=H-40,y1=40; axis(g,x0,y0,x1,y1);
+    var xmax=5,wid=0.4,zs=0.05*B;
+    var sigp=function(x){return absp(x,c0-zs,wid);};
+    var sigm=function(x){return absp(x,c0+zs,wid);};
+    var davll=function(x){return sigp(x)-sigm(x);};
+    function P(fn,col,dash){g.strokeStyle=col;g.lineWidth=2;g.setLineDash(dash?[6,4]:[]);g.beginPath();
+      for(var i=0;i<=400;i++){var x=-xmax+2*xmax*i/400,y=fn(x);
+        var px=x0+(x+xmax)/(2*xmax)*(x1-x0),py=y0-(y+1.05)/2.1*(y0-y1);if(i===0)g.moveTo(px,py);else g.lineTo(px,py);}g.stroke();g.setLineDash([]);}
+    P(sigp,'#7dd3fc',false);P(sigm,'#86efac',false);P(davll,'#fca5a5',false);
+    txt(g,'σ⁺',x1-10,y0-(sigp(c0)+1.05)/2.1*(y0-y1)-6,'#7dd3fc',12,'right');
+    txt(g,'σ⁻',x1-10,y0-(sigm(c0)+1.05)/2.1*(y0-y1)-22,'#86efac',12,'right');
+    txt(g,'DAVLL',x1-10,y0-(davll(c0)+1.05)/2.1*(y0-y1)-40,'#fca5a5',12,'right');
+    out.innerHTML='DAVLL = A(σ⁺) − A(σ⁻)：两吸收峰因塞曼位移（∝ B）错开，其差在原子共振 c0 处<b>过零</b>。\n'+
+      '当前 B='+B.toFixed(1)+' G，过零斜率 ∝ 塞曼分裂；把激光频率压在过零点即稳频。B 越大两峰分得越开、斜率越陡。';
+  }
+  sB.oninput=draw;sC.oninput=draw;draw();
+})();
+</script>
+</body>
+</html>
