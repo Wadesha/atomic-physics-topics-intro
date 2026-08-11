@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>交互 3 · SERF 窗口</title>
+<link rel="stylesheet" href="common.css">
+<style>
+  body{max-width:1180px;margin:0 auto;padding:22px 18px 64px;}
+  .topbar{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-bottom:6px;font-size:14px;}
+  .topbar a{color:var(--acc,#38bdf8);text-decoration:none;}
+  .topbar a:hover{text-decoration:underline;}
+  .pagetitle{font-size:21px;margin:8px 0 2px;}
+  .sub{color:var(--mut,#9aa4b2);font-size:14px;margin:0 0 14px;}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <a href="index.html">← 子站总目录</a>
+  <a href="../index.html">↩ 完整导览主页</a>
+</header>
+<h1 class="pagetitle">交互 3：SERF 窗口 </h1>
+<p class="sub">左：自旋进动实时积分；右：线宽随 B 塌缩</p>
+<main>
+
+<div class="demo">
+    <h4>交互 3：SERF 窗口<span class="badge">左：自旋进动实时积分；右：线宽随 B 塌缩</span></h4>
+    <div class="ctl">
+      <label>磁场 B <input id="bB" type="range" min="-1" max="3" step="0.05" value="1"><span class="val" id="bBv">10 nT</span></label>
+      <label>自旋交换率 R<sub>se</sub> <input id="bR" type="range" min="3" max="6" step="0.1" value="5"><span class="val" id="bRv">1e5 /s</span></label>
+      <label>破坏弛豫 R<sub>sd</sub> <input id="bS" type="range" min="1" max="500" step="1" value="30"><span class="val" id="bSv">30 /s</span></label>
+    </div>
+    <canvas id="cBloch" width="1200" height="380"></canvas>
+    <div class="out" id="oBloch"></div>
+  </div>
+</main>
+<footer class="footer">本页为原子物理 / 量子光学主题自底向上导览的独立交互演示（子站）。数值结论以程序实际输出为准。</footer>
+<script src="common.js"></script>
+<script>
+(function(){
+  var sB=document.getElementById('bB'), sR=document.getElementById('bR'), sS=document.getElementById('bS');
+  var vB=document.getElementById('bBv'), vR=document.getElementById('bRv'), vS=document.getElementById('bSv');
+  var out=document.getElementById('oBloch');
+  var GAM=2*Math.PI*7.0e9;   /* rad/s/T ；γ/2π = 7 Hz/nT */
+  var Q=6;
+
+  function width(Bnt,Rse,Rsd){var w0=GAM*Bnt*1e-9;return Rsd+Q*w0*w0/Rse;}
+  function draw(){
+    var Bnt=Math.pow(10,+sB.value), Rse=Math.pow(10,+sR.value), Rsd=+sS.value;
+    vB.textContent=(Bnt<1?Bnt.toFixed(2):Bnt.toFixed(1))+' nT';
+    vR.textContent=Rse.toExponential(0).replace('+','')+' /s';
+    vS.textContent=Rsd+' /s';
+    var G=width(Bnt,Rse,Rsd), T2=1/G, f0=GAM*Bnt*1e-9/(2*Math.PI);
+    var o=ctxOf('cBloch'), g=o.g, cw=o.c.width, ch=o.c.height, MID=cw/2-10;
+
+    /* --- 左：RK4 积分自旋进动 --- */
+    var L=60,Rr=MID-20,T=26,B=ch-40;
+    axis(g,L,T,Rr,B);
+    var tmax=Math.max(3*T2,0.6/Math.max(f0,1)); tmax=Math.min(tmax,0.25);
+    var nst=900, dt=tmax/nst, S=[1,0,0], pts=[], env=[];
+    var w=GAM*Bnt*1e-9;
+    function f(s){return [ w*s[1]-s[0]*G, -w*s[0]-s[1]*G, 0 ];}
+    for(var i=0;i<=nst;i++){
+      pts.push([i*dt,S[0]]); env.push([i*dt,Math.exp(-i*dt*G)]);
+      var k1=f(S),k2=f([S[0]+.5*dt*k1[0],S[1]+.5*dt*k1[1],0]),
+          k3=f([S[0]+.5*dt*k2[0],S[1]+.5*dt*k2[1],0]),
+          k4=f([S[0]+dt*k3[0],S[1]+dt*k3[1],0]);
+      S=[S[0]+dt/6*(k1[0]+2*k2[0]+2*k3[0]+k4[0]), S[1]+dt/6*(k1[1]+2*k2[1]+2*k3[1]+k4[1]),0];
+    }
+    var X1=function(t){return L+t/tmax*(Rr-L);}, Y1=function(v){return (T+B)/2 - v*(B-T)/2*0.9;};
+    g.strokeStyle='#1b212a';g.beginPath();g.moveTo(L,Y1(0));g.lineTo(Rr,Y1(0));g.stroke();
+    g.strokeStyle='#3f4b5a';g.lineWidth=1.3;g.setLineDash([4,4]);
+    [1,-1].forEach(function(sg){g.beginPath();env.forEach(function(p,i){var px=X1(p[0]),py=Y1(sg*p[1]);
+      i?g.lineTo(px,py):g.moveTo(px,py);});g.stroke();});
+    g.setLineDash([]);
+    g.strokeStyle='#7dd3fc';g.lineWidth=2;g.beginPath();
+    pts.forEach(function(p,i){var px=X1(p[0]),py=Y1(p[1]);i?g.lineTo(px,py):g.moveTo(px,py);});g.stroke();
+    txt(g,'Sx(t)  —  RK4 积分  dS/dt = γS×B − ΓS⊥',L,T-8,'#9aa4b2',12);
+    txt(g,'t / s  (0 → '+tmax.toExponential(1)+')',(L+Rr)/2,ch-10,'#9aa4b2',11.5,'center');
+    txt(g,'虚线 = exp(−Γt) 包络',Rr,B-6,'#5f6b7a',11,'right');
+
+    /* --- 右：线宽随 B 塌缩（log-log） --- */
+    var L2=MID+50,R2=cw-30;
+    axis(g,L2,T,R2,B);
+    var bmin=-1,bmax=3;                      /* 0.1 .. 1000 nT */
+    var vals=[]; for(var k=0;k<=200;k++){var lb=bmin+(bmax-bmin)*k/200; vals.push([lb,width(Math.pow(10,lb),Rse,Rsd)/(2*Math.PI)]);}
+    var lmin=Math.log10(Math.max(Rsd/(2*Math.PI)*0.4,1e-3)), lmax=Math.log10(vals[200][1]*1.6);
+    var X2=function(lb){return L2+(lb-bmin)/(bmax-bmin)*(R2-L2);};
+    var Y2=function(v){return B-(Math.log10(Math.max(v,1e-6))-lmin)/(lmax-lmin)*(B-T);};
+    g.strokeStyle='#1b212a';g.lineWidth=1;
+    for(var d=Math.ceil(lmin);d<=Math.floor(lmax);d++){g.beginPath();g.moveTo(L2,Y2(Math.pow(10,d)));
+      g.lineTo(R2,Y2(Math.pow(10,d)));g.stroke();
+      txt(g,'1e'+d,L2-6,Y2(Math.pow(10,d))+4,'#5f6b7a',10.5,'right');}
+    for(var d2=bmin;d2<=bmax;d2++){g.beginPath();g.moveTo(X2(d2),T);g.lineTo(X2(d2),B);g.stroke();
+      txt(g,(Math.pow(10,d2)>=1?Math.pow(10,d2):0.1)+'',X2(d2),B+17,'#5f6b7a',10.5,'center');}
+    /* 自旋破坏底线 */
+    g.strokeStyle='#4b5563';g.lineWidth=1.4;g.setLineDash([5,4]);
+    g.beginPath();g.moveTo(L2,Y2(Rsd/(2*Math.PI)));g.lineTo(R2,Y2(Rsd/(2*Math.PI)));g.stroke();g.setLineDash([]);
+    txt(g,'自旋破坏底线 Rsd/2π',L2+6,Y2(Rsd/(2*Math.PI))-6,'#6b7480',11);
+    g.strokeStyle='#fca5a5';g.lineWidth=2.6;g.beginPath();
+    vals.forEach(function(p,i){var px=X2(p[0]),py=Y2(p[1]);i?g.lineTo(px,py):g.moveTo(px,py);});g.stroke();
+    var cl=Math.log10(Bnt);
+    g.fillStyle='#86efac';g.beginPath();g.arc(X2(cl),Y2(G/(2*Math.PI)),5.5,0,6.2832);g.fill();
+    g.strokeStyle='#0a0c10';g.lineWidth=2;g.stroke();
+    txt(g,'磁共振线宽 / Hz   (log-log)',L2,T-8,'#9aa4b2',12);
+    txt(g,'B / nT',(L2+R2)/2,ch-10,'#9aa4b2',11.5,'center');
+
+    var se=Q*w*w/Rse;
+    out.innerHTML=
+      'B = <b>'+(Bnt<1?Bnt.toFixed(3):Bnt.toFixed(2))+' nT</b>   拉莫尔频率 ω₀/2π = '+f0.toFixed(3)+' Hz\n'+
+      '自旋交换展宽 R_se_eff = q·ω₀²/R_se = 6×('+w.toFixed(1)+')²/'+Rse.toExponential(0)+' = <i>'+se.toFixed(3)+' /s</i>'+
+      '     自旋破坏 R_sd = '+Rsd+' /s\n'+
+      '总弛豫 Γ = '+G.toFixed(2)+' /s  →  T₂ = <b>'+(T2*1000).toFixed(3)+' ms</b>   线宽 = <b>'+(G/(2*Math.PI)).toFixed(3)+' Hz</b>\n'+
+      (se<Rsd*0.1
+        ? '✔ <b>SERF 区</b>：自旋交换展宽只占总弛豫的 '+(100*se/G).toFixed(1)+'%，已被"自己关掉"，线宽由自旋破坏碰撞封顶。'
+        : (se>Rsd*10
+           ? '✘ 自旋交换主导：占总弛豫 '+(100*se/G).toFixed(1)+'%，线宽被展宽 '+(G/Rsd).toFixed(0)+' 倍——普通磁力仪就卡在这里。'
+           : '过渡区：自旋交换占 '+(100*se/G).toFixed(1)+'%，继续降 B 或升 R_se 即可进入 SERF。'));
+  }
+  sB.oninput=draw; sR.oninput=draw; sS.oninput=draw; draw();
+})();
+</script>
+</body>
+</html>
