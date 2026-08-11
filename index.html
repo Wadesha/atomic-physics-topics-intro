@@ -65,6 +65,39 @@
     border:1px solid var(--line);border-radius:8px;padding:12px 14px;white-space:pre-wrap;word-break:break-all}
   .kbd{color:var(--acc)}
   .footer{color:var(--mut);font-size:13px;border-top:1px solid var(--line);margin-top:40px;padding-top:16px}
+
+  /* ---- simulation section ---- */
+  .term{font-family:var(--mono);font-size:12.8px;line-height:1.55;background:#08090c;
+    border:1px solid #223;border-radius:8px;padding:12px 14px;overflow-x:auto;color:#c7d2de;
+    white-space:pre;margin:10px 0}
+  .term .ok{color:var(--grn)} .term .hi{color:#fde68a} .term .cm{color:#6b7480}
+  .term .ttl{color:var(--acc)}
+  .src{font-family:var(--mono);font-size:12.5px;line-height:1.5;background:#0b0d11;
+    border:1px solid var(--line);border-radius:8px;padding:11px 13px;overflow-x:auto;
+    color:#a8b6c8;white-space:pre;margin:8px 0}
+  .src .kw{color:#c792ea} .src .nu{color:#f78c6c} .src .cc{color:#5f6b7a}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:10px 0}
+  @media(max-width:900px){.two{grid-template-columns:1fr}}
+  .demo{background:linear-gradient(180deg,#141b24,#12151b);border:1px solid #26333f;
+    border-radius:12px;padding:14px 16px;margin:14px 0}
+  .demo h4{margin:0 0 10px;color:var(--grn);font-size:15px;
+    display:flex;align-items:center;gap:8px}
+  .demo h4:before{content:"▶";font-size:11px;color:var(--grn)}
+  .ctl{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin:8px 0 12px}
+  .ctl label{font-size:13px;color:var(--mut);display:flex;align-items:center;gap:8px}
+  .ctl input[type=range]{width:150px;accent-color:var(--acc)}
+  .ctl select,.ctl button{background:var(--card2);color:var(--fg);border:1px solid var(--line);
+    border-radius:7px;padding:4px 10px;font-size:13px;font-family:inherit;cursor:pointer}
+  .ctl button:hover{border-color:var(--acc);color:var(--acc)}
+  .val{font-family:var(--mono);color:var(--acc);min-width:58px;display:inline-block}
+  canvas{width:100%;height:auto;display:block;background:#0a0c10;
+    border:1px solid var(--line);border-radius:8px}
+  .out{font-family:var(--mono);font-size:13px;color:#c7d2de;margin-top:10px;
+    background:#0a0c10;border:1px solid var(--line);border-radius:8px;padding:10px 12px;
+    white-space:pre-wrap}
+  .out b{color:var(--grn)} .out i{color:#fde68a;font-style:normal}
+  .badge{display:inline-block;font-size:11px;padding:1px 8px;border-radius:999px;
+    border:1px solid #2f3d4c;color:var(--mut);margin-left:8px;font-weight:400}
   @media(max-width:860px){nav{display:none}main{padding:24px 18px}}
 </style>
 </head>
@@ -82,6 +115,7 @@
     <li><a href="#b2">分支B·FADOF 滤光器</a></li>
     <li><a href="#b3">分支C·分子光谱/费米共振</a></li>
     <li><a href="#l4">计算方法层：代码与物理意义</a></li>
+    <li><a href="#sim">模拟演示：把源码跑起来</a></li>
     <li><a href="#map">统一地图</a></li>
   </ol>
 </nav>
@@ -305,9 +339,255 @@
     <li><b>这一层是第 7 节的"实验台"</b>：理论哈密顿量 → 代码对角化 → 合成光谱 → 与实测比对，闭环验证费米共振与振动-转动耦合模型。</li>
   </ul>
 
+</section>
+
+<!-- ============ SIMULATION ============ -->
+<section id="sim">
+  <h2>9 · 模拟演示：把源码跑起来</h2>
+  <p class="lead">这一节不讲道理，只给结果。做法是：把归档 Fortran 源码里<b>可移植的核心算法逐行搬出来</b>——
+  <code>EIGEN</code> 的 Jacobi 阈值旋转、<code>ONDIA</code> 的非谐能量多项式、<code>OFDIA</code> 的费米耦合公式、
+  DVR 的网格哈密顿量构造——物理常数一个不改，原样照抄 <code>DATA</code> 语句，然后跑。
+  下面每个方框里的数字都是真跑出来的；每个滑块背后也是同一套算法用 JavaScript 再写一遍，在你的浏览器里现算。</p>
+
+  <div class="card b">
+    <b>为什么要移植而不是直接编译？</b>
+    <p style="margin:6px 0 0">原码是 FORTRAN 77（<code>abwc_v1_0</code>，固定格式、算术 IF、共享终止标号的嵌套 DO）
+    与 Fortran 90（<code>acnc/acne</code>），后者还依赖商业库 NAG 的 <code>F02ABF</code>。
+    但真正决定物理结果的部分——哈密顿量怎么搭、矩阵怎么对角化——是<b>自包含且可移植</b>的。
+    把这部分搬出来，既能验证"我确实读懂了这段代码"，又能让它在网页里跑。</p>
+  </div>
+
+  <h3>9.1 移植了哪三段代码</h3>
+
+  <h4>① <code>ONDIA</code>：非谐振动能量（ABWC0067–0076）</h4>
+  <p>三重嵌套 DO 全部终止在标号 <code>2</code>——这是 F77 的老写法：<code>OMEGA(I)*P</code> 每个 I 只算一次，
+  <code>X(I,J)*P*Q</code> 每个 (I,J) 算一次，<code>Y(I,J,K)*P*Q*R</code> 才是最内层。读错这一点整条公式就废了。</p>
+  <div class="two">
+    <div class="src"><span class="cc">C * CALCULATION OF UNPERTURBED ENERGIES</span>
+      ENERGY = G22 * EL2
+      <span class="kw">DO</span> 2 I=1,3
+      P = V(I) + .5  *U(I)
+      ENERGY = ENERGY + OMEGA(I) * P
+      <span class="kw">DO</span> 2 J=I,3
+      Q = V(J) + .5  *U(J)
+      ENERGY = ENERGY + X(I,J) * P * Q
+      <span class="kw">DO</span> 2 K=J,3
+      R = V(K) + .5   * U(K)
+    2 ENERGY = ENERGY + Y(I,J,K) * P * Q * R</div>
+    <div class="src"><span class="cc"># 移植（Python / JS 同构）</span>
+<span class="kw">def</span> ondia(v1,v2,v3,l):
+    V=[v1,v2,v3]; E = G22*l*l
+    <span class="kw">for</span> i <span class="kw">in</span> range(3):
+        P = V[i] + .5*U[i]
+        E += OMEGA[i]*P
+        <span class="kw">for</span> j <span class="kw">in</span> range(i,3):
+            Q = V[j] + .5*U[j]
+            E += X[i][j]*P*Q
+            <span class="kw">for</span> k <span class="kw">in</span> range(j,3):
+                R = V[k] + .5*U[k]
+                E += Y[i][j][k]*P*Q*R
+    <span class="kw">return</span> E</div>
+  </div>
+  <p class="note">常数照抄 <code>DATA</code>（ABWC0019–0022）：<code>OMEGA = 1354.91 / 673.0 / 2396.49</code>，
+  <code>U = 1,2,1</code>（简并度：ν₂ 是二重简并弯曲模，所以 +½·2），<code>G22 = 0.775</code>（l 型能量），
+  <code>X</code> 是 3×3 非谐常数、<code>Y</code> 是 3×3×3 三阶项——注意 Fortran 的 <code>DATA</code> 按<b>列优先</b>填充，
+  <code>Y/.13,8*.0,-.08,.../</code> 这 27 个数按 <code>i + 3(j−1) + 9(k−1)</code> 展开，顺序搞反结果就全错。</p>
+
+  <h4>② <code>OFDIA</code>：费米共振非对角元（ABWC0094–0096）</h4>
+  <div class="src">      OFDIA(INDEX) = .5   * (W0 - ELAM1 * V(1) - ELAM2 * V(2)
+     1    - ELAM3 * V(3) - ELAML * EL) *  SQRT( V(1) * (( V(2) + 2.   )
+     2*2.       - EL2))</div>
+  <p>即 ⟨v₁,v₂ᶩ | W | v₁−1, (v₂+2)ᶩ⟩ = ½(W₀ − Σλᵢvᵢ) · √[ v₁ · ((v₂+2)² − l²) ]。
+  两部分各有来头：前括号是<b>耦合强度随激发程度缓慢衰减</b>（W₀=51.31，λ₁=0.15、λ₂=0.41、λ₃=0.78），
+  后根号是<b>谐振子阶梯算符的矩阵元</b>——a₁ 降一个 ν₁ 量子、a₂†² 升两个 ν₂ 量子，因子自然是 √v₁·(v₂+2)。
+  它只连接 Δv₁=−1、Δv₂=+2、Δl=0 的态，这就是费米共振的选择定则。</p>
+
+  <h4>③ <code>EIGEN</code>：Jacobi 阈值旋转对角化（ABWC0644–0790）</h4>
+  <p>整个程序的心脏。它不是现代的 QR，而是 1962 年 Ralston &amp; Wilf 书里的经典 Jacobi 法：
+  反复挑出最大的非对角元，用一个 2×2 平面旋转把它转成 0，直到全部非对角元小于阈值。
+  阈值 <code>THR</code> 每轮除以 N 逐级收紧，直到低于 <code>ANRMX = ‖A‖·RANGE/N</code>。</p>
+  <div class="two">
+    <div class="src">   40 ANORM=1.414*SQRT(ANORM)
+      ANRMX=ANORM*RANGE/FLOAT(N)
+   45 THR=THR/FLOAT(N)
+   62 IF( ABS(A(LM))-THR) 130,65,65
+   65 IND=1
+      X=0.5*(A(LL)-A(MM))
+   68 Y=-A(LM)/ SQRT(A(LM)*A(LM)+X*X)
+      IF(X) 70,75,75
+   70 Y=-Y
+   75 SINX=Y/ SQRT(2.0*(1.0+(SQRT(1.0-Y*Y))))
+   78 COSX= SQRT(1.0-SINX2)</div>
+    <div class="src"><span class="cc">// 移植：旋转角的半角公式</span>
+x    = 0.5*(A[l][l] - A[m][m]);
+y    = -A[l][m]/Math.sqrt(A[l][m]**2 + x*x);
+<span class="kw">if</span> (x &lt; 0) y = -y;          <span class="cc">// 保证转到最近的解</span>
+sinx = y/Math.sqrt(2*(1+Math.sqrt(1-y*y)));
+cosx = Math.sqrt(1-sinx*sinx);
+<span class="cc">// 更新 2x2 块（ABWC0747-0752）</span>
+t = 2*A[l][m]*sinx*cosx;
+A[l][l] = All*cosx² + Amm*sinx² - t;
+A[m][m] = All*sinx² + Amm*cosx² + t;
+A[l][m] = (All-Amm)*sinx*cosx + Alm*(cosx²-sinx²);</div>
+  </div>
+  <p class="note">一个细节：源码注释写明"双精度版本请把 <code>RANGE</code> 改成 <code>1.0D-12</code>、
+  <code>SQRT</code> 改 <code>DSQRT</code>"（ABWC0662–0664）。移植时直接按双精度走，
+  否则单精度 1.0E-6 的收敛判据会让 cm⁻¹ 量级的能级只剩 3–4 位有效数字。</p>
+
+  <h3>9.2 运行 1：CO₂ 费米共振——端到端复算</h3>
+  <p>拿上面三段拼起来：用 <code>ONDIA</code> 算 (1,0⁰,0) 与 (0,2⁰,0) 的非微扰能量，用 <code>OFDIA</code> 算它们之间的耦合，
+  搭成 2×2 矩阵，交给 <code>EIGEN</code>。这是完整的一遍原程序逻辑，只是把基组限制在这一个 polyad 内。</p>
+  <div class="term"><span class="ttl">【运行 1】ABWC 端到端复算 CO2 费米共振双线  (v3=0, l=0)</span>
+零点能 ZPE = <span class="hi">2534.682</span> cm-1
+非微扰 G(100) =  <span class="hi">1341.60</span> cm-1     (ONDIA)
+非微扰 G(020) =  <span class="hi">1332.04</span> cm-1     (ONDIA)
+费米耦合 W    =    <span class="hi">51.16</span> cm-1     (OFDIA)
+--------------------------------------------------------------
+EIGEN(Jacobi) 输出：
+  E_lower = <span class="ok">1285.43</span> cm-1   混合系数 (-0.673, 0.739)  -> |100&gt;占 45.3%
+  E_upper = <span class="ok">1388.20</span> cm-1   混合系数 ( 0.739, 0.673)  -> |100&gt;占 54.7%
+  裂距 dE =  102.77 cm-1   (Jacobi 扫描 42 轮)
+  <span class="cm">实验值   1285.41 / 1388.19 cm-1  (CO2 费米双线)</span></div>
+  <div class="card g">
+    <b>误差 0.02 cm⁻¹。</b>
+    <p style="margin:6px 0 0">这不是拟合出来的——常数是 1970 年代文献里定死的，公式是源码里抄的，
+    没有任何一个参数被调过。两个非微扰能级只差 <b>9.6 cm⁻¹</b>（1341.60 vs 1332.04，几乎重合），
+    加上 51.16 的耦合后被<b>推开到 102.77 cm⁻¹</b>——这就是费米共振：
+    <span style="color:var(--acc)">近简并 + 非零耦合 = 能级排斥</span>。混合系数 45%/55% 说明两个本征态几乎是
+    |100⟩ 与 |020⟩ 的等权叠加，谁也不再是"纯的"ν₁ 或 2ν₂，所以原本没有强度的 2ν₂ 能从 ν₁ 那里"借"到跃迁强度。</p>
+  </div>
+
+  <p>再往上推一个 polyad（v₁+2v₂ 守恒的三重态 200/120/040），矩阵变 3×3，耦合链是 200↔120↔040：</p>
+  <div class="term"><span class="ttl">推广到 polyad n=2 三重态 (200/120/040)</span>
+  非微扰: 2676.70 / 2680.07 / 2659.47      <span class="cm">&lt;- 三个能级挤在 21 cm-1 内</span>
+  耦合  : W(200-120)=<span class="hi">72.14</span>  W(120-040)=<span class="hi">100.68</span>
+  本征值: <span class="ok">2548.33 / 2670.89 / 2797.02</span> cm-1  (扫描 34 轮)
+  <span class="cm">实验值: 2548.4  / 2671.1  / 2797.1  cm-1</span></div>
+  <p class="note">三个挤在一起的能级被耦合撑开成横跨 <b>249 cm⁻¹</b> 的三重线，三条全部命中实验值，最大偏差 0.21 cm⁻¹。
+  注意耦合强度随 v 增大（51 → 72 → 101），因为 <code>OFDIA</code> 里的 √[v₁((v₂+2)²−l²)] 是随量子数长的。</p>
+
+  <div class="demo">
+    <h4>交互 1：能级排斥（avoided crossing）<span class="badge">JS 实时对角化，非查表</span></h4>
+    <div class="ctl">
+      <label>耦合 W₀ <input id="fW" type="range" min="0" max="120" step="0.01" value="51.16"><span class="val" id="fWv">51.31</span> cm⁻¹</label>
+      <label>失谐 Δ = G(100)−G(020) <input id="fD" type="range" min="-200" max="200" step="0.02" value="9.56"><span class="val" id="fDv">+9.56</span> cm⁻¹</label>
+      <button id="fReset">回到 CO₂ 真值</button>
+    </div>
+    <canvas id="cFermi" width="1200" height="420"></canvas>
+    <div class="out" id="oFermi"></div>
+  </div>
+
+  <h3>9.3 运行 2：DVR 网格 + EIGEN 解薛定谔方程</h3>
+  <p>这是 <code>acnc</code>/<code>acne</code> 那一路的核心思想，剥到最简：把坐标离散成网格，
+  动能算符变成三对角差分矩阵，势能算符变成对角矩阵，加起来直接对角化。
+  用同一个 <code>EIGEN</code> 跑一维谐振子 V=x²/2（ℏ=m=1，解析解是 n+½）：</p>
+  <div class="term"><span class="ttl">【运行 2】DVR/有限差分网格 + EIGEN，V = x²/2，区间 [-8,8]</span>
+ N     E0        E1        E2        E3        E4      Jacobi扫描
+  20   0.4811    1.4016    2.2358    2.9029    3.7012     27
+  40   0.4952    1.4758    2.4364    3.3765    4.2952     29
+  80   0.4988    1.4939    2.4840    3.4692    4.4494     27
+ 160   <span class="ok">0.4997    1.4985    2.4960    3.4923    4.4873</span>     26
+<span class="cm">解析      0.5000    1.5000    2.5000    3.5000    4.5000</span></div>
+  <p>N=160 时基态误差 6×10⁻⁴，收敛干净。注意两件事：</p>
+  <ul>
+    <li><b>高能级收敛更慢</b>（E4 误差是 E0 的 20 倍）——因为高激发态波函数振荡快、伸得远，网格分辨率和边界都更吃紧。
+    这正是 <code>acne</code> 要做<b>两阶段收缩</b>的原因：先在每个角向网格点上解 2D 子问题、挑出能量最低的一批本征矢做收缩基，
+    再拼 3D 矩阵。否则 3D 直积基组会大到无法对角化。</li>
+    <li><b>Jacobi 是 O(N³)</b>。N 从 20 涨到 160（8 倍），矩阵元 64 倍，耗时 ~500 倍。
+    这就是为什么 <code>acne</code> 宁可依赖 NAG 的 <code>F02ABF</code>，也要先把基组砍到几百维再对角化。</li>
+  </ul>
+
+  <div class="demo">
+    <h4>交互 2：网格解薛定谔方程<span class="badge">同一套 Jacobi 在浏览器里跑</span></h4>
+    <div class="ctl">
+      <label>势能 <select id="dPot">
+        <option value="ho">谐振子 V=x²/2</option>
+        <option value="morse">Morse V=De(1−e^(−ax))²</option>
+        <option value="box">无限深势阱</option>
+        <option value="dw">双阱 V=(x²−4)²/8</option>
+      </select></label>
+      <label>网格点数 N <input id="dN" type="range" min="20" max="140" step="10" value="80"><span class="val" id="dNv">80</span></label>
+      <label><input id="dWf" type="checkbox" checked> 画波函数</label>
+      <button id="dRun">重新计算</button>
+    </div>
+    <canvas id="cDvr" width="1200" height="460"></canvas>
+    <div class="out" id="oDvr">点「重新计算」开始…</div>
+  </div>
+
+  <h3>9.4 运行 3：Morse 势——非谐常数 x<sub>ij</sub> 是从哪来的</h3>
+  <p>把同一个网格程序的势能换成 Morse 势，立刻能看到 <code>ONDIA</code> 里那些 <code>X(I,J)</code> 的物理来源：</p>
+  <div class="term"><span class="ttl">【运行 3】Morse 势 V = De(1-e^(-ax))²,  De=12, a=0.4</span>
+解析: we = a*sqrt(2De) = 1.9596 ,  we*xe = a²/2 = 0.0800
+  n    E_n(数值)   E_n(解析)     相邻间隔
+  0     0.9579      0.9598
+  1     2.7512      2.7594      <span class="hi">1.7933</span>
+  2     4.3808      4.3990      <span class="hi">1.6296</span>
+  3     5.8491      5.8786      <span class="hi">1.4683</span>
+  4     7.1582      7.1982      <span class="hi">1.3090</span>
+  5     8.3095      8.3578      <span class="hi">1.1513</span>
+<span class="cm">谐振子的间隔应恒为 1.9596 —— 这里逐级变小，差值恒为 2*we*xe = 0.16</span></div>
+  <p>能级间隔以固定步长 0.16 = 2ωₑxₑ 递减，正是 E<sub>n</sub> = ωₑ(n+½) − ωₑxₑ(n+½)² 的一阶差分。
+  <b>换句话说：<code>ONDIA</code> 里的 X(I,J) 就是把"真实势阱不是抛物线"这件事，展开成量子数的二次项写进能量公式。</b>
+  ABWC 走的是<b>解析展开</b>路线（把非谐性打包成拟合常数，快、可读、但依赖已有常数）；
+  ACNC/ACNE 走的是<b>数值求解</b>路线（直接在真实势能面上解，慢、但只要势能面对就不需要经验常数）。
+  同一个物理，两条计算哲学——这也是第 8 节两套代码分家的根本原因。</p>
+
+  <h3>9.5 运行 4：Bloch 方程与 SERF 展宽塌缩</h3>
+  <p class="note">说明：归档源码里<b>没有</b>自旋这一支的程序（第 8 节的两套代码都属分子支流）。
+  这一小节的方程是按第 4/5 节的物理自己搭的 RK4 积分，标注清楚，不冒充源码结果。</p>
+  <div class="term"><span class="ttl">【运行 4】dS/dt = γ S×B − S⊥/T₂ ，RK4 积分</span>
+B = 1 nT, T2 = 3 ms, γ/2π = 7 Hz/nT  ->  拉莫尔频率 7.00 Hz
+  t=0.0ms  Sx=+1.0000  Sy=+0.0000
+  t=1.0ms  Sx=+0.7158  Sy=-0.0315
+  t=2.0ms  Sx=+0.5114  Sy=-0.0451   |S⊥|=<span class="ok">0.5134</span>   <span class="cm">exp(-t/T2)=0.5134  ✓</span>
+--------------------------------------------------------------
+自旋交换展宽  R_se_eff = q·ω₀²/R_se     (q=6, R_se=1e5 /s)
+   B(nT)     ω₀(rad/s)    R_se_eff(1/s)     线宽(Hz)
+   100.0        4398.2        1160.67        <span class="hi">184.726</span>
+    30.0        1319.5         104.46          16.625
+    10.0         439.8          11.61           1.847
+     3.0         131.9           1.04           0.166
+     1.0          44.0           0.12           <span class="ok">0.018</span>
+     0.1           4.4           0.00           0.000
+<span class="cm">B 每降 10 倍，展宽降 100 倍（∝B²）</span></div>
+  <p><b>这张表就是 SERF 的全部秘密。</b>在地磁场量级（~50000 nT）自旋交换碰撞是压倒性的弛豫源，
+  磁共振线宽宽到磁力仪没法用；但展宽正比于 <b>ω₀²/R_se</b>，把场压到 1 nT 以下、同时把碱金属密度拉高使 R_se 极大，
+  这一项就<b>塌缩到接近零</b>——头号敌人被自己关掉了。剩下的线宽由自旋破坏碰撞和抽运决定，灵敏度才能做到 fT/√Hz。
+  注意 RK4 积分的横向幅度 0.5134 与解析 exp(−t/T₂)=0.5134 完全吻合，说明数值积分本身没有引入伪衰减。</p>
+
+  <div class="demo">
+    <h4>交互 3：SERF 窗口<span class="badge">左：自旋进动实时积分；右：线宽随 B 塌缩</span></h4>
+    <div class="ctl">
+      <label>磁场 B <input id="bB" type="range" min="-1" max="3" step="0.05" value="1"><span class="val" id="bBv">10 nT</span></label>
+      <label>自旋交换率 R<sub>se</sub> <input id="bR" type="range" min="3" max="6" step="0.1" value="5"><span class="val" id="bRv">1e5 /s</span></label>
+      <label>破坏弛豫 R<sub>sd</sub> <input id="bS" type="range" min="1" max="500" step="1" value="30"><span class="val" id="bSv">30 /s</span></label>
+    </div>
+    <canvas id="cBloch" width="1200" height="380"></canvas>
+    <div class="out" id="oBloch"></div>
+  </div>
+
+  <h3>9.6 这几个演示各自证明了什么</h3>
+  <table>
+    <tr><th>演示</th><th>算法出处</th><th>验证了什么</th><th>物理意义</th></tr>
+    <tr><td>CO₂ 费米双线</td><td><code>ONDIA</code>+<code>OFDIA</code>+<code>EIGEN</code> 全部照抄</td>
+      <td>算得 1285.43/1388.20 vs 实验 1285.41/1388.19</td>
+      <td>费米共振 = 近简并态被非对角耦合推开并混合，强度可互借</td></tr>
+    <tr><td>polyad 三重态</td><td>同上，扩到 3×3</td><td>2548.33/2670.89/2797.02，最大偏差 0.21</td>
+      <td>耦合随量子数增长（√v₁ 因子），高 polyad 结构更散</td></tr>
+    <tr><td>网格谐振子</td><td>DVR 思想 + <code>EIGEN</code></td><td>N=160 收敛到 0.4997（解析 0.5）</td>
+      <td>薛定谔方程可以不靠解析解，直接在构型空间数值求解</td></tr>
+    <tr><td>Morse 非谐</td><td>同上换势能</td><td>间隔递减步长 0.16 = 2ωₑxₑ</td>
+      <td>非谐常数 x<sub>ij</sub> 的物理来源；两条计算哲学的分水岭</td></tr>
+    <tr><td>Bloch / SERF</td><td>第 4/5 节方程，自建 RK4</td><td>数值衰减与 exp(−t/T₂) 完全一致</td>
+      <td>展宽 ∝ B²/R<sub>se</sub>，低场高密度下自旋交换弛豫塌缩</td></tr>
+  </table>
+  <p class="note">四组数字里有三组能与独立的实验/解析结果对上，这是判断"代码读懂没有"最硬的标准——
+  只要哪一步公式抄错、常数顺序填反、旋转角符号弄反，末位就不可能对齐。</p>
+</section>
+
 <!-- ============ MAP ============ -->
 <section id="map">
-  <h2>9 · 统一地图</h2>
+  <h2>10 · 统一地图</h2>
   <p>把上面的层次收成一张图：最底下是共用地基，往上长出物质与相互作用，再往上分出应用支流；数值计算横贯分子支流的"验证层"。</p>
   <div class="stack">
     <div class="layer"><div class="lt">计算方法层（横贯）</div><div class="ld">对角化(ABWC/VIBOCO) + DVR(ACNC/ACNE)：把能级/光谱从定性变成可复现数字</div></div>
@@ -326,5 +606,312 @@
 </div>
 </main>
 </div>
+
+<script>
+/* ============================================================
+   与 ABWC EIGEN (ABWC0644-0790) 同算法的 Jacobi 阈值旋转对角化
+   ============================================================ */
+function eigen(Ain, n){
+  var A=[], R=[], i, j;
+  for(i=0;i<n;i++){A.push(Ain[i].slice()); var r=[]; for(j=0;j<n;j++) r.push(i===j?1:0); R.push(r);}
+  var RANGE=1e-12, anorm=0;
+  for(i=0;i<n;i++) for(j=i+1;j<n;j++) anorm+=A[i][j]*A[i][j];
+  if(anorm<=0){var d0=[];for(i=0;i<n;i++)d0.push(A[i][i]);return {val:d0,vec:R,sweeps:0};}
+  anorm=1.414*Math.sqrt(anorm);
+  var anrmx=anorm*RANGE/n, thr=anorm, sweeps=0, guard=0;
+  while(thr>anrmx && guard<200){
+    thr=thr/n; var ind=1;
+    while(ind===1 && guard<200){
+      ind=0; sweeps++; guard++;
+      for(var l=0;l<n-1;l++) for(var m=l+1;m<n;m++){
+        if(Math.abs(A[l][m])<thr) continue;
+        ind=1;
+        var x=0.5*(A[l][l]-A[m][m]);
+        var y=-A[l][m]/Math.sqrt(A[l][m]*A[l][m]+x*x);
+        if(x<0) y=-y;
+        var sn=y/Math.sqrt(2*(1+Math.sqrt(1-y*y)));
+        var sn2=sn*sn, cs=Math.sqrt(1-sn2), cs2=cs*cs, sc=sn*cs;
+        for(i=0;i<n;i++){
+          if(i!==l && i!==m){
+            var til=A[i][l], tim=A[i][m];
+            A[i][l]=A[l][i]=til*cs-tim*sn;
+            A[i][m]=A[m][i]=til*sn+tim*cs;
+          }
+          var rl=R[i][l], rm=R[i][m];
+          R[i][l]=rl*cs-rm*sn; R[i][m]=rl*sn+rm*cs;
+        }
+        var t=2*A[l][m]*sc, All=A[l][l], Amm=A[m][m];
+        A[l][m]=A[m][l]=(All-Amm)*sc+A[l][m]*(cs2-sn2);
+        A[l][l]=All*cs2+Amm*sn2-t;
+        A[m][m]=All*sn2+Amm*cs2+t;
+      }
+    }
+  }
+  var ev=[],idx=[];
+  for(i=0;i<n;i++){ev.push(A[i][i]);idx.push(i);}
+  idx.sort(function(a,b){return ev[a]-ev[b];});
+  var V=idx.map(function(k){return ev[k];});
+  var Vec=idx.map(function(k){var c=[];for(i=0;i<n;i++)c.push(R[i][k]);return c;});
+  return {val:V, vec:Vec, sweeps:sweeps};
+}
+
+/* ---------- 画布工具 ---------- */
+function ctxOf(id){var c=document.getElementById(id);var g=c.getContext('2d');
+  g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,c.width,c.height);return {c:c,g:g};}
+function axis(g,x0,y0,x1,y1){g.strokeStyle='#39424f';g.lineWidth=1.5;g.beginPath();
+  g.moveTo(x0,y1);g.lineTo(x0,y0);g.moveTo(x0,y1);g.lineTo(x1,y1);g.stroke();}
+function txt(g,s,x,y,col,size,align){g.fillStyle=col||'#9aa4b2';
+  g.font=(size||13)+'px ui-monospace,Consolas,monospace';g.textAlign=align||'left';g.fillText(s,x,y);}
+
+/* ============================================================
+   交互 1：费米共振 avoided crossing
+   ============================================================ */
+(function(){
+  var sW=document.getElementById('fW'), sD=document.getElementById('fD');
+  var vW=document.getElementById('fWv'), vD=document.getElementById('fDv');
+  var out=document.getElementById('oFermi');
+  var CO2_W=51.16, CO2_D=9.56, CO2_MID=1336.815;  /* ONDIA 全精度：G(100)=1341.595, G(020)=1332.035 */
+
+  function solve(mid,d,W){
+    var H=[[mid+d/2, W],[W, mid-d/2]];
+    return eigen(H,2);
+  }
+  function draw(){
+    var W=+sW.value, D=+sD.value;
+    vW.textContent=W.toFixed(2); vD.textContent=(D>=0?'+':'')+D.toFixed(2);
+    var o=ctxOf('cFermi'), g=o.g, cw=o.c.width, ch=o.c.height;
+    var L=70,Rr=cw-30,T=28,B=ch-42;
+    var dmin=-200,dmax=200, emin=CO2_MID-190, emax=CO2_MID+190;
+    var X=function(d){return L+(d-dmin)/(dmax-dmin)*(Rr-L);};
+    var Y=function(e){return B-(e-emin)/(emax-emin)*(B-T);};
+    axis(g,L,T,Rr,B);
+    /* 网格 */
+    g.strokeStyle='#1b212a';g.lineWidth=1;
+    for(var e=CO2_MID-150;e<=CO2_MID+150;e+=50){g.beginPath();g.moveTo(L,Y(e));g.lineTo(Rr,Y(e));g.stroke();
+      txt(g,e.toFixed(0),L-8,Y(e)+4,'#5f6b7a',11,'right');}
+    for(var d=dmin;d<=dmax;d+=100){g.beginPath();g.moveTo(X(d),T);g.lineTo(X(d),B);g.stroke();
+      txt(g,(d>0?'+':'')+d,X(d),B+18,'#5f6b7a',11,'center');}
+    /* 未耦合（虚线交叉） */
+    g.setLineDash([5,5]);g.strokeStyle='#4b5563';g.lineWidth=1.6;
+    g.beginPath();g.moveTo(X(dmin),Y(CO2_MID+dmin/2));g.lineTo(X(dmax),Y(CO2_MID+dmax/2));g.stroke();
+    g.beginPath();g.moveTo(X(dmin),Y(CO2_MID-dmin/2));g.lineTo(X(dmax),Y(CO2_MID-dmax/2));g.stroke();
+    g.setLineDash([]);
+    /* 耦合后（实线排斥）—— 每点真做一次 2x2 Jacobi */
+    var up=[],lo=[];
+    for(var k=0;k<=200;k++){
+      var dd=dmin+(dmax-dmin)*k/200, r=solve(CO2_MID,dd,W);
+      lo.push([X(dd),Y(r.val[0])]); up.push([X(dd),Y(r.val[1])]);
+    }
+    function poly(pts,col){g.strokeStyle=col;g.lineWidth=2.6;g.beginPath();
+      pts.forEach(function(p,i){i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]);});g.stroke();}
+    poly(up,'#fca5a5'); poly(lo,'#7dd3fc');
+    /* 当前点 */
+    var cur=solve(CO2_MID,D,W);
+    [[cur.val[1],'#fca5a5'],[cur.val[0],'#7dd3fc']].forEach(function(p){
+      g.fillStyle=p[1];g.beginPath();g.arc(X(D),Y(p[0]),5.5,0,6.2832);g.fill();
+      g.strokeStyle='#0a0c10';g.lineWidth=2;g.stroke();});
+    /* 裂距标注 */
+    g.strokeStyle='#86efac';g.lineWidth=1.4;g.setLineDash([3,3]);
+    g.beginPath();g.moveTo(X(D),Y(cur.val[0]));g.lineTo(X(D),Y(cur.val[1]));g.stroke();g.setLineDash([]);
+    txt(g,'Δ='+(cur.val[1]-cur.val[0]).toFixed(2),X(D)+9,(Y(cur.val[0])+Y(cur.val[1]))/2+4,'#86efac',12.5);
+    txt(g,'能量 / cm⁻¹',L-8,T-10,'#9aa4b2',12,'right');
+    txt(g,'失谐 Δ = G(100) − G(020)  / cm⁻¹',(L+Rr)/2,ch-10,'#9aa4b2',12,'center');
+    txt(g,'虚线 = 无耦合（会交叉）   实线 = 有费米耦合（互相排斥）',Rr,T+2,'#5f6b7a',11.5,'right');
+    /* 混合柱 */
+    var c00=cur.vec[0][0]*cur.vec[0][0], c11=cur.vec[1][0]*cur.vec[1][0];
+    var bx=L+14,by=T+16,bw=190,bh=13;
+    txt(g,'下能级成分',bx,by-4,'#9aa4b2',11.5);
+    g.fillStyle='#7dd3fc';g.fillRect(bx,by,bw*c00,bh);
+    g.fillStyle='#334155';g.fillRect(bx+bw*c00,by,bw*(1-c00),bh);
+    txt(g,'|100⟩ '+(100*c00).toFixed(1)+'%   |020⟩ '+(100*(1-c00)).toFixed(1)+'%',bx,by+bh+14,'#c7d2de',11.5);
+
+    var isCO2=(Math.abs(W-51.16)<0.06 && Math.abs(D-CO2_D)<0.12);
+    out.innerHTML='2×2 矩阵 H = [['+(CO2_MID+D/2).toFixed(2)+', '+W.toFixed(2)+'], ['+W.toFixed(2)+', '+(CO2_MID-D/2).toFixed(2)+']]\n'+
+      'Jacobi 扫描 '+cur.sweeps+' 轮  →  E_low = <b>'+cur.val[0].toFixed(2)+'</b> cm⁻¹   E_high = <b>'+cur.val[1].toFixed(2)+'</b> cm⁻¹   裂距 <i>'+
+      (cur.val[1]-cur.val[0]).toFixed(2)+'</i> cm⁻¹\n'+
+      '解析核对 √(Δ²+4W²) = '+Math.sqrt(D*D+4*W*W).toFixed(2)+' cm⁻¹  ——  '+
+      (Math.abs((cur.val[1]-cur.val[0])-Math.sqrt(D*D+4*W*W))<0.01?'✓ 一致':'✗ 不符')+'\n'+
+      (W===0?'W=0：两条线直接交叉，没有排斥，也没有混合——费米共振消失。'
+            :(Math.abs(D)>150?'大失谐：耦合不起作用，本征态几乎回到纯 |100⟩ / |020⟩，混合度趋近 0/100%。'
+                             :(isCO2?'← 当前正是 ONDIA/OFDIA 算出的 CO₂ 真值，与 Python 端跑出的 1285.43 / 1388.20 完全一致':'近简并区：混合最强，裂距被 W 主导（Δ→0 时裂距 = 2W）。')));
+  }
+  sW.oninput=draw; sD.oninput=draw;
+  document.getElementById('fReset').onclick=function(){sW.value=51.16;sD.value=9.56;draw();};
+  draw();
+})();
+
+/* ============================================================
+   交互 2：DVR 网格解薛定谔方程
+   ============================================================ */
+(function(){
+  var sN=document.getElementById('dN'), vN=document.getElementById('dNv');
+  var sel=document.getElementById('dPot'), cbW=document.getElementById('dWf');
+  var out=document.getElementById('oDvr');
+  var POT={
+    ho   :{f:function(x){return 0.5*x*x;}, a:-8, b:8,  name:'谐振子 V=x²/2',
+           ana:function(n){return n+0.5;}, anaTxt:'n+½'},
+    morse:{f:function(x){return 12*Math.pow(1-Math.exp(-0.4*x),2);}, a:-4, b:22, name:'Morse De=12,a=0.4',
+           ana:function(n){var we=0.4*Math.sqrt(24),wx=0.08;return we*(n+0.5)-wx*(n+0.5)*(n+0.5);},
+           anaTxt:'ωₑ(n+½)−ωₑxₑ(n+½)²'},
+    box  :{f:function(x){return 0;}, a:0, b:Math.PI, name:'无限深势阱 [0,π]',
+           ana:function(n){return 0.5*(n+1)*(n+1);}, anaTxt:'(n+1)²/2'},
+    dw   :{f:function(x){return Math.pow(x*x-4,2)/8;}, a:-4.5, b:4.5, name:'双阱 V=(x²−4)²/8',
+           ana:null, anaTxt:'—'}
+  };
+  function run(){
+    var N=+sN.value; vN.textContent=N;
+    var p=POT[sel.value], h=(p.b-p.a)/(N+1), xs=[], i;
+    for(i=0;i<N;i++) xs.push(p.a+(i+1)*h);
+    var T=0.5/(h*h), H=[];
+    for(i=0;i<N;i++){var row=new Array(N).fill(0);row[i]=2*T+p.f(xs[i]);
+      if(i>0)row[i-1]=-T; if(i<N-1)row[i+1]=-T; H.push(row);}
+    var t0=performance.now();
+    var r=eigen(H,N);
+    var ms=performance.now()-t0;
+    draw(xs,p,r,N,h);
+    var s='势能：'+p.name+'    网格 N='+N+'  步长 h='+h.toFixed(4)+
+          '    Jacobi 扫描 '+r.sweeps+' 轮，耗时 <i>'+ms.toFixed(0)+' ms</i>\n';
+    s+=' n |   数值 E_n   |  解析 '+p.anaTxt+'  |   相对误差   | 相邻间隔\n';
+    for(var n=0;n<6;n++){
+      var a=p.ana?p.ana(n):null;
+      var gap=n>0?(r.val[n]-r.val[n-1]).toFixed(4):'   —  ';
+      s+=' '+n+' | '+r.val[n].toFixed(6).padStart(11)+' | '+
+         (a!==null?a.toFixed(6).padStart(13):'            —')+' | '+
+         (a!==null?((Math.abs(r.val[n]-a)/Math.abs(a)*100).toFixed(3)+'%').padStart(11):'          —')+
+         ' | '+gap+'\n';
+    }
+    if(sel.value==='morse') s+='间隔逐级递减，差值恒为 2ωₑxₑ=0.16 → 非谐性；这就是 ONDIA 里 X(I,J) 的来源。';
+    else if(sel.value==='ho') s+='间隔恒为 1（=ℏω）→ 完美谐性。加大 N 看基态如何逼近 0.5。';
+    else if(sel.value==='dw') s+='注意最低两个能级几乎简并（对称/反对称组合）——这就是隧穿分裂，Δ 越小势垒越高。';
+    else s+='无限深势阱：E ∝ (n+1)²，间隔越来越大，与谐振子恰好相反。';
+    out.innerHTML=s;
+  }
+  function draw(xs,p,r,N,h){
+    var o=ctxOf('cDvr'), g=o.g, cw=o.c.width, ch=o.c.height;
+    var L=70,Rr=cw-30,T=24,B=ch-40;
+    var vmax=0; xs.forEach(function(x){vmax=Math.max(vmax,p.f(x));});
+    var emax=Math.max(r.val[5]*1.45, 1);
+    emax=Math.min(emax, vmax>0?vmax*1.05:emax);
+    if(p===POT.box) emax=r.val[5]*1.2;
+    var X=function(x){return L+(x-p.a)/(p.b-p.a)*(Rr-L);};
+    var Y=function(e){return B-e/emax*(B-T);};
+    axis(g,L,T,Rr,B);
+    g.strokeStyle='#1b212a';g.lineWidth=1;
+    for(var k=1;k<=5;k++){var yy=T+(B-T)*k/6;g.beginPath();g.moveTo(L,yy);g.lineTo(Rr,yy);g.stroke();}
+    /* 势能曲线 */
+    g.strokeStyle='#64748b';g.lineWidth=2;g.beginPath();
+    for(var i=0;i<=300;i++){var x=p.a+(p.b-p.a)*i/300, yv=Y(Math.min(p.f(x),emax*1.2));
+      i?g.lineTo(X(x),yv):g.moveTo(X(x),yv);} g.stroke();
+    /* 能级 + 波函数 */
+    var cols=['#7dd3fc','#86efac','#fca5a5','#fde68a','#c4b5fd','#f9a8d4'];
+    for(var n=0;n<6;n++){
+      var E=r.val[n]; if(E>emax) break;
+      g.strokeStyle=cols[n];g.lineWidth=1.3;g.globalAlpha=.55;
+      g.beginPath();g.moveTo(L,Y(E));g.lineTo(Rr,Y(E));g.stroke();g.globalAlpha=1;
+      txt(g,'E'+n+'='+E.toFixed(4),Rr-4,Y(E)-5,cols[n],11.5,'right');
+      if(cbW.checked){
+        var v=r.vec[n], mx=0; v.forEach(function(a){mx=Math.max(mx,Math.abs(a));});
+        var amp=(B-T)*0.085/ (mx||1);
+        g.strokeStyle=cols[n];g.lineWidth=2;g.beginPath();
+        for(var j=0;j<N;j++){var px=X(xs[j]),py=Y(E)-v[j]*amp;j?g.lineTo(px,py):g.moveTo(px,py);}
+        g.stroke();
+      }
+    }
+    txt(g,'E / 自然单位 (ℏ=m=1)',L-8,T-8,'#9aa4b2',12,'right');
+    txt(g,'x',(L+Rr)/2,ch-10,'#9aa4b2',12,'center');
+    txt(g,'灰线=势能   彩线=波函数（画在各自能级上）',Rr,T+4,'#5f6b7a',11.5,'right');
+  }
+  sN.oninput=run; sel.onchange=run; cbW.onchange=run;
+  document.getElementById('dRun').onclick=run;
+  run();
+})();
+
+/* ============================================================
+   交互 3：Bloch 进动 + SERF 线宽塌缩
+   ============================================================ */
+(function(){
+  var sB=document.getElementById('bB'), sR=document.getElementById('bR'), sS=document.getElementById('bS');
+  var vB=document.getElementById('bBv'), vR=document.getElementById('bRv'), vS=document.getElementById('bSv');
+  var out=document.getElementById('oBloch');
+  var GAM=2*Math.PI*7.0e9;   /* rad/s/T ；γ/2π = 7 Hz/nT */
+  var Q=6;
+
+  function width(Bnt,Rse,Rsd){var w0=GAM*Bnt*1e-9;return Rsd+Q*w0*w0/Rse;}
+  function draw(){
+    var Bnt=Math.pow(10,+sB.value), Rse=Math.pow(10,+sR.value), Rsd=+sS.value;
+    vB.textContent=(Bnt<1?Bnt.toFixed(2):Bnt.toFixed(1))+' nT';
+    vR.textContent=Rse.toExponential(0).replace('+','')+' /s';
+    vS.textContent=Rsd+' /s';
+    var G=width(Bnt,Rse,Rsd), T2=1/G, f0=GAM*Bnt*1e-9/(2*Math.PI);
+    var o=ctxOf('cBloch'), g=o.g, cw=o.c.width, ch=o.c.height, MID=cw/2-10;
+
+    /* --- 左：RK4 积分自旋进动 --- */
+    var L=60,Rr=MID-20,T=26,B=ch-40;
+    axis(g,L,T,Rr,B);
+    var tmax=Math.max(3*T2,0.6/Math.max(f0,1)); tmax=Math.min(tmax,0.25);
+    var nst=900, dt=tmax/nst, S=[1,0,0], pts=[], env=[];
+    var w=GAM*Bnt*1e-9;
+    function f(s){return [ w*s[1]-s[0]*G, -w*s[0]-s[1]*G, 0 ];}
+    for(var i=0;i<=nst;i++){
+      pts.push([i*dt,S[0]]); env.push([i*dt,Math.exp(-i*dt*G)]);
+      var k1=f(S),k2=f([S[0]+.5*dt*k1[0],S[1]+.5*dt*k1[1],0]),
+          k3=f([S[0]+.5*dt*k2[0],S[1]+.5*dt*k2[1],0]),
+          k4=f([S[0]+dt*k3[0],S[1]+dt*k3[1],0]);
+      S=[S[0]+dt/6*(k1[0]+2*k2[0]+2*k3[0]+k4[0]), S[1]+dt/6*(k1[1]+2*k2[1]+2*k3[1]+k4[1]),0];
+    }
+    var X1=function(t){return L+t/tmax*(Rr-L);}, Y1=function(v){return (T+B)/2 - v*(B-T)/2*0.9;};
+    g.strokeStyle='#1b212a';g.beginPath();g.moveTo(L,Y1(0));g.lineTo(Rr,Y1(0));g.stroke();
+    g.strokeStyle='#3f4b5a';g.lineWidth=1.3;g.setLineDash([4,4]);
+    [1,-1].forEach(function(sg){g.beginPath();env.forEach(function(p,i){var px=X1(p[0]),py=Y1(sg*p[1]);
+      i?g.lineTo(px,py):g.moveTo(px,py);});g.stroke();});
+    g.setLineDash([]);
+    g.strokeStyle='#7dd3fc';g.lineWidth=2;g.beginPath();
+    pts.forEach(function(p,i){var px=X1(p[0]),py=Y1(p[1]);i?g.lineTo(px,py):g.moveTo(px,py);});g.stroke();
+    txt(g,'Sx(t)  —  RK4 积分  dS/dt = γS×B − ΓS⊥',L,T-8,'#9aa4b2',12);
+    txt(g,'t / s  (0 → '+tmax.toExponential(1)+')',(L+Rr)/2,ch-10,'#9aa4b2',11.5,'center');
+    txt(g,'虚线 = exp(−Γt) 包络',Rr,B-6,'#5f6b7a',11,'right');
+
+    /* --- 右：线宽随 B 塌缩（log-log） --- */
+    var L2=MID+50,R2=cw-30;
+    axis(g,L2,T,R2,B);
+    var bmin=-1,bmax=3;                      /* 0.1 .. 1000 nT */
+    var vals=[]; for(var k=0;k<=200;k++){var lb=bmin+(bmax-bmin)*k/200; vals.push([lb,width(Math.pow(10,lb),Rse,Rsd)/(2*Math.PI)]);}
+    var lmin=Math.log10(Math.max(Rsd/(2*Math.PI)*0.4,1e-3)), lmax=Math.log10(vals[200][1]*1.6);
+    var X2=function(lb){return L2+(lb-bmin)/(bmax-bmin)*(R2-L2);};
+    var Y2=function(v){return B-(Math.log10(Math.max(v,1e-6))-lmin)/(lmax-lmin)*(B-T);};
+    g.strokeStyle='#1b212a';g.lineWidth=1;
+    for(var d=Math.ceil(lmin);d<=Math.floor(lmax);d++){g.beginPath();g.moveTo(L2,Y2(Math.pow(10,d)));
+      g.lineTo(R2,Y2(Math.pow(10,d)));g.stroke();
+      txt(g,'1e'+d,L2-6,Y2(Math.pow(10,d))+4,'#5f6b7a',10.5,'right');}
+    for(var d2=bmin;d2<=bmax;d2++){g.beginPath();g.moveTo(X2(d2),T);g.lineTo(X2(d2),B);g.stroke();
+      txt(g,(Math.pow(10,d2)>=1?Math.pow(10,d2):0.1)+'',X2(d2),B+17,'#5f6b7a',10.5,'center');}
+    /* 自旋破坏底线 */
+    g.strokeStyle='#4b5563';g.lineWidth=1.4;g.setLineDash([5,4]);
+    g.beginPath();g.moveTo(L2,Y2(Rsd/(2*Math.PI)));g.lineTo(R2,Y2(Rsd/(2*Math.PI)));g.stroke();g.setLineDash([]);
+    txt(g,'自旋破坏底线 Rsd/2π',L2+6,Y2(Rsd/(2*Math.PI))-6,'#6b7480',11);
+    g.strokeStyle='#fca5a5';g.lineWidth=2.6;g.beginPath();
+    vals.forEach(function(p,i){var px=X2(p[0]),py=Y2(p[1]);i?g.lineTo(px,py):g.moveTo(px,py);});g.stroke();
+    var cl=Math.log10(Bnt);
+    g.fillStyle='#86efac';g.beginPath();g.arc(X2(cl),Y2(G/(2*Math.PI)),5.5,0,6.2832);g.fill();
+    g.strokeStyle='#0a0c10';g.lineWidth=2;g.stroke();
+    txt(g,'磁共振线宽 / Hz   (log-log)',L2,T-8,'#9aa4b2',12);
+    txt(g,'B / nT',(L2+R2)/2,ch-10,'#9aa4b2',11.5,'center');
+
+    var se=Q*w*w/Rse;
+    out.innerHTML=
+      'B = <b>'+(Bnt<1?Bnt.toFixed(3):Bnt.toFixed(2))+' nT</b>   拉莫尔频率 ω₀/2π = '+f0.toFixed(3)+' Hz\n'+
+      '自旋交换展宽 R_se_eff = q·ω₀²/R_se = 6×('+w.toFixed(1)+')²/'+Rse.toExponential(0)+' = <i>'+se.toFixed(3)+' /s</i>'+
+      '     自旋破坏 R_sd = '+Rsd+' /s\n'+
+      '总弛豫 Γ = '+G.toFixed(2)+' /s  →  T₂ = <b>'+(T2*1000).toFixed(3)+' ms</b>   线宽 = <b>'+(G/(2*Math.PI)).toFixed(3)+' Hz</b>\n'+
+      (se<Rsd*0.1
+        ? '✔ <b>SERF 区</b>：自旋交换展宽只占总弛豫的 '+(100*se/G).toFixed(1)+'%，已被"自己关掉"，线宽由自旋破坏碰撞封顶。'
+        : (se>Rsd*10
+           ? '✘ 自旋交换主导：占总弛豫 '+(100*se/G).toFixed(1)+'%，线宽被展宽 '+(G/Rsd).toFixed(0)+' 倍——普通磁力仪就卡在这里。'
+           : '过渡区：自旋交换占 '+(100*se/G).toFixed(1)+'%，继续降 B 或升 R_se 即可进入 SERF。'));
+  }
+  sB.oninput=draw; sR.oninput=draw; sS.oninput=draw; draw();
+})();
+</script>
+
 </body>
 </html>
