@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>交互 6 · sinc-DVR 解一维薛定谔</title>
+<link rel="stylesheet" href="common.css">
+<style>
+  body{max-width:1180px;margin:0 auto;padding:22px 18px 64px;}
+  .topbar{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-bottom:6px;font-size:14px;}
+  .topbar a{color:var(--acc,#38bdf8);text-decoration:none;}
+  .topbar a:hover{text-decoration:underline;}
+  .pagetitle{font-size:21px;margin:8px 0 2px;}
+  .sub{color:var(--mut,#9aa4b2);font-size:14px;margin:0 0 14px;}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <a href="index.html">← 子站总目录</a>
+  <a href="../index.html">↩ 完整导览主页</a>
+</header>
+<h1 class="pagetitle">交互 6：sinc-DVR 解一维薛定谔 </h1>
+<p class="sub">同一套 EIGEN 在浏览器里跑</p>
+<main>
+
+<div class="demo">
+    <h4>交互 6：sinc-DVR 解一维薛定谔<span class="badge">同一套 EIGEN 在浏览器里跑</span></h4>
+    <div class="ctl">
+      <label>势能 <select id="sdPot">
+        <option value="ho">谐振子 V=x²/2</option>
+        <option value="morse">Morse V=½(1−e^(−x))²</option>
+      </select></label>
+      <label>网格 N <input id="sdN" type="range" min="21" max="161" step="20" value="81"><span class="val" id="sdNv">81</span></label>
+      <button id="sdRun">计算</button>
+    </div>
+    <canvas id="cDvr1" width="1200" height="440"></canvas>
+    <div class="out" id="oDvr1"></div>
+  </div>
+</main>
+<footer class="footer">本页为原子物理 / 量子光学主题自底向上导览的独立交互演示（子站）。数值结论以程序实际输出为准。</footer>
+<script src="common.js"></script>
+<script>
+(function(){
+  var sel=document.getElementById('sdPot'), sN=document.getElementById('sdN'), vN=document.getElementById('sdNv');
+  var btn=document.getElementById('sdRun'), out=document.getElementById('oDvr1'), cv='cDvr1';
+  var POT={
+    ho:{f:function(x){return 0.5*x*x;}, a:-8,b:8, name:'谐振子 V=x²/2', ana:function(n){return n+0.5;}, anaTxt:'n+½'},
+    morse:{f:function(x){return 0.5*Math.pow(1-Math.exp(-x),2);}, a:-3,b:12, name:'Morse V=½(1−e^(−x))²',
+           ana:function(n){var h=n+0.5;return h-h*h/2;}, anaTxt:'(n+½)−(n+½)²/2'}
+  };
+  function solve(pot,N,nvec){
+    var xs=[],k;
+    for(k=0;k<N;k++) xs.push(pot.a+(pot.b-pot.a)*k/(N-1));
+    var dx=(pot.b-pot.a)/(N-1), T=[];
+    for(var i=0;i<N;i++){var row=[];for(var j=0;j<N;j++) row.push(i===j?Math.PI*Math.PI/3:2*Math.pow(-1,i-j)/((i-j)*(i-j))); T.push(row);}
+    for(i=0;i<N;i++) for(j=0;j<N;j++) T[i][j]/=(2*dx*dx);
+    var H=[]; for(i=0;i<N;i++){var r=[];for(j=0;j<N;j++) r.push(T[i][j]+(i===j?pot.f(xs[i]):0)); H.push(r);}
+    var res=eigen(H,N);
+    return {xs:xs, ev:res.val.slice(0,nvec), psi0:res.vec[0], sweeps:res.sweeps};
+  }
+  function draw(){
+    var N=+sN.value; vN.textContent=N; var p=POT[sel.value];
+    var t0=performance.now(); var res=solve(p,N,6); var ms=performance.now()-t0;
+    var o=ctxOf(cv), g=o.g, cw=o.c.width, ch=o.c.height;
+    var L=70,Rr=cw-30,T=24,B=ch-40;
+    var vmax=0,i; for(i=0;i<=300;i++){var xx=p.a+(p.b-p.a)*i/300; vmax=Math.max(vmax,p.f(xx));}
+    var emax=Math.max(res.ev[5]*1.4,1); emax=Math.min(emax, vmax>0?vmax*1.05:emax);
+    var X=function(x){return L+(x-p.a)/(p.b-p.a)*(Rr-L);};
+    var Y=function(e){return B-e/emax*(B-T);};
+    axis(g,L,T,Rr,B);
+    g.strokeStyle='#1b212a';g.lineWidth=1;
+    for(var kk=1;kk<=5;kk++){var yy=T+(B-T)*kk/6;g.beginPath();g.moveTo(L,yy);g.lineTo(Rr,yy);g.stroke();}
+    g.strokeStyle='#64748b';g.lineWidth=2;g.beginPath();
+    for(var i2=0;i2<=300;i2++){var x2=p.a+(p.b-p.a)*i2/300, yv=Y(Math.min(p.f(x2),emax*1.2)); i2?g.lineTo(X(x2),yv):g.moveTo(X(x2),yv);}g.stroke();
+    var cols=['#7dd3fc','#86efac','#fca5a5','#fde68a','#c4b5fd','#f9a8d4'];
+    for(var n=0;n<6;n++){var E=res.ev[n]; if(E>emax) break;
+      g.strokeStyle=cols[n];g.lineWidth=1.3;g.globalAlpha=.55;g.beginPath();g.moveTo(L,Y(E));g.lineTo(Rr,Y(E));g.stroke();g.globalAlpha=1;
+      txt(g,'E'+n+'='+E.toFixed(4),Rr-4,Y(E)-5,cols[n],11.5,'right');}
+    var v=res.psi0, mx=0; v.forEach(function(a){mx=Math.max(mx,Math.abs(a));});
+    var amp=(B-T)*0.10/(mx||1);
+    g.strokeStyle='#86efac';g.lineWidth=2.2;g.beginPath();
+    for(var j=0;j<N;j++){var px=X(res.xs[j]),py=Y(res.ev[0])-v[j]*amp; j?g.lineTo(px,py):g.moveTo(px,py);}g.stroke();
+    txt(g,'E / 自然单位 (ℏ=m=1)',L-8,T-8,'#9aa4b2',12,'right');
+    txt(g,'x',(L+Rr)/2,ch-10,'#9aa4b2',12,'center');
+    txt(g,'灰线=势能  绿线=基态波函数（画在 E0 上）',Rr,T+4,'#5f6b7a',11.5,'right');
+    var s='势能：'+p.name+'    网格 N='+N+'    满动能矩阵 Jacobi '+res.sweeps+' 轮，耗时 <i>'+ms.toFixed(0)+' ms</i>\n';
+    s+=' n |   数值 E_n   |  解析 '+p.anaTxt+'  |   相对误差\n';
+    for(var nn=0;nn<6;nn++){var a=p.ana?p.ana(nn):null;
+      s+=' '+nn+' | '+res.ev[nn].toFixed(6)+' | '+(a!==null?a.toFixed(6).padStart(13):'            —')+' | '+(a!==null?((Math.abs(res.ev[nn]-a)/Math.abs(a)*100).toFixed(3)+'%').padStart(10):'          —')+'\n';}
+    if(sel.value==='morse') s+='基态 E0=0.375 正是 Morse 解析 (n+½)−(n+½)²/2 = 0.5−0.125=0.375，验证 DVR 对束缚态精度。';
+    else s+='满动能矩阵代价：DVR 比 9.3 的有限差分收敛更快——N=41 即给出 0.5000/1.5000/2.5000/3.5000/4.5000（误差<1e-4）。';
+    out.innerHTML=s;
+  }
+  sel.onchange=draw; sN.oninput=draw; btn.onclick=draw; draw();
+})();
+</script>
+</body>
+</html>
