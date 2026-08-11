@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>从原子到磁力仪：一份自底向上的系统性介绍</title>
+<style>
+  :root{
+    --bg:#0f1115; --card:#171a21; --card2:#1d2129; --line:#262b34;
+    --fg:#e6e6e6; --mut:#9aa4b2; --acc:#7dd3fc; --acc2:#fca5a5; --grn:#86efac;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--fg);
+    font-family:-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;line-height:1.75;font-size:16px}
+  a{color:var(--acc);text-decoration:none}
+  a:hover{text-decoration:underline}
+  /* layout */
+  .wrap{display:flex;max-width:1180px;margin:0 auto}
+  nav{position:sticky;top:0;align-self:flex-start;height:100vh;overflow:auto;
+    width:260px;flex:0 0 260px;padding:28px 18px;border-right:1px solid var(--line);background:var(--bg)}
+  nav h2{font-size:13px;color:var(--mut);text-transform:uppercase;letter-spacing:.08em;margin:18px 0 8px}
+  nav ol{list-style:none;margin:0;padding:0;counter-reset:s}
+  nav li{counter-increment:s;margin:2px 0}
+  nav a{display:block;padding:5px 10px;border-radius:7px;color:var(--mut);font-size:14px}
+  nav a:before{content:counter(s) ". ";color:#5b6472}
+  nav a:hover{background:var(--card);color:var(--fg);text-decoration:none}
+  main{flex:1;padding:36px 40px 90px;min-width:0}
+  header.hero{padding:30px 0 18px;border-bottom:1px solid var(--line);margin-bottom:26px}
+  header.hero h1{font-size:30px;margin:0 0 10px;letter-spacing:.01em}
+  header.hero p{color:var(--mut);margin:6px 0;max-width:760px}
+  .tag{display:inline-block;background:var(--card);border:1px solid var(--line);
+    color:var(--acc);padding:2px 10px;border-radius:999px;font-size:12px;margin-right:6px}
+  section{margin:0 0 30px;scroll-margin-top:18px}
+  section h2{font-size:23px;margin:0 0 6px;border-left:4px solid var(--acc);padding-left:12px}
+  section h3{font-size:17px;color:#cdd5e0;margin:22px 0 6px}
+  p{margin:10px 0}
+  .lead{color:var(--mut)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:14px 0}
+  .card.g{background:linear-gradient(180deg,#15211c,#171a21);border-color:#234}
+  .card.b{background:linear-gradient(180deg,#1a2230,#171a21);border-color:#243}
+  .formula{font-family:var(--mono);background:#0b0d11;border:1px solid var(--line);
+    border-radius:8px;padding:10px 14px;margin:10px 0;color:#d7e3f4;overflow-x:auto;font-size:14.5px}
+  .note{font-size:13.5px;color:var(--mut);border-left:3px solid #334;padding:4px 0 4px 12px;margin:10px 0}
+  ul,ol{margin:10px 0;padding-left:24px}
+  li{margin:5px 0}
+  /* layered diagram */
+  .stack{display:flex;flex-direction:column;gap:0;margin:18px 0}
+  .layer{border:1px solid var(--line);background:var(--card);padding:14px 18px}
+  .layer:first-child{border-radius:12px 12px 0 0}
+  .layer:last-child{border-radius:0 0 12px 12px}
+  .layer+.layer{border-top:none}
+  .layer .lt{font-weight:700;color:var(--acc);font-size:14px}
+  .layer .ld{color:var(--mut);font-size:13.5px;margin-top:3px}
+  .branch{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0}
+  .branch .b{border:1px solid var(--line);border-radius:12px;padding:14px;background:var(--card2)}
+  .branch .b h4{margin:0 0 6px;color:var(--acc2);font-size:15px}
+  .branch .b p{margin:0;font-size:13.5px;color:var(--mut)}
+  code{font-family:var(--mono);background:#0b0d11;border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:13.5px;color:#cbd5e1}
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left}
+  th{background:var(--card2);color:var(--mut)}
+  .filelist{font-family:var(--mono);font-size:13px;color:#b9c2d0;background:#0b0d11;
+    border:1px solid var(--line);border-radius:8px;padding:12px 14px;white-space:pre-wrap;word-break:break-all}
+  .kbd{color:var(--acc)}
+  .footer{color:var(--mut);font-size:13px;border-top:1px solid var(--line);margin-top:40px;padding-top:16px}
+  @media(max-width:860px){nav{display:none}main{padding:24px 18px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav>
+  <h2>目录</h2>
+  <ol>
+    <li><a href="#thesis">共同的地基</a></li>
+    <li><a href="#l0">底层：量子力学基石</a></li>
+    <li><a href="#l1">碱金属原子</a></li>
+    <li><a href="#l2">光与物质的相互作用</a></li>
+    <li><a href="#l3">自旋动力学</a></li>
+    <li><a href="#b1">分支A·SERF 磁力仪</a></li>
+    <li><a href="#b2">分支B·FADOF 滤光器</a></li>
+    <li><a href="#b3">分支C·分子光谱/费米共振</a></li>
+    <li><a href="#l4">计算方法层·计算程序</a></li>
+    <li><a href="#map">统一地图</a></li>
+  </ol>
+</nav>
+
+<main>
+<header class="hero">
+  <span class="tag">系统性导览</span><span class="tag">自底向上</span><span class="tag">公共基础</span>
+  <h1>从原子到磁力仪：五个主题的共同地基</h1>
+  <p class="lead">自旋弛豫、自旋交换、FADOF、SERF 铷原子磁力仪、费米共振——这五个看似分散的主题，
+  其实都立在同一套最底层的物理之上：<b>原子/分子的量子力学 + 光与物质的相互作用 + 光谱学</b>。
+  下面从最底层开始，一层一层往上搭，直到看清它们各自从哪条支流长出来。</p>
+</header>
+
+<!-- ============ THESIS ============ -->
+<section id="thesis">
+  <h2>0 · 共同的地基</h2>
+  <p>先把"底层"摆出来。无论你是研究原子磁强计还是分子振动，所有计算与现象最终都归结为四件事：</p>
+  <div class="card b">
+    <ul>
+      <li><b>能级是离散的。</b>原子/分子的能态只能取特定值；在能级间跃迁会吸收或发射特定频率的光——这就是<b>光谱学</b>的全部起点。</li>
+      <li><b>角动量与自旋。</b>电子有轨道角动量 L 与自旋 S，原子有总角动量 J，原子核有核自旋 I；它们耦合出超精细能级 F。自旋是后面一切"磁"现象的来源。</li>
+      <li><b>对称性与选择定则。</b>不是任意两个能级都能相互跃迁；选择定则（如电偶极 ΔJ=±1）和对称性（不可约表示）决定哪些跃迁允许、哪些禁戒、哪些能相互混合。</li>
+      <li><b>光与物质的相互作用。</b>吸收、色散（折射率）、法拉第旋光、塞曼分裂、光抽运——这些机制在原子和分子上形式完全一致，只是能级结构不同。</li>
+    </ul>
+  </div>
+  <p class="note">一句话记忆：<span class="kbd">能级 + 角动量/自旋 + 对称性 + 光相互作用</span> 是这套资料的"操作系统"，五个主题都是跑在这套系统上的"应用"。</p>
+</section>
+
+<!-- ============ LAYER 0 ============ -->
+<section id="l0">
+  <h2>1 · 底层：量子力学基石</h2>
+  <h3>1.1 离散能级与光谱</h3>
+  <p>一个孤立原子的能量只能取一系列本征值 Eₙ。当体系从能级 i 跃迁到 j，吸收/发射光子的频率由玻尔频率条件决定：</p>
+  <div class="formula">h·ν = E_j − E_i</div>
+  <p>不同原子/分子的能级排布不同，于是它们的"指纹"——光谱——各不相同。反过来，测量光谱就能反推能级结构。这是所有主题共用的第一条原理。</p>
+
+  <h3>1.2 角动量耦合</h3>
+  <p>量子体系携带多种角动量，按规则耦合：</p>
+  <ul>
+    <li>电子轨道角动量 <code>L</code> 与电子自旋 <code>S</code> → 总电子角动量 <code>J</code>；</li>
+    <li>电子角动量 <code>J</code> 与核自旋 <code>I</code> → 超精细角动量 <code>F</code>（超精细结构）。</li>
+  </ul>
+  <p>对碱金属，最外层只有一个价电子，问题被极大简化——这正是它们成为"标准模型原子"的原因。</p>
+
+  <h3>1.3 选择定则与对称性</h3>
+  <p>跃迁并非任意：电偶极跃迁要求 <code>ΔJ = 0, ±1</code>（J=0→0 禁戒）；更一般地说，两个态要能"对话"，必须满足由分子点群决定的<b>对称性相同（属于同一不可约表示）</b>且能量接近。这条规则在分子支线（费米共振）里会再次出现。</p>
+</section>
+
+<!-- ============ LAYER 1 ============ -->
+<section id="l1">
+  <h2>2 · 第一层：碱金属原子（主力工作物质）</h2>
+  <p>五个主题里，四个都直接用到碱金属（锂 Li、钠 Na、钾 K、铷 Rb、铯 Cs）。原因：</p>
+  <div class="card b">
+    <ul>
+      <li><b>单价电子</b>：能级结构接近氢原子，理论简单、好算好控；</li>
+      <li><b>强共振线在可见/近红外</b>：Rb 的 D1 线 ≈ 795 nm、D2 线 ≈ 780 nm，正好能用便宜的半导体激光器；</li>
+      <li><b>有核自旋</b>：产生超精细结构（F 能级），是光抽运与 SERF 物理的关键；</li>
+      <li><b>室温附近就有足够蒸气压</b>：加热到 150–200 ℃ 即得高密度原子蒸气。</li>
+    </ul>
+  </div>
+  <p>所以"碱金属蒸气"是连接底层量子力学和上层应用（磁力仪、滤光器）的<b>物质载体</b>。</p>
+</section>
+
+<!-- ============ LAYER 2 ============ -->
+<section id="l2">
+  <h2>3 · 第二层：光与物质的相互作用</h2>
+  <h3>3.1 吸收、色散与折射率</h3>
+  <p>光在原子蒸气中传播时，其电场与原子偶极相互作用，产生<b>吸收</b>（损耗）和<b>色散</b>（折射率 n 随频率变化）。在共振频率附近，n(ω) 变化极为陡峭——这是 FADOF 的物理基础。</p>
+
+  <h3>3.2 塞曼效应</h3>
+  <p>加磁场 B 后，能级按磁量子数 m_F 分裂（塞曼分裂），分裂间距正比于 B：</p>
+  <div class="formula">ΔE = g_F · μ_B · B · m_F</div>
+  <p>于是左旋(σ⁺)与右旋(σ⁻)圆偏振光"看到"的折射率不同——这正是<b>法拉第旋光</b>的来源。</p>
+
+  <h3>3.3 法拉第旋光</h3>
+  <p>在纵向磁场中，线偏振光（可分解为 σ⁺/σ⁻ 叠加）因两种圆偏振分量相位不同，出射时偏振面旋转一个角度 θ。FADOF 正是用这个效应+正交偏振片做超窄带选频。</p>
+
+  <h3>3.4 光抽运（Optical Pumping）</h3>
+  <p>用圆偏振激光照射蒸气，只有特定自旋态的原子能吸收光子并获得角动量，于是绝大多数原子自旋被"刷"向同一方向——产生<b>自旋极化</b>。极化后的原子像一个集体磁针，对外磁场极度敏感。</p>
+</section>
+
+<!-- ============ LAYER 3 ============ -->
+<section id="l3">
+  <h2>4 · 第三层：自旋动力学（原子磁强仪的心脏）</h2>
+  <p>极化产生后，关键问题变成：它能保持多久？怎么被外磁场"读出"？这由自旋动力学决定。</p>
+
+  <h3>4.1 极化与 Bloch 方程</h3>
+  <p>用极化矢量 <code>S</code> 描述集体自旋，在磁场中它以拉莫尔频率进动：</p>
+  <div class="formula">ω_L = γ · B &nbsp;&nbsp;(γ≈3.5 Hz/nT 对 Cs)</div>
+  <p>测进动频率 ω_L 就等价于测磁场 B——这是原子磁强计的核心读数原理。</p>
+
+  <h3>4.2 弛豫：极化的"天敌"</h3>
+  <p>极化会因各种原因衰减，用两个时间刻画：</p>
+  <ul>
+    <li><b>T₁（纵向）</b>：极化大小恢复到平衡的速度；</li>
+    <li><b>T₂（横向）</b>：不同原子进动"相位"打散、相干丢失的速度（直接决定带宽与线宽）。</li>
+  </ul>
+  <p>弛豫机制包括：撞池壁、<b>自旋交换碰撞(SE)</b>、<b>自旋破坏碰撞(SD)</b>、扩散、磁场梯度。在碱金属高密度蒸气里，SE 是最主要的贡献。</p>
+
+  <h3>4.3 自旋交换（Spin Exchange）</h3>
+  <p>两碱金属原子碰撞时，<b>总角动量守恒但各自自旋指向可互换</b>（A↑+B↓ → A↓+B↑）。它会让进动"不同步"而退相干，但——</p>
+  <div class="formula">T_se = (σ_se · n · v̄_rel)⁻¹ ,&nbsp; σ_se ≈ 2×10⁻¹⁴ cm² (K,Rb,Cs)</div>
+  <p>当交换<b>极快</b>（R_se ≫ ω_L）时，快速交换反而维持一个统计平衡的"自旋温度分布"，平均进动频率的不确定度 ∝ γ²B²/R_se 随 R_se 增大而减小。于是极化能长时间保持。<b>这就是 SERF 的物理开关。</b></p>
+
+  <h3>4.4 临界结论：SERF 条件</h3>
+  <div class="card g">
+    <p style="margin:0">让磁场降到近零（B ≲ 1 nT）、同时提高原子密度（高温）→ 拉莫尔频率 ≪ 自旋交换速率 →
+    <b>自旋交换不再造成弛豫</b> → 相干时间可达 1 秒量级 → 灵敏度冲到亚飞特斯拉（fT/√Hz）。</p>
+  </div>
+  <p class="note">至此，底层（能级/角动量）→ 物质（碱金属）→ 相互作用（光抽运/塞曼/法拉第）→ 动力学（弛豫/自旋交换）已全部就位。
+  接下来三条应用支线都是在这块地基上长出来的。</p>
+</section>
+
+<!-- ============ BRANCH A ============ -->
+<section id="b1">
+  <h2>5 · 分支 A：SERF 铷原子磁力仪</h2>
+  <p>把第 4 层的结论接上仪器：蒸气池（Rb + He/N₂ 缓冲气体）+ 抽运激光（极化）+ 探测激光（读偏振旋转）+ 磁屏蔽（把地磁场降到 nT）。
+  在近零场、高密度下工作于 SERF 区，灵敏度可达 <b>0.089 fT/√Hz</b>（北航 2019，公开报道最优之一）。</p>
+  <div class="card g">
+    <ul>
+      <li><b>生物医学</b>：脑磁图(MEG)、心磁图(MCG)——无需液氦、可穿戴，正替代 SQUID；</li>
+      <li><b>地球物理 / 考古 / 矿产</b>：磁异常探测；</li>
+      <li><b>基础物理</b>：寻找轴子(axion)等。</li>
+    </ul>
+  </div>
+  <p class="note">对应资料：<code>全光学高灵敏度铷原子磁力仪的研究_李曙光.pdf</code>、<code>141022SERF磁力仪.docx</code>、<code>铷氦/[Wagshul]PRA49.3854.pdf</code>。</p>
+</section>
+
+<!-- ============ BRANCH B ============ -->
+<section id="b2">
+  <h2>6 · 分支 B：FADOF 法拉第反常色散滤光器</h2>
+  <p>同一套"碱金属蒸气 + 共振色散 + 法拉第旋光"被换了个用途：做<b>超窄带光学滤波器</b>。</p>
+  <ul>
+    <li>结构：纵向磁场中的碱金属蒸气池 + 前后两片<b>正交偏振片</b>；</li>
+    <li>原理：只有落在原子共振附近、偏振面恰好转过 ≈90° 的光才能透过第二片偏振片，带外光被挡掉；</li>
+    <li>性能：带宽 GHz 量级（≈0.01 nm），能保留空间信息，对入射角不敏感。</li>
+  </ul>
+  <p>典型用途：<b>激光频率稳定</b>（把激光锁到原子线上）、自由空间/水下/深空光通信、激光雷达、强背景弱信号探测。</p>
+  <p class="note">FADOF 与磁力仪是"同源异用"：磁力仪用极化进动<b>读磁场</b>，FADOF 用共振色散+旋光<b>选频率</b>。底层都是碱金属蒸气的共振光学性质。</p>
+</section>
+
+<!-- ============ BRANCH C ============ -->
+<section id="b3">
+  <h2>7 · 分支 C：分子光谱与费米共振</h2>
+  <p>这条线把舞台从<b>原子</b>换到<b>分子</b>（以 CO₂ 为例），但底层规则完全相同：离散能级、对称性、选择定则、非谐耦合。</p>
+  <h3>7.1 分子振动与非谐性</h3>
+  <p>CO₂ 是线性三原子分子，有弯曲振动 ν₂（≈667 cm⁻¹）、对称伸缩 ν₁（≈1337 cm⁻¹）、反对称伸缩 ν₃（≈2349 cm⁻¹）。
+  真实分子不是理想谐振子，势能含<b>非谐项</b>，使不同振动模式可以"耦合"。</p>
+  <h3>7.2 费米共振（Fermi Resonance, 1931）</h3>
+  <p>CO₂ 弯曲振动的倍频 2ν₂ ≈ 1334 cm⁻¹，与对称伸缩 ν₁ ≈ 1337 cm⁻¹ <b>能量几乎相等且对称性相同</b>。二者发生量子力学混合，原本单一的对称伸缩峰裂成两个强峰：</p>
+  <div class="formula">观测峰 ≈ 1285 cm⁻¹ 与 1388 cm⁻¹ （拉曼），原强峰消失</div>
+  <p>表现：频率"避免交叉"（avoided crossing，最小间距 = 2|W|，W 为耦合常数）；弱/禁戒的倍频带向强基频带"借"强度（intensity borrowing）。研究方法常用<b>同位素取代法</b>与<b>变换溶剂法</b>。</p>
+  <p class="note">对应资料：<code>130128FermiResonanceSHAOZhuchen.pdf</code>、<code>文档/20130106CPC/</code>（CO₂ 红外吸收、Raman 与费米共振，及 ABWC/ACES/ACNC 等 Fortran 计算程序）。</p>
+</section>
+
+<!-- ============ LAYER 4: COMPUTE ============ -->
+<section id="l4">
+  <h2>8 · 计算方法层：<code>文档\计算程序</code> 是什么</h2>
+  <p>前面所有光谱与能级，最终都要靠<b>计算</b>来验证或拟合。资料里的 <code>C:\Users\wade\OneDrive\ACADEMIC\文档\计算程序</code> 就是这套计算的<b>文献与工具箱</b>。它包含：</p>
+  <table>
+    <tr><th>内容</th><th>说明</th></tr>
+    <tr><td>一批 <code>1-s2.0-00104655…-main.pdf</code></td><td><i>Computer Physics Communications</i>（CPC，ISSN 0010-4655）期刊论文/程序说明——这就是"CPC"的来历，涉及量子化学与分子振动计算程序。</td></tr>
+    <tr><td><code>130122费米共振对分子振动能级和光谱的影响.pdf</code></td><td>直接讲费米共振如何影响分子振动能级与光谱的论文。</td></tr>
+    <tr><td><code>abwc.pdf</code></td><td>ABWC 程序使用手册（ABWC 即上面出现的计算程序之一）。</td></tr>
+    <tr><td><code>gcc.pdf</code>、<code>gfortran-95.pdf</code></td><td>Fortran 编译器（GCC / gfortran）手册——编译运行这些科学计算程序的工具链。</td></tr>
+    <tr><td><code>.thumbnails/</code></td><td>系统生成的缩略图缓存，无实质内容。</td></tr>
+  </table>
+  <p>真正的 Fortran 源代码（<code>ABWC</code>、<code>ACES</code>、<code>ACNC</code>、<code>ACNE</code>、<code>ACRW</code>、<code>ACWD</code>、<code>ACXC</code>、<code>ADAC</code>、<code>ADAL</code> …）与输入/输出数据，存放在同级的 <code>文档/20130106CPC/</code> 目录中。</p>
+  <h3>怎么"写进 HTML"</h3>
+  <p>上面这张表已经把它写进本页第 8 节：先说明它是<b>分子光谱/费米共振的计算文献与工具箱</b>，再逐类列出文件、点明 CPC=Computer Physics Communications、并指回源代码目录。它在本体系里的位置是<b>最顶上的"计算方法层"</b>——为第 7 节（费米共振）提供数值验证手段，是连接"物理原理"与"可复现结果"的最后一环。</p>
+  <div class="filelist">文档\计算程序\
+├─ 1-s2.0-00104655…-main.pdf   (×10，CPC 期刊论文/程序说明)
+├─ 130122费米共振对分子振动能级和光谱的影响.pdf
+├─ abwc.pdf                     (ABWC 程序手册)
+├─ gcc.pdf / gfortran-95.pdf   (Fortran 编译器手册)
+└─ .thumbnails\                (缩略图缓存，无实质内容)
+
+文档\20130106CPC\              (实际 Fortran 源代码与数据：ABWC/ACES/ACNC/ACNE/ACRW/ACWD/ACXC/ADAC/ADAL …)</div>
+</section>
+
+<!-- ============ MAP ============ -->
+<section id="map">
+  <h2>9 · 统一地图</h2>
+  <p>把上面的层次收成一张图：最底下是共用地基，往上长出物质与相互作用，再往上分出三条应用支流，最顶是计算方法层。</p>
+  <div class="stack">
+    <div class="layer"><div class="lt">计算方法层</div><div class="ld">文档\计算程序 / 20130106CPC（Fortran 光谱计算程序）——验证与拟合所有光谱</div></div>
+    <div class="layer"><div class="lt">应用支流</div><div class="ld">A. SERF 磁力仪（读磁场）&nbsp;·&nbsp; B. FADOF 滤光器（选频率）&nbsp;·&nbsp; C. 分子光谱/费米共振（CO₂ 振动耦合）</div></div>
+    <div class="layer"><div class="lt">自旋动力学</div><div class="ld">4. 极化 · Bloch方程 · 弛豫(T₁/T₂) · 自旋交换 · SERF 条件（R_se≫ω_L 且 B≈0）</div></div>
+    <div class="layer"><div class="lt">光—物质相互作用</div><div class="ld">3. 吸收/色散 · 塞曼效应 · 法拉第旋光 · 光抽运</div></div>
+    <div class="layer"><div class="lt">物质载体</div><div class="ld">2. 碱金属原子（Rb/K/Cs）：单电子、可见共振线、有核自旋、易成蒸气</div></div>
+    <div class="layer"><div class="lt">底层地基（共用）</div><div class="ld">1. 离散能级 · 角动量/自旋 · 对称性与选择定则 · 光与物质相互作用</div></div>
+  </div>
+  <p class="note">所以回答你的问题：<b>这五个主题绝非没有共同基础</b>——它们共享同一套量子力学与光谱学地基，区别只在于"往上走了哪条支流"：原子磁强仪与 FADOF 走原子自旋支路，费米共振走分子振动支路，而计算程序为后者提供数值工具。</p>
+</section>
+
+<div class="footer">
+  本页为 <code>ACADEMIC</code> 资料库的自底向上导览，内容综合自公开文献（SERF 灵敏度、自旋交换截面、FADOF 带宽、费米共振 CO₂ 双峰等）。
+  做严肃研究请以原始论文为准。对应原始文件见 <code>项目归档/</code> 下各主题子目录的 index.html。
+</div>
+</main>
+</div>
+</body>
+</html>
