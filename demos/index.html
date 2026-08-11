@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>原子物理交互演示 · 子站总目录</title>
+<link rel="stylesheet" href="common.css">
+<style>
+  body{max-width:1000px;margin:0 auto;padding:30px 20px 60px;}
+  h1{font-size:24px;}
+  ul.demo-list{list-style:none;padding:0;margin:18px 0;}
+  ul.demo-list li{padding:11px 14px;border:1px solid var(--line,#263040);border-radius:8px;margin-bottom:10px;background:#0e1622;}
+  ul.demo-list a{font-size:16px;color:var(--acc,#38bdf8);text-decoration:none;font-weight:600;}
+  ul.demo-list a:hover{text-decoration:underline;}
+  .tag{display:inline-block;font-size:12px;padding:1px 8px;border-radius:10px;margin-left:8px;vertical-align:middle;}
+  .tag.real{background:#0c2a1a;color:#86efac;border:1px solid #166534;}
+  .tag.sim{background:#3a1414;color:#fca5a5;border:1px solid #991b1b;}
+  .dsc{display:block;color:var(--mut,#9aa4b2);font-size:13px;margin-top:3px;}
+  .back{font-size:14px;}
+  .back a{color:var(--acc,#38bdf8);text-decoration:none;}
+</style>
+</head>
+<body>
+<h1>原子物理交互演示 · 子站总目录</h1>
+<p class="sub">每个演示都是独立可打开的子站（共用 common.js / common.css）。标注「模拟展示」的为非实验合成数据，仅作结构/标度示意。</p>
+<p class="back"><a href="../index.html">↩ 返回完整导览主页</a></p>
+<ul class="demo-list">
+      <li>
+        <a href="demo01.html">交互 1：能级排斥（avoided crossing）</a>
+        <span class="tag real">真实计算</span>
+        <span class="dsc">JS 实时对角化，非查表</span>
+      </li>
+      <li>
+        <a href="demo02.html">交互 2：网格解薛定谔方程</a>
+        <span class="tag real">真实计算</span>
+        <span class="dsc">同一套 Jacobi 在浏览器里跑</span>
+      </li>
+      <li>
+        <a href="demo03.html">交互 3：SERF 窗口</a>
+        <span class="tag real">真实计算</span>
+        <span class="dsc">左：自旋进动实时积分；右：线宽随 B 塌缩</span>
+      </li>
+      <li>
+        <a href="demo05.html">交互 5：完整振动态表（IV3 = 0,1）</a>
+        <span class="tag real">真实计算</span>
+        <span class="dsc">JS 端实时对角化整张表</span>
+      </li>
+      <li>
+        <a href="demo06.html">交互 6：sinc-DVR 解一维薛定谔</a>
+        <span class="tag real">真实计算</span>
+        <span class="dsc">同一套 EIGEN 在浏览器里跑</span>
+      </li>
+      <li>
+        <a href="demo07.html">交互 7：T(Δ) 随轴向磁场 B 开启</a>
+        <span class="tag real">真实计算</span>
+        <span class="dsc">实时画 T–Δ 曲线</span>
+      </li>
+      <li>
+        <a href="demo08.html">交互 8：极化增长曲线 + 线宽 U 形</a>
+        <span class="tag real">真实计算</span>
+        <span class="dsc">实时 R / γ</span>
+      </li>
+      <li>
+        <a href="demo09.html">交互 9：Morse 能级 → 拟合反推 ω_e / ω_e x_e</a>
+        <span class="tag real">真实计算</span>
+        <span class="dsc">实时 D / a / N</span>
+      </li>
+      <li>
+        <a href="demo10.html">交互 10：⁸⁷Rb 基态 8 条塞曼子能级 vs 磁场</a>
+        <span class="tag real">真实计算</span>
+        <span class="dsc">实时 B_max</span>
+      </li>
+      <li>
+        <a href="demo11.html">交互 11：χ′(Δ) 与 χ″(Δ) 共轭对</a>
+        <span class="tag real">真实计算</span>
+        <span class="dsc">实时 γ</span>
+      </li>
+      <li>
+        <a href="demo12.html">交互 12：洛伦兹 / 高斯 / 伪 Voigt / 朴素卷积</a>
+        <span class="tag real">真实计算</span>
+        <span class="dsc">实时 a_L / a_D</span>
+      </li>
+      <li>
+        <a href="demo13.html">交互 13：DAVLL 信号 vs 失谐/磁场</a>
+        <span class="tag real">真实计算</span>
+        <span class="dsc">实时 B / Δ₀</span>
+      </li>
+      <li>
+        <a href="demo14.html">交互 14：2D DVR 本征能级 vs 解析 (n_x+n_y+1)</a>
+        <span class="tag real">真实计算</span>
+        <span class="dsc">实时 N</span>
+      </li>
+      <li>
+        <a href="demo17.html">交互 17：伪随机分子带（合成）</a>
+        <span class="tag sim">模拟展示</span>
+        <span class="dsc"></span>
+      </li>
+      <li>
+        <a href="demo18.html">交互 18：⁸⁷Rb D₂ 超精细能级 + 六条跃迁强度</a>
+        <span class="tag real">真实计算</span>
+        <span class="dsc">真实常数 A/B</span>
+      </li>
+      <li>
+        <a href="demo19.html">交互 19：振动–转动带 P/R 支（合成）</a>
+        <span class="tag sim">模拟展示</span>
+        <span class="dsc"></span>
+      </li>
+      <li>
+        <a href="demo20.html">交互 20：SERF 灵敏度标度律（合成）</a>
+        <span class="tag sim">模拟展示</span>
+        <span class="dsc"></span>
+      </li>
+      <li>
+        <a href="demo21.html">交互 21：SEOP 极化建立 P(t)（合成）</a>
+        <span class="tag sim">模拟展示</span>
+        <span class="dsc"></span>
+      </li>
+      <li>
+        <a href="demo22.html">交互 22：自旋交换变窄 / SERF 线宽</a>
+        <span class="tag real">真实计算</span>
+        <span class="dsc">实时 Γ_se / R_sd / B</span>
+      </li>
+      <li>
+        <a href="demo23.html">交互 23：弛豫时间预算 T₁ 分解</a>
+        <span class="tag real">真实计算</span>
+        <span class="dsc">实时 n / T / T_wall</span>
+      </li>
+      <li>
+        <a href="demo24.html">交互 24：拉比振荡 P_e(t)</a>
+        <span class="tag real">真实计算</span>
+        <span class="dsc">实时 Ω / δ / Γ</span>
+      </li>
+      <li>
+        <a href="demo25.html">交互 25：⁸⁷Rb 基态 Breit–Rabi 塞曼图</a>
+        <span class="tag real">真实计算</span>
+        <span class="dsc">实时 B_max (G)</span>
+      </li>
+      <li>
+        <a href="demo26.html">交互 26：SEOP 效率 η</a>
+        <span class="tag real">真实计算</span>
+        <span class="dsc">实时 A_b / γ̄ / 核自旋 I</span>
+      </li>
+      <li>
+        <a href="demo27.html">交互 27：Ramsey 条纹</a>
+        <span class="tag real">真实计算</span>
+        <span class="dsc">实时 自由演化 T</span>
+      </li>
+      <li>
+        <a href="demo28.html">交互 28：EIT 透明窗</a>
+        <span class="tag real">真实计算</span>
+        <span class="dsc">实时 Ω_c / γ / δ_c</span>
+      </li>
+</ul>
+<footer class="footer">共 25 个独立演示子站。</footer>
+</body>
+</html>
