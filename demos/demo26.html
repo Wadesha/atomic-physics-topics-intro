@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>交互 26 · SEOP 效率 η</title>
+<link rel="stylesheet" href="common.css">
+<style>
+  body{max-width:1180px;margin:0 auto;padding:22px 18px 64px;}
+  .topbar{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-bottom:6px;font-size:14px;}
+  .topbar a{color:var(--acc,#38bdf8);text-decoration:none;}
+  .topbar a:hover{text-decoration:underline;}
+  .pagetitle{font-size:21px;margin:8px 0 2px;}
+  .sub{color:var(--mut,#9aa4b2);font-size:14px;margin:0 0 14px;}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <a href="index.html">← 子站总目录</a>
+  <a href="../index.html">↩ 完整导览主页</a>
+</header>
+<h1 class="pagetitle">交互 26：SEOP 效率 η </h1>
+<p class="sub">实时 A_b / γ̄ / 核自旋 I</p>
+<main>
+
+<div class="demo">
+    <h4>交互 26：SEOP 效率 η<span class="badge">实时 A_b / γ̄ / 核自旋 I</span></h4>
+    <div class="ctl">
+      <label>惰性气体 <select id="n26gas">
+        <option value="0.5">³He (I=1/2)</option>
+        <option value="0.5">¹²⁹Xe (I=1/2)</option>
+        <option value="1.5">²¹Ne (I=3/2)</option>
+        <option value="1.5">¹³¹Xe (I=3/2)</option>
+        <option value="4.5">⁸³Kr (I=9/2)</option>
+      </select></label>
+      <label>自旋交换常数 A_b <input id="n26Ab" type="range" min="0.02" max="3" step="0.01" value="0.2"><span class="val" id="n26Abv">0.20</span></label>
+      <label>总弛豫 γ̄ <input id="n26gb" type="range" min="0.05" max="3" step="0.01" value="0.6"><span class="val" id="n26gbv">0.60</span></label>
+    </div>
+    <canvas id="cN26" width="1200" height="360"></canvas>
+    <div class="out" id="oN26"></div>
+  </div>
+</main>
+<footer class="footer">本页为原子物理 / 量子光学主题自底向上导览的独立交互演示（子站）。数值结论以程序实际输出为准。</footer>
+<script src="common.js"></script>
+<script>
+(function(){
+  var sgas=document.getElementById('n26gas'),sAb=document.getElementById('n26Ab'),sgb=document.getElementById('n26gb');
+  var vAb=document.getElementById('n26Abv'),vgb=document.getElementById('n26gbv'),out=document.getElementById('oN26');
+  function draw(){
+    var I=+sgas.value, Ab=+sAb.value, gbar=+sgb.value;
+    vAb.textContent=Ab.toFixed(2); vgb.textContent=gbar.toFixed(2);
+    var Imean=I*(I+1)/(2*I+1);
+    var R=Ab*Imean;
+    var eta=R/(2*(gbar+R));
+    var o=ctxOf('cN26'),c=o.c,g=o.g,W=c.width,H=c.height;
+    var x0=60,y0=H-50,x1=W-30,y1=40; axis(g,x0,y0,x1,y1);
+    var pts=[];
+    for(var a=0.02;a<=3.001;a+=3/400){ var r=a*Imean; var e=r/(2*(gbar+r)); pts.push([a,e]); }
+    g.strokeStyle='#38bdf8';g.lineWidth=2;g.beginPath();
+    pts.forEach(function(p,i){ var px=x0+(x1-x0)*(p[0]/3); var py=y0-(y0-y1)*p[1]; if(i===0)g.moveTo(px,py);else g.lineTo(px,py); });
+    g.stroke();
+    var px=x0+(x1-x0)*(Ab/3), py=y0-(y0-y1)*eta;
+    g.fillStyle='#f59e0b';g.beginPath();g.arc(px,py,5,0,7);g.fill();
+    txt(g,'η = A_b⟨I⟩ / [2(γ̄ + A_b⟨I⟩)]',x0+6,y1+16,'#9aa4b2',13,'left');
+    txt(g,'A_b (相对)',x1,y0+22,'#9aa4b2',12,'right');
+    txt(g,'η',x0-6,y1+4,'#9aa4b2',13,'right');
+    txt(g,'Rb–Xe 实测 ≈0.04',x0+10,y0-(y0-y1)*0.04-6,'#fca5a5',11,'left');
+    txt(g,'K–He 实测 ≈0.38',x0+10,y0-(y0-y1)*0.38-6,'#86efac',11,'left');
+    out.innerHTML='⟨I⟩=I(I+1)/(2I+1)='+Imean.toFixed(3)+'（I='+I+'）。\n'+
+      'A_b='+Ab.toFixed(2)+'，γ̄='+gbar.toFixed(2)+' → R=A_b⟨I⟩='+R.toFixed(3)+' → η='+eta.toFixed(3)+'。\n'+
+      '（RMP Eq.20 上限。重核 A_b 大→η 仅 ~0.04；轻核 ³He A_b 小→η 可到 ~0.38。效率=光→核极化转化率的硬上限。）';
+  }
+  sgas.onchange=draw;sAb.oninput=draw;sgb.oninput=draw;draw();
+})();
+</script>
+</body>
+</html>
