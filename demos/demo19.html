@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>交互 19 · 振动–转动带 P/R 支（合成）</title>
+<link rel="stylesheet" href="common.css">
+<style>
+  body{max-width:1180px;margin:0 auto;padding:22px 18px 64px;}
+  .topbar{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-bottom:6px;font-size:14px;}
+  .topbar a{color:var(--acc,#38bdf8);text-decoration:none;}
+  .topbar a:hover{text-decoration:underline;}
+  .pagetitle{font-size:21px;margin:8px 0 2px;}
+  .sub{color:var(--mut,#9aa4b2);font-size:14px;margin:0 0 14px;}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <a href="index.html">← 子站总目录</a>
+  <a href="../index.html">↩ 完整导览主页</a>
+</header>
+<h1 class="pagetitle">交互 19：振动–转动带 P/R 支（合成） <span class="badge sim" style="background:#7f1d1d;color:#fecaca;border-color:#991b1b">模拟展示 · 非实验数据</span></h1>
+<p class="sub">JS 实时计算 · 非查表</p>
+<main>
+<p class="simwarn">⚠ 本演示为<b>示意性合成</b>：CO₂ 的真实振转常数需另查 HITRAN 等数据库，本页源文件未含。下面用一套"编造但物理上不无道理"的 B 常数演示 P 支 / R 支结构，仅作结构示意，<b>数值不可当作 CO₂ 实测</b>。</p>
+<div class="demo">
+    <h4>交互 19：振动–转动带 P/R 支（合成）<span class="badge sim" style="background:#7f1d1d;color:#fecaca;border-color:#991b1b">模拟展示 · 非实测</span></h4>
+    <div class="ctl">
+      <label>带心 ν₀ <input id="rv0" type="range" min="2000" max="2400" step="10" value="2349"><span class="val" id="rv0v">2349</span> cm⁻¹</label>
+      <label>转动常数 B <input id="rvB" type="range" min="0.3" max="1.2" step="0.05" value="0.39"><span class="val" id="rvBv">0.39</span></label>
+    </div>
+    <canvas id="cRov" width="1200" height="400"></canvas>
+    <div class="out" id="oRov"></div>
+  </div>
+</main>
+<footer class="footer">本页为原子物理 / 量子光学主题自底向上导览的独立交互演示（子站）。数值结论以程序实际输出为准。</footer>
+<script src="common.js"></script>
+<script>
+(function(){
+  var s0=document.getElementById('rv0'), sB=document.getElementById('rvB');
+  var v0=document.getElementById('rv0v'), vB=document.getElementById('rvBv');
+  var out=document.getElementById('oRov');
+  function draw(){
+    var nu0=+s0.value, B=+sB.value; v0.textContent=nu0.toFixed(0); vB.textContent=B.toFixed(2);
+    var lines=[];
+    for(var J=1;J<=14;J++)lines.push({nu:nu0+B*((J+1)*(J+2))-B*(J*(J+1)),int:Math.pow(J+1,2)*Math.exp(-B*J*(J+1)/2),br:'R'});
+    for(var J=1;J<=14;J++)lines.push({nu:nu0+B*((J-1)*J)-B*(J*(J+1)),int:Math.pow(J,2)*Math.exp(-B*J*(J+1)/2),br:'P'});
+    var nus=lines.map(function(l){return l.nu;});
+    var nmin=Math.min.apply(null,nus)-B,nmax=Math.max.apply(null,nus)+B;
+    var imax=Math.max.apply(null,lines.map(function(l){return l.int;}));
+    var o=ctxOf('cRov'),c=o.c,g=o.g,W=c.width,H=c.height;
+    var x0=70,x1=W-40,y0=H-40,y1=40; axis(g,x0,y0,x1,y1);
+    function X(nu){return x0+(nu-nmin)/(nmax-nmin)*(x1-x0);}
+    lines.forEach(function(l){var px=X(l.nu),py=y0-(l.int/imax)*0.85*(y0-y1);
+      g.strokeStyle=l.br==='R'?'#7dd3fc':'#86efac';g.lineWidth=2;g.beginPath();g.moveTo(px,y0);g.lineTo(px,py);g.stroke();
+      g.fillStyle=l.br==='R'?'#7dd3fc':'#86efac';g.beginPath();g.arc(px,py,3,0,7);g.fill();});
+    txt(g,'波数 (cm⁻¹，示意值)',(x0+x1)/2,y0+28,'#9aa4b2',12,'center');
+    out.innerHTML='⚠ 合成振转带：带心 ν₀='+nu0.toFixed(0)+' cm⁻¹（示意值），R 支（蓝，ΔJ=+1）向右、P 支（绿，ΔJ=−1）向左。\n'+
+      '强度 ∝ (J+1)²·e^{−BJ(J+1)/2} 先升后降。数值为占位示意，非 HITRAN 实测。';
+  }
+  s0.oninput=draw;sB.oninput=draw;draw();
+})();
+</script>
+</body>
+</html>
