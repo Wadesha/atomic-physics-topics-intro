@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>交互 23 · 弛豫时间预算 T₁ 分解</title>
+<link rel="stylesheet" href="common.css">
+<style>
+  body{max-width:1180px;margin:0 auto;padding:22px 18px 64px;}
+  .topbar{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-bottom:6px;font-size:14px;}
+  .topbar a{color:var(--acc,#38bdf8);text-decoration:none;}
+  .topbar a:hover{text-decoration:underline;}
+  .pagetitle{font-size:21px;margin:8px 0 2px;}
+  .sub{color:var(--mut,#9aa4b2);font-size:14px;margin:0 0 14px;}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <a href="index.html">← 子站总目录</a>
+  <a href="../index.html">↩ 完整导览主页</a>
+</header>
+<h1 class="pagetitle">交互 23：弛豫时间预算 T₁ 分解 </h1>
+<p class="sub">实时 n / T / T_wall</p>
+<main>
+
+<div class="demo">
+    <h4>交互 23：弛豫时间预算 T₁ 分解<span class="badge">实时 n / T / T_wall</span></h4>
+    <div class="ctl">
+      <label>Rb 密度 n <input id="n23nRb" type="range" min="11" max="15" step="0.1" value="14"><span class="val" id="n23nRbv">1e14 cm⁻³</span></label>
+      <label>N₂ 密度 <input id="n23nN2" type="range" min="16" max="20" step="0.1" value="18"><span class="val" id="n23nN2v">1e18 cm⁻³</span></label>
+      <label>He 密度 <input id="n23nHe" type="range" min="16" max="21" step="0.1" value="19"><span class="val" id="n23nHev">1e19 cm⁻³</span></label>
+      <label>温度 T <input id="n23T" type="range" min="80" max="200" step="1" value="150"><span class="val" id="n23Tv">150 ℃</span></label>
+      <label>壁弛豫时间 T_wall <input id="n23Tw" type="range" min="0.1" max="5" step="0.1" value="1"><span class="val" id="n23Twv">1 s</span></label>
+    </div>
+    <canvas id="cN23" width="1200" height="360"></canvas>
+    <div class="out" id="oN23"></div>
+  </div>
+</main>
+<footer class="footer">本页为原子物理 / 量子光学主题自底向上导览的独立交互演示（子站）。数值结论以程序实际输出为准。</footer>
+<script src="common.js"></script>
+<script>
+(function(){
+  var snRb=document.getElementById('n23nRb'),snN2=document.getElementById('n23nN2'),snHe=document.getElementById('n23nHe'),
+      sT=document.getElementById('n23T'),sTw=document.getElementById('n23Tw');
+  var vnRb=document.getElementById('n23nRbv'),vnN2=document.getElementById('n23nN2v'),vnHe=document.getElementById('n23nHev'),
+      vT=document.getElementById('n23Tv'),vTw=document.getElementById('n23Twv');
+  var out=document.getElementById('oN23');
+  var kRbRb=3.9e-14, kRbN2=9.38e-18; // cm³/s, 实验文献
+  function draw(){
+    var nRb=Math.pow(10,+snRb.value), nN2=Math.pow(10,+snN2.value), nHe=Math.pow(10,+snHe.value);
+    var T=+sT.value, Tw=+sTw.value;
+    vnRb.textContent='1e'+snRb.value+' cm⁻³'; vnN2.textContent='1e'+snN2.value+' cm⁻³';
+    vnHe.textContent='1e'+snHe.value+' cm⁻³'; vT.textContent=T+' ℃'; vTw.textContent=Tw+' s';
+    var kRbHe=9.29e-17*Math.pow(T,4.259); // PRL 80,2801 温度律
+    var rRbRb=kRbRb*nRb, rRbN2=kRbN2*nN2, rRbHe=kRbHe*nHe;
+    var rGas=rRbRb+rRbN2+rRbHe, rWall=1/Tw, rTot=rGas+rWall, T1=1/rTot;
+    var o=ctxOf('cN23'),c=o.c,g=o.g,W=c.width,H=c.height;
+    var items=[['Rb–Rb',rRbRb],['Rb–N₂',rRbN2],['Rb–He (T^4.259)',rRbHe],['壁 1/T_wall',rWall]];
+    var maxR=Math.max(rRbRb,rRbN2,rRbHe,rWall)*1.15, bw=(W-120)/items.length;
+    g.font='13px ui-monospace,Consolas,monospace';
+    items.forEach(function(it,i){ var bh=(H-100)*(it[1]/maxR), bx=60+i*bw+bw*0.15, by=H-55-bh;
+      g.fillStyle=['#38bdf8','#22d3ee','#a78bfa','#f59e0b'][i]; g.fillRect(bx,by,bw*0.7,bh);
+      g.fillStyle='#9aa4b2'; g.textAlign='center';
+      g.fillText(it[0], bx+bw*0.35, H-38); g.fillText(it[1].toExponential(2)+' /s', bx+bw*0.35, by-6); });
+    g.strokeStyle='#39424f';g.beginPath();g.moveTo(60,H-55);g.lineTo(W-30,H-55);g.stroke();
+    g.fillStyle='#9aa4b2';g.textAlign='left';g.fillText('各通道弛豫速率 (1/s)',60,40);
+    out.innerHTML='各通道：Rb–Rb='+rRbRb.toExponential(2)+'，Rb–N₂='+rRbN2.toExponential(2)+'，Rb–He(T='+T+'℃)='+rRbHe.toExponential(2)+'，壁='+rWall.toExponential(2)+' /s。\n'+
+      '气体项合计 '+rGas.toExponential(2)+' /s；总 1/T₁='+rTot.toExponential(2)+' /s → T₁='+T1.toExponential(2)+' s。\n'+
+      '（系数取自实验文献：Rb–Rb=3.9×10⁻¹⁴、Rb–N₂=9.38×10⁻¹⁸ cm³/s；Rb–He 用 PRL 80,2801 的 T^4.259 律。）';
+  }
+  snRb.oninput=draw;snN2.oninput=draw;snHe.oninput=draw;sT.oninput=draw;sTw.oninput=draw;draw();
+})();
+</script>
+</body>
+</html>
