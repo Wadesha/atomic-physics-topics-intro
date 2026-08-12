@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>噪声抑制专题：原子磁力仪的"消音"工程</title>
+<style>
+:root{
+  --bg:#0f1115; --card:#171a21; --bord:#23262d; --mut:#9aa4b2;
+  --txt:#e6e8ec; --acc:#7dd3fc; --warn:#fbbf24; --intu:#c4b5fd; --side:#2a2140;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font:16px/1.9 -apple-system,"Segoe UI","Microsoft YaHei",sans-serif;padding:28px 20px 60px}
+main{max-width:820px;margin:0 auto}
+a{color:var(--acc);text-decoration:none}
+a:hover{text-decoration:underline}
+h1{font-size:27px;line-height:1.45;margin-bottom:8px}
+h2{font-size:21px;margin:40px 0 14px;padding-left:12px;border-left:4px solid var(--acc)}
+h3{font-size:17px;margin:24px 0 10px;color:var(--acc)}
+p{margin:12px 0}
+ul,ol{margin:10px 0 10px 24px}
+li{margin:6px 0}
+table{border-collapse:collapse;width:100%;margin:14px 0;font-size:14px}
+th,td{border:1px solid var(--bord);padding:7px 11px;text-align:left}
+th{background:#1c2029;color:var(--acc)}
+tr:nth-child(even) td{background:#151922}
+.sub{color:var(--mut);font-size:14px}
+.formula{background:#11141a;border:1px solid var(--bord);border-radius:8px;padding:12px 18px;margin:14px 0;font-family:"Cambria Math",Georgia,serif;font-size:16px;overflow-x:auto;text-align:center}
+.formula b{color:var(--acc)}
+.note{border-left:3px solid var(--warn);padding:8px 14px;margin:14px 0;background:#1a1710;font-size:14px}
+.side{background:var(--side);border:1px solid #3b2f5e;border-radius:10px;padding:12px 16px;margin:14px 0;font-size:14px}
+.side b{color:#c4b5fd}
+.glos{background:#11141a;border:1px solid var(--bord);border-radius:8px;padding:10px 14px;margin:8px 0;font-size:14px}
+.glos b{color:var(--acc)}
+.links{margin-top:30px;display:flex;gap:16px;flex-wrap:wrap;font-size:14px}
+.toplink{color:var(--mut);font-size:13px;margin-bottom:12px;display:block}
+/* 浅色主题 */
+body[data-theme="light"]{
+  --bg:#f7f8fa; --card:#ffffff; --bord:#dde1e7; --mut:#5a6472;
+  --txt:#1a2029; --acc:#0284c7; --warn:#b45309; --intu:#6d28d9; --side:#f3eefb;
+}
+body[data-theme="light"] .formula{background:#f1f3f6;border-color:#dde1e7}
+body[data-theme="light"] .note{background:#fdf6e3;border-color:#e5c97a}
+body[data-theme="light"] .side{border-color:#c9b8ec}
+body[data-theme="light"] .glos{background:#f1f3f6;border-color:#dde1e7}
+body[data-theme="light"] th{background:#eef1f5}
+body[data-theme="light"] tr:nth-child(even) td{background:#f3f5f8}
+/* 顶部可折叠目录 */
+#tocBtn{position:fixed;top:10px;right:10px;z-index:90;background:transparent;border:1px solid var(--bord);
+  color:var(--mut);border-radius:6px;font-size:14px;padding:3px 9px;cursor:pointer;opacity:.55;transition:opacity .2s}
+#tocBtn:hover{opacity:1;color:var(--acc)}
+#toc{position:fixed;top:0;left:0;right:0;z-index:89;background:var(--bg);border-bottom:1px solid var(--bord);
+  max-height:0;overflow:hidden;transition:max-height .3s ease;display:flex;flex-wrap:wrap;gap:4px 16px;padding:0 16px}
+#toc.open{max-height:70vh;overflow:auto;padding-top:44px;padding-bottom:12px}
+#toc a{font-size:13px;color:var(--mut);padding:2px 0}
+#toc a:hover{color:var(--acc)}
+#toc a.cur{color:var(--acc)}
+/* 主题切换按钮（右下角，不起眼） */
+#themeBtn{position:fixed;right:10px;bottom:10px;z-index:90;width:34px;height:34px;border-radius:50%;
+  background:var(--card);border:1px solid var(--bord);color:var(--mut);font-size:16px;cursor:pointer;
+  opacity:.5;transition:opacity .2s}
+#themeBtn:hover{opacity:1;color:var(--acc)}
+@media(max-width:860px){main{padding:0 4px}h1{font-size:22px}}
+</style>
+</head>
+<body>
+<button id="tocBtn" title="展开/收起目录">☰</button>
+<button id="themeBtn" title="深浅切换">◐</button>
+<div id="toc"></div>
+<main>
+<a class="toplink" href="index.html">&larr; 返回《从原子到磁力仪》主线</a>
+<h1>噪声抑制专题：原子磁力仪的"消音"工程</h1>
+<p class="sub">实验支线的专题篇，与《原子磁力仪实验》配套。主线讲原子怎么被利用，实验篇讲装置怎么搭，这一篇专门讲：<b>灵敏度被噪声卡住时，每一项噪声是怎么被一步步压下去的</b>。</p>
+<div class="side"><b style="color:#7dd3fc">这一篇和你有什么关系：</b>你戴的主动降噪耳机、录音棚里的话放、手机拍照的夜景模式——它们都在做同一件事：分辨噪声、再把噪声压下去。这一篇是原子磁力仪版的"降噪工程"：从屏蔽房到差分测量，把环境的、光的、原子的噪声一项项拆解，直到信号从噪声里浮出来。</div>
+
+<!-- ============ 0 学习地图 ============ -->
+<section id="n0">
+<h2>0 &middot; 先看地图：噪声抑制这条线怎么走</h2>
+<p>灵敏度就是"信号除以噪声"。原子磁力仪四十年灵敏度进步，表面上是数字在变小，实质上是一部<b>噪声抑制史</b>——每一代突破，都是把某一类噪声压下去。这条线的推进顺序：</p>
+<ul>
+<li>第 1 节先建立共同语言：噪声怎么用数学描述（功率谱、白噪声、1/f、艾伦方差），灵敏度公式怎么读。</li>
+<li>第 2 节给噪声分类：环境磁场、光、原子、电子——四类噪声，四套打法。</li>
+<li>第 3 节处理环境磁场噪声：被动屏蔽、主动稳定、梯度仪（差分）。</li>
+<li>第 4 节处理光噪声：平衡探测、调制解调、光移。</li>
+<li>第 5 节处理原子噪声：SERF（把弛豫压掉）与自旋压缩（把量子涨落压掉）。</li>
+<li>第 6 节处理电子与杂项噪声：低噪声电路、振动、温控。</li>
+<li>第 7 节讲怎么"称量"噪声：灵敏度谱、艾伦方差、噪声预算——没有测量手段，抑制就无从谈起。</li>
+<li>第 8 节收束：把六类手段排成一张表，看极限落在哪。</li>
+</ul>
+<div class="note">时间少的话：只读每节第一段 + 结果表。整篇的核心思想一句话——<b>先分辨噪声来自哪里，再决定是"挡"（屏蔽）、"减"（相减）还是"压"（物理机制）</b>。</div>
+</section>
+
+<!-- ============ 1 噪声的数学语言 ============ -->
+<section id="n1">
+<h2>1 &middot; 共同语言：噪声怎么描述、灵敏度怎么读</h2>
+<p>说噪声之前，先要有描述噪声的工具。两个工具最常用：<b>功率谱密度</b>（频域）和<b>艾伦方差</b>（时域）。</p>
+
+<h3>1.1 功率谱密度：把噪声拆到每个频率</h3>
+<p>把一段磁场记录做傅里叶变换，就得到噪声在每个频率上的大小，画出来叫功率谱密度，单位是 T/√Hz（磁场）或 fT/√Hz。谱的形状直接告诉你是哪类噪声：</p>
+<div class="formula">S<sub>y</sub>(f) &prop; f<sup>&alpha;</sup>&nbsp;&nbsp;（&alpha; = 0：白噪声；&alpha; &lt; 0：低频升高的 1/f 噪声）</div>
+<ul>
+<li><b>白噪声</b>（&alpha;=0）：各频率一样大，主要是散粒噪声、原子投影噪声这类"随机到达"的噪声。它可以靠长时间平均压下去（平均时间越长越小）；</li>
+<li><b>1/f 噪声</b>（&alpha;&asymp;-1）：频率越低越大，来自激光漂移、温度漂移、环境场慢变。它压不下去——积分越久越吃亏，所以精密测量的积分时间有个"甜点"。</li>
+</ul>
+
+<h3>1.2 艾伦方差：看噪声随积分时间怎么变</h3>
+<p>艾伦方差是把数据切成越来越长的段、看段与段之间差多少，随积分时间 &tau; 画出来。它比直接看频谱更直观地告诉你"积多久最优"：</p>
+<ul>
+<li>白噪声段：&sigma;&prop;1/&tau;<sup>1/2</sup>——积得越久越准；</li>
+<li>低频漂移段：&sigma; 随 &tau; 上升——再积就变差，曲线的最低点就是最优积分时间。</li>
+</ul>
+
+<h3>1.3 灵敏度公式再读一遍</h3>
+<div class="formula">&delta;B &asymp; 1 / (&gamma;<sub>e</sub> &middot; &radic;(n &middot; T<sub>2</sub> &middot; V &middot; t))</div>
+<p>这个公式是整篇的"北极星"：n 大、T<sub>2</sub> 长、V 大、t 长，灵敏度就高。噪声抑制的每一招，最终都是在帮这个公式里的某一项。而公式本身还藏着一个"天花板"——自旋投影噪声：就算环境和光都完美，原子自旋的量子涨落仍然在。第 5 节讲怎么挑战这个天花板。</p>
+<div class="side"><b>为什么"单位带宽"很重要：</b>灵敏度写成 fT/√Hz 而不是 fT，是因为白噪声可以被平均掉——测 1 秒和测 100 秒，能分辨的磁场不一样。所以比较两台磁力仪，必须指明积分时间或带宽，否则没有意义。</div>
+</section>
+
+<!-- ============ 2 噪声分类地图 ============ -->
+<section id="n2">
+<h2>2 &middot; 先分清敌我：四类噪声，四套打法</h2>
+<p>把一台磁力仪从外到内拆开，噪声分四层，各自来源不同、对策不同：</p>
+<table>
+<tr><th>类别</th><th>来源</th><th>量级特征</th><th>对策（本篇章节）</th></tr>
+<tr><td>环境磁场噪声</td><td>地球磁场涨落、50 Hz 电力线、电梯、仪器移动</td><td>低频为主，可达 &micro;T 级</td><td>屏蔽/主动稳定/梯度仪（第 3 节）</td></tr>
+<tr><td>光噪声</td><td>激光强度与波长涨落、光移、散粒噪声</td><td>fT&ndash;pT 级耦合进信号</td><td>平衡探测/调制/光移抑制（第 4 节）</td></tr>
+<tr><td>原子噪声</td><td>自旋投影噪声、自旋交换弛豫、碰撞</td><td>决定了量子极限</td><td>SERF/自旋压缩（第 5 节）</td></tr>
+<tr><td>电子与技术噪声</td><td>探测器暗电流、放大器、振动、温漂</td><td>通常低于前三类，但会"抬底"</td><td>低噪声电子/隔振/控温（第 6 节）</td></tr>
+</table>
+<p>记住一个原则：<b>先处理大头，再处理小头</b>。早期磁力仪（1960&ndash;90 年代）瓶颈在环境噪声和光噪声；2000 年代 SERF 把原子噪声压下去后，环境噪声又成为新瓶颈；2010 年代以后，量子层面的噪声（自旋投影、压缩）成了最后的前沿。噪声抑制的顺序，就是灵敏度进步的顺序。</p>
+<div class="side"><b>一个反直觉的事实：</b>噪声不是"越小越好"那么简单——有时抑制一种噪声会引入另一种。比如梯度仪差分，既消了环境噪声，也可能把两个通道的电噪声叠加进来。优秀的噪声工程，永远是"按下葫芦浮起瓢"的权衡艺术。</div>
+</section>
+
+<!-- ============ 3 环境磁场噪声 ============ -->
+<section id="n3">
+<h2>3 &middot; 挡：环境磁场噪声——屏蔽、稳定、差分</h2>
+<p class="intu">环境噪声是最大的"公敌"：地球磁场有 30&ndash;60 &micro;T，城市里还有 50 Hz 电力线和各种扰动，而我们要测的信号只有 fT 级——差着十几个数量级。三招：<b>挡</b>（屏蔽）、<b>稳</b>（主动稳定）、<b>减</b>（梯度仪差分）。</p>
+
+<h3>3.1 被动屏蔽：高磁导率材料的"吸力"</h3>
+<p>坡莫合金（&mu;-金属）这类高磁导率材料会把磁力线"吸"进自己体内，让内部空间近乎无场。多层桶屏蔽能力惊人：</p>
+<table>
+<tr><th>屏蔽配置</th><th>低频（0.01 Hz）</th><th>高频（~1 kHz）</th></tr>
+<tr><td>单层 &mu;-金属桶</td><td>~10²</td><td>~10³&ndash;10⁴</td></tr>
+<tr><td>4 层典型实验桶</td><td>~10⁴&ndash;10⁵</td><td>~10⁶&ndash;10⁷</td></tr>
+<tr><td>7 层极高性能桶</td><td>7.5&times;10⁴</td><td>~10⁹</td></tr>
+</table>
+<p>注意一个规律：<b>屏蔽对低频的压制远不如高频</b>——0.01 Hz 比 1 kHz 差 4 个数量级以上。而环境噪声恰恰在低频最大。所以"多包几层"解决不了低频问题，必须靠下面两招补。</p>
+
+<h3>3.2 主动稳定：用磁力仪反哺磁场</h3>
+<p>思路：在屏蔽桶外（或内）放一个传感器监测环境场，把测量值与目标值比较产生误差信号，反馈控制线圈电流，主动把噪声"顶回去"。</p>
+<ul>
+<li>主动稳定的噪声抑制比典型 10&ndash;1000，具体取决于传感器噪声和反馈环路带宽；</li>
+<li>一个示范实验：无屏蔽的地球磁场环境里，用原子磁力仪主动稳定，把环境噪声压到 ~40 fT/√Hz，低频抑制比 &gt;800；</li>
+<li>与被动屏蔽互补：SQUID 在桶外监测+主动稳定，把 0.01 Hz 处的总抑制比从 7.5&times;10⁴ 再提升 30 倍到 2&times;10⁶。</li>
+</ul>
+<p>主动稳定的优点：成本低、体积大（不像屏蔽桶那么占空间）、能补被动屏蔽的低频短板。缺点：抑制比有限，且依赖传感器自身噪声够低。</p>
+
+<h3>3.3 梯度仪：让噪声自己"抵消自己"</h3>
+<p>这是最优雅的一招。环境噪声在空间上近似均匀——如果两个探头离得近，它们感受到的环境噪声几乎一样。把两路信号<b>相减</b>，环境噪声被消掉；而我们要测的信号源（大脑、心脏）离探头很近，两探头感受到的信号强弱不同，相减后仍然保留一部分：</p>
+<div class="formula">输出 = 探头<sub>1</sub> - 探头<sub>2</sub> &nbsp;&rArr;&nbsp; 远场噪声抵消、近场信号保留</div>
+<ul>
+<li><b>一阶梯度仪</b>：两个独立磁力仪电信号相减。简单，但电噪声也会叠加（两台的电噪声互不相关）；</li>
+<li><b>光学梯度仪</b>：一束探测光穿过泡内两个区域，一次探测直接得到差分——只需要一个偏振计，电噪声不因差分而增加。基长 30 mm 的光学梯度仪已用于生物磁测量。</li>
+</ul>
+<div class="side"><b>梯度仪的"基长"是关键参数：</b>基长要大于"信号源到近探头的距离"才有意义——远了，近场信号也被当成噪声消掉。脑磁图阵列的梯度仪基长往往就是按"头皮到传感器"的距离设计的。</div>
+</section>
+
+<!-- ============ 4 光噪声 ============ -->
+<section id="n4">
+<h2>4 &middot; 减：光噪声——平衡、调制、光移</h2>
+<p class="intu">光是磁力仪唯一的"输入输出通道"，也是噪声的大入口：激光强度抖一下，信号就抖一下。三招：<b>平衡探测</b>（把强度抖动相减掉）、<b>调制解调</b>（把信号搬到高频躲开 1/f）、<b>光移抑制</b>（消除光本身造成的假磁场）。</p>
+
+<h3>4.1 平衡探测：让激光的抖动"共模抵消"</h3>
+<p>激光强度噪声会直接进入信号。平衡偏振计的办法：沃拉斯顿棱镜把线偏振光劈成两束、各打一个光电二极管、相减。激光强度一抖，两束一起抖——相减后抵消；只有真正的偏振旋转（信号）留下。这是所有高灵敏度磁力仪的标准配置。</p>
+<p>散粒噪声（光子到达的随机性）是光探测的量子底：光越强散粒噪声相对越小，但光太强又会引入光移和加热。所以"光强调多少"永远是权衡。</p>
+
+<h3>4.2 调制解调：把低频信号"搬"到高频去测</h3>
+<p>1/f 噪声在低频最凶。一个聪明的办法：给磁场加一个高频调制（或调制光），让信号出现在高频载波附近，再用锁相放大器只提取载波附近的能量——低频的 1/f 噪声就被甩在身后了：</p>
+<div class="formula">磁场调制 / 光调制 &rarr; 信号搬到 &omega;<sub>mod</sub> 附近 &rarr; 锁相解调 &rarr; 躲开 1/f</div>
+<ul>
+<li>push-pull 磁力仪在 2&omega;<sub>mod</sub> 处解调，进一步抑制载波本身的残余与 1/f；</li>
+<li>代价：调制需要额外的线圈或光学元件，且调制频率受限于原子响应带宽。</li>
+</ul>
+
+<h3>4.3 光移：光把"假磁场"写进信号</h3>
+<p>泵浦光不完美共振时，会产生光移（AC Stark 效应）——等效于一个沿光传播方向的假磁场。激光强度和波长一抖，假磁场就抖，直接变成噪声。三个对付办法：</p>
+<ul>
+<li><b>SERF 信号结构利用</b>：SERF 输出公式里，x 分量和 z 分量以乘积形式出现——把 x 方向场归零，信号就对 z 方向的泵浦光移不敏感；</li>
+<li><b>RF 磁力仪免疫</b>：高频工作的磁力仪里，泵浦光移只改变共振频率、不直接进信号，所以对泵浦光移天然免疫（但探测光移仍是问题）；</li>
+<li><b>脉冲/相干泵浦</b>：用脉冲光或相干光抽运，等效光强大幅降低。一个自持续振荡磁力仪把泵浦光移压到约 1.8 mHz/(mW/cm²)，对应 380 fT/(mW/cm²)。</li>
+</ul>
+<div class="side"><b>一个典型实验的教训：</b>push-pull 磁力仪实测噪声底 ~35 pA/√Hz 全部来自 DFB 激光的功率、频率和相位起伏——理论上限（散粒噪声）是 17 fT/√Hz，实际做不到，就因为激光不稳。结论：<b>激光稳定是光噪声抑制的第一道关</b>。</div>
+</section>
+
+<!-- ============ 5 原子噪声 ============ -->
+<section id="n5">
+<h2>5 &middot; 压：原子噪声——从压弛豫到压量子涨落</h2>
+<p class="intu">环境和光都搞定了，剩下的噪声来自原子自己：一个是"宏观"的弛豫（自旋被碰撞打乱），一个是"量子"的投影噪声（自旋方向本质上的随机）。前者用 SERF 压掉，后者用自旋压缩压掉——这是噪声抑制的两座高峰。</p>
+
+<h3>5.1 SERF：把自旋交换弛豫"以毒攻毒"</h3>
+<p>普通磁力仪想提高灵敏度，加密度加原子数——但密度一高，自旋交换碰撞急剧增多，共振线宽被碰撞率卡死，灵敏度不升反降。SERF 的突破：让自旋交换率远大于拉莫尔进动率，碰撞的随机性被平均掉，弛豫被抑制，线宽只由自旋破坏碰撞决定：</p>
+<div class="formula">自旋交换截面（K 约 10<sup>-14</sup> cm²）比自旋破坏截面大 2&ndash;4 个数量级 &nbsp;&rArr;&nbsp; 抑制交换弛豫 = 灵敏度数量级提升</div>
+<p>SERF 让 T<sub>2</sub> 从毫秒级跳到秒级（灵敏度公式里 T<sub>2</sub> 在根号下，意味着约一个数量级）。这是原子磁力仪从 pT 跨入 fT 的关键。</p>
+
+<h3>5.2 自旋压缩：挑战自旋投影噪声</h3>
+<p>自旋投影噪声是量子极限：即使环境、光、弛豫都完美，测量自旋方向本身就有量子涨落。自旋压缩的思路：用<b>量子非破坏测量（QND）</b>对原子集体自旋"先看一次"，把不确定度从"信号方向"挤到"非信号方向"——像把一团雾挤成一片薄饼：</p>
+<div class="formula">&delta;B = &radic;&lang;(&Delta;S)²&rang; / (&gamma;&radic;T&radic;N) &nbsp;&rArr;&nbsp; 压缩 &lang;(&Delta;S)²&rang; 即提升灵敏度</div>
+<ul>
+<li>2012 年一项实验：8.5&times;10⁵ 个激光冷却 ⁸&#8317;Rb 原子，用合成 QND 脉冲对制备自旋压缩态，实现 <b>3.2 dB 噪声压缩</b>、按 Wineland 判据 2.0 dB 有效压缩（意味着原子间产生了纠缠）；</li>
+<li>在对齐-取向转换（AOC）磁场测量中，压缩态比非压缩态直接提升 11% 灵敏度；</li>
+<li>压缩光（把一个正交分量的涨落压到散粒噪声以下）同样被用于提升光探测。</li>
+</ul>
+<p>自旋压缩的代价：压缩需要"消耗"原子（探测本身会扰动），且压缩只在特定方向有效——所以它适合短时间、高带宽测量，长期积分反而可能被反噬。</p>
+
+<h3>5.3 关联态与相干泵浦：另外两条路</h3>
+<ul>
+<li><b>关联自旋态</b>：在自旋弛豫主导的碱金属蒸气里，利用原子间的关联把噪声压到散粒噪声以下（"亚散粒噪声磁力仪"，2008 年验证）；</li>
+<li><b>自持续振荡（self-sustaining）</b>：用相干泵浦让自旋像被驱动的振荡器一样持续进动，噪声平均特性从 1/&tau;<sup>1/2</sup> 提升到 1/&tau;——更快到达量子底，还顺便把光移压掉一个数量级。</li>
+</ul>
+<div class="side"><b>Wineland 判据为什么重要：</b>3.2 dB 的总噪声压缩里，有一部分可能是"把原子数也压缩了"（作弊）。Wineland 判据只认"真正的计量优势"——按这个标准还有 2.0 dB，才说明原子间真的产生了纠缠，压缩是"有营养"的。这是量子计量学的通行证。</div>
+</section>
+
+<!-- ============ 6 电子与技术噪声 ============ -->
+<section id="n6">
+<h2>6 &middot; 抬底：电子与技术噪声——把地板压低</h2>
+<p class="intu">前三类是"打大仗"，这一类是"打扫战场"：探测器暗电流、放大器噪声、振动、温度漂移——单看都不大，但会把整个噪声谱的"地板"抬高，让前面所有努力打折扣。</p>
+<ul>
+<li><b>低噪声电子</b>：光电二极管选低暗电流型号，放大器选低噪声（输入噪声电压/电流密度指标），必要时用跨阻放大+屏蔽盒；</li>
+<li><b>平衡差分</b>：电子噪声在两路相减时会叠加（不相关），所以光学梯度仪"只用一个偏振计"的优势就在这里——电噪声不因差分而增加；</li>
+<li><b>隔振</b>：光纤和光学元件对振动敏感（振动→光束指向抖动→偏振抖动）。标准做法是气浮光学平台；</li>
+<li><b>控温</b>：温度影响原子密度、激光波长、电路漂移。泡温用 PT100 控到 &plusmn;0.5&ndash;1 &deg;C，激光器用温控锁定；</li>
+<li><b>磁化与剩磁管理</b>：加热丝用高频交流电（避免直流磁场）、工具要消磁、屏蔽桶定期消磁——"干净"是习惯也是制度。</li>
+</ul>
+<div class="side"><b>一个细节：</b>单光束宽带宽磁力仪测噪声底时，会分别记录"有光"和"无光"的探测器输出——两者之差就是光引入的噪声，两者之间的共同底才是电子噪声。这种"拆解实验"是噪声预算的基本功。</div>
+</section>
+
+<!-- ============ 7 噪声表征 ============ -->
+<section id="n7">
+<h2>7 &middot; 称量：怎么知道噪声压下去了——灵敏度谱、艾伦方差、噪声预算</h2>
+<p class="intu">没有测量就没有抑制。这一节讲"体检"手段：怎么把噪声谱画出来、怎么确认自己压的是哪一项、怎么知道还有多少余量。</p>
+
+<h3>7.1 灵敏度谱：一张图看清全频段</h3>
+<p>在工作点施加已知小正弦场、扫频率，记录每个频率下的信噪比，换算成 fT/√Hz，画成"灵敏度 vs 频率"曲线。它直接暴露：哪里是白噪声底（平坦段）、哪里是 1/f 抬升（低频上扬）、哪里有 50 Hz 及谐波的尖峰（电力线）、哪里是带宽边缘（响应滚降）。</p>
+
+<h3>7.2 艾伦方差：确认"积多久最优"</h3>
+<p>对长时间记录算艾伦方差，看 &sigma;(&tau;) 曲线：先随 1/&tau;<sup>1/2</sup> 下降（白噪声段），在某处到达最低点后上升（漂移段）。最低点对应的 &tau; 就是这台机器的最优积分时间——超过它，再测反而更差。</p>
+
+<h3>7.3 噪声预算：把每一分噪声"对账"</h3>
+<p>专业的做法是建立一张表，列出每一项噪声的来源、估计大小、实测大小、抑制手段：</p>
+<table>
+<tr><th>噪声源</th><th>抑制手段</th><th>实测贡献</th></tr>
+<tr><td>环境磁场</td><td>4 层屏蔽 + 主动稳定</td><td>&lt; 10 fT/√Hz</td></tr>
+<tr><td>激光强度抖动</td><td>平衡探测 + 功率稳定</td><td>~ fT 级</td></tr>
+<tr><td>散粒噪声</td><td>光强调优（权衡光移）</td><td>量子底</td></tr>
+<tr><td>自旋投影噪声</td><td>SERF / 自旋压缩</td><td>量子极限</td></tr>
+<tr><td>电子噪声</td><td>低噪声跨阻放大</td><td>低于原子噪声</td></tr>
+<tr><td>振动/温漂</td><td>气浮台 + PT100 控温</td><td>低频抬升</td></tr>
+</table>
+<p>对完账就知道：瓶颈在哪一项，下一轮改进往哪使劲。</p>
+<div class="side"><b>范例数字：</b>无屏蔽环境 + 主动稳定 &rarr; 40 fT/√Hz 噪声底；屏蔽房内 SERF &rarr; 0.16 fT/√Hz（2010 年纪录）；单光束宽带宽磁力仪 &rarr; 0.9 pT/√Hz@2 kHz、带宽 24 kHz——同一套"称量"方法，量出的是完全不同的战场。</div>
+</section>
+
+<!-- ============ 8 收束 ============ -->
+<section id="n8">
+<h2>8 &middot; 收束：六类手段一张表，极限在哪</h2>
+<p>把全篇压成一张表——每个噪声、每个对策、每个效果：</p>
+<table>
+<tr><th>噪声类别</th><th>对策</th><th>机制</th><th>标志性效果</th></tr>
+<tr><td>环境磁场</td><td>被动屏蔽</td><td>挡</td><td>7 层桶 ~10⁹（1 kHz）</td></tr>
+<tr><td>环境磁场</td><td>主动稳定</td><td>稳</td><td>无屏蔽下 40 fT/√Hz</td></tr>
+<tr><td>环境磁场</td><td>梯度仪</td><td>减</td><td>远场抵消、近场保留</td></tr>
+<tr><td>光</td><td>平衡探测</td><td>减</td><td>共模抖动抵消</td></tr>
+<tr><td>光</td><td>调制解调</td><td>搬</td><td>躲开 1/f</td></tr>
+<tr><td>光</td><td>光移抑制</td><td>消</td><td>380 fT/(mW/cm²)</td></tr>
+<tr><td>原子</td><td>SERF</td><td>压弛豫</td><td>T<sub>2</sub> 毫秒&rarr;秒</td></tr>
+<tr><td>原子</td><td>自旋压缩</td><td>压量子</td><td>3.2 dB 噪声压缩</td></tr>
+<tr><td>电子/技术</td><td>低噪电路/隔振/控温</td><td>抬底</td><td>不让地板抬高</td></tr>
+</table>
+<p><b>极限在哪？</b>技术噪声可以无限逼近零，真正的地板是量子极限——自旋投影噪声（对给定原子数、体积、时间）。SERF 已经把它附近的弛豫清干净；自旋压缩则是在挑战它本身。<b>当前纪录 0.16 fT/√Hz 离自旋投影噪声极限（&lt;0.01 fT/√Hz）还有约一个数量级</b>——这一段的每一步，都在同时打"环境、光、原子"三场仗。这就是噪声抑制工程的现状：大头已清，剩下的都是硬骨头。</p>
+<div class="side"><b>一句话总结全篇：</b>噪声抑制不是"把仪器做安静"，而是"分辨每一类噪声、选对每一招"——挡不住的用稳，稳不了的用减，减不掉的用压，压不动的才知道那是量子极限。这四层逻辑，就是原子磁力仪四十年的进步路线图。</div>
+</section>
+
+<!-- ============ 9 术语表 ============ -->
+<section id="glos">
+<h2>9 &middot; 术语表（随时回来查）</h2>
+<div class="glos"><b>功率谱密度</b>：噪声在各频率上的大小分布（T/√Hz 或 fT/√Hz）。</div>
+<div class="glos"><b>白噪声</b>：各频率等大的噪声，可被平均压掉。</div>
+<div class="glos"><b>1/f 噪声</b>：低频段功率随频率下降而上升的噪声，无法靠积分压掉。</div>
+<div class="glos"><b>艾伦方差</b>：随时间域积分长度 &tau; 的噪声统计，用于找最优积分时间。</div>
+<div class="glos"><b>自旋投影噪声</b>：原子自旋方向测量的量子极限，灵敏度公式的地板。</div>
+<div class="glos"><b>屏蔽抑制比</b>：屏蔽前后磁场噪声之比（10⁴ 表示压到万分之一）。</div>
+<div class="glos"><b>主动磁场稳定</b>：用传感器监测+反馈补偿环境磁场的技术。</div>
+<div class="glos"><b>梯度仪</b>：两个（或多个）探头相减，抵消远场公共噪声、保留近场信号。</div>
+<div class="glos"><b>光学梯度仪</b>：一束探测光直接读出两个区域之差，电噪声不因差分叠加。</div>
+<div class="glos"><b>平衡偏振计/平衡探测</b>：光束劈两路相减，抵消共模强度抖动。</div>
+<div class="glos"><b>调制解调</b>：给信号加高频调制、在载波附近解调，躲开低频 1/f。</div>
+<div class="glos"><b>锁相放大器</b>：只提取已知调制频率附近信号的仪器。</div>
+<div class="glos"><b>光移（AC Stark 效应）</b>：光强/失谐产生的等效假磁场，随光强波动成为噪声。</div>
+<div class="glos"><b>散粒噪声</b>：光子到达探测器的随机涨落，光探测的量子底。</div>
+<div class="glos"><b>SERF</b>：自旋交换弛豫自由区——交换率远大于拉莫尔进动率，弛豫被平均掉。</div>
+<div class="glos"><b>自旋压缩</b>：用 QND 测量把集体自旋的不确定度挤到非信号方向。</div>
+<div class="glos"><b>量子非破坏测量（QND）</b>：测量不破坏被测量的可观测量本身。</div>
+<div class="glos"><b>Wineland 判据</b>：判断压缩是否带来真正计量优势（含纠缠）的标准。</div>
+<div class="glos"><b>对齐-取向转换（AOC）</b>：用拉曼过程把自旋对齐转为取向、读出磁场。</div>
+<div class="glos"><b>自持续振荡</b>：相干泵浦让自旋像受驱动振荡器持续进动，1/&tau; 平均。</div>
+<div class="glos"><b>噪声预算</b>：逐项列出噪声来源、大小、抑制手段的对账表。</div>
+<div class="glos"><b>灵敏度谱</b>：灵敏度随频率的曲线，用于诊断噪声类型。</div>
+</section>
+
+<div class="links">
+<a href="index.html">&larr; 返回主线</a>
+<a href="atomic_experiments.html">实验支线：原子磁力仪实验 &rarr;</a>
+<a href="#n0">回到顶部</a>
+</div>
+</main>
+<script>
+(function(){
+  var KEY='siteTheme';
+  function apply(t){document.body.setAttribute('data-theme',t);}
+  try{var saved=localStorage.getItem(KEY);if(saved==='light')apply('light');}catch(e){}
+  var tb=document.getElementById('themeBtn');
+  tb.addEventListener('click',function(){
+    var cur=document.body.getAttribute('data-theme')==='light'?'dark':'light';
+    apply(cur);try{localStorage.setItem(KEY,cur);}catch(e){}
+  });
+  var toc=document.getElementById('toc'),btn=document.getElementById('tocBtn');
+  if(toc&&btn){
+    var links=[];
+    document.querySelectorAll('main section').forEach(function(sec){
+      var h=sec.querySelector('h2');if(sec.id&&h){
+        var a=document.createElement('a');a.href='#'+sec.id;a.textContent=h.textContent;
+        toc.appendChild(a);links.push(a);
+      }
+    });
+    btn.addEventListener('click',function(){toc.classList.toggle('open');});
+    toc.addEventListener('click',function(e){if(e.target.tagName==='A')toc.classList.remove('open');});
+    window.addEventListener('scroll',function(){
+      var cur=null;
+      document.querySelectorAll('main section').forEach(function(sec){
+        if(sec.getBoundingClientRect().top<120)cur=sec.id;
+      });
+      links.forEach(function(a){a.classList.toggle('cur',a.getAttribute('href')==='#'+cur);});
+    });
+  }
+})();
+</script>
+</body>
+</html>
