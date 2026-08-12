@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>生物磁测量：读心脏与大脑的磁场</title>
+<style>
+:root{
+  --bg:#0f1115; --card:#171a21; --bord:#23262d; --mut:#9aa4b2;
+  --txt:#e6e8ec; --acc:#7dd3fc; --warn:#fbbf24; --intu:#c4b5fd; --side:#2a2140;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font:16px/1.9 -apple-system,"Segoe UI","Microsoft YaHei",sans-serif;padding:28px 20px 60px}
+main{max-width:820px;margin:0 auto}
+a{color:var(--acc);text-decoration:none}
+a:hover{text-decoration:underline}
+h1{font-size:27px;line-height:1.45;margin-bottom:8px}
+h2{font-size:21px;margin:40px 0 14px;padding-left:12px;border-left:4px solid var(--acc)}
+h3{font-size:17px;margin:24px 0 10px;color:var(--acc)}
+p{margin:12px 0}
+ul,ol{margin:10px 0 10px 24px}
+li{margin:6px 0}
+table{border-collapse:collapse;width:100%;margin:14px 0;font-size:14px}
+th,td{border:1px solid var(--bord);padding:7px 11px;text-align:left}
+th{background:#1c2029;color:var(--acc)}
+tr:nth-child(even) td{background:#151922}
+.sub{color:var(--mut);font-size:14px}
+.formula{background:#11141a;border:1px solid var(--bord);border-radius:8px;padding:12px 18px;margin:14px 0;font-family:"Cambria Math",Georgia,serif;font-size:16px;overflow-x:auto;text-align:center}
+.formula b{color:var(--acc)}
+.note{border-left:3px solid var(--warn);padding:8px 14px;margin:14px 0;background:#1a1710;font-size:14px}
+.side{background:var(--side);border:1px solid #3b2f5e;border-radius:10px;padding:12px 16px;margin:14px 0;font-size:14px}
+.side b{color:#c4b5fd}
+.glos{background:#11141a;border:1px solid var(--bord);border-radius:8px;padding:10px 14px;margin:8px 0;font-size:14px}
+.glos b{color:var(--acc)}
+.links{margin-top:30px;display:flex;gap:16px;flex-wrap:wrap;font-size:14px}
+.toplink{color:var(--mut);font-size:13px;margin-bottom:12px;display:block}
+body[data-theme="light"]{
+  --bg:#f7f8fa; --card:#ffffff; --bord:#dde1e7; --mut:#5a6472;
+  --txt:#1a2029; --acc:#0284c7; --warn:#b45309; --intu:#6d28d9; --side:#f3eefb;
+}
+body[data-theme="light"] .formula{background:#f1f3f6;border-color:#dde1e7}
+body[data-theme="light"] .note{background:#fdf6e3;border-color:#e5c97a}
+body[data-theme="light"] .side{border-color:#c9b8ec}
+body[data-theme="light"] .glos{background:#f1f3f6;border-color:#dde1e7}
+body[data-theme="light"] th{background:#eef1f5}
+body[data-theme="light"] tr:nth-child(even) td{background:#f3f5f8}
+#tocBtn{position:fixed;top:10px;right:10px;z-index:90;background:transparent;border:1px solid var(--bord);
+  color:var(--mut);border-radius:6px;font-size:14px;padding:3px 9px;cursor:pointer;opacity:.55;transition:opacity .2s}
+#tocBtn:hover{opacity:1;color:var(--acc)}
+#toc{position:fixed;top:0;left:0;right:0;z-index:89;background:var(--bg);border-bottom:1px solid var(--bord);
+  max-height:0;overflow:hidden;transition:max-height .3s ease;display:flex;flex-wrap:wrap;gap:4px 16px;padding:0 16px}
+#toc.open{max-height:70vh;overflow:auto;padding-top:44px;padding-bottom:12px}
+#toc a{font-size:13px;color:var(--mut);padding:2px 0}
+#toc a:hover{color:var(--acc)}
+#toc a.cur{color:var(--acc)}
+#themeBtn{position:fixed;right:10px;bottom:10px;z-index:90;width:34px;height:34px;border-radius:50%;
+  background:var(--card);border:1px solid var(--bord);color:var(--mut);font-size:16px;cursor:pointer;
+  opacity:.5;transition:opacity .2s}
+#themeBtn:hover{opacity:1;color:var(--acc)}
+@media(max-width:860px){main{padding:0 4px}h1{font-size:22px}}
+</style>
+</head>
+<body>
+<button id="tocBtn" title="展开/收起目录">☰</button>
+<button id="themeBtn" title="深浅切换">◐</button>
+<div id="toc"></div>
+<main>
+<a class="toplink" href="index.html">&larr; 返回《从原子到磁力仪》主线</a>
+<h1>生物磁测量：读心脏与大脑的磁场</h1>
+<p class="sub">主线应用专题。主线的 SERF 磁力仪做到 fT 级，这一篇讲它最大的用武之地——测量人体器官自己产生的磁场：心脏（pT 级）和大脑（fT 级）。所有数字来自公开文献。</p>
+<div class="side"><b style="color:#7dd3fc">这一篇和你有什么关系：</b>你体检时做过的核磁共振（MRI）用 1.5–3 T 的超强磁场（地球磁场才 30–70 微特斯拉，相差十万倍）让身体里的氢质子排队——和这一篇磁力仪读的是同一个物理。你手机里的电子罗盘（指南针 App）也是个微型磁力仪，靠霍尔效应测地磁场方向；而脑磁图正在把同样的技术用来"读"大脑。</div>
+
+<!-- ============ 0 学习地图 ============ -->
+<section id="b0">
+<h2>0 &middot; 先看地图：从"器官放电"到"磁场图"</h2>
+<p>生物磁测量把主线磁力仪用到人身上。整条线：</p>
+<ul>
+<li>第 1 节信号从哪来：神经/心肌放电怎么变成头皮外的磁场。</li>
+<li>第 2 节信号的量级：fT/pT 对比，以及为什么难测。</li>
+<li>第 3 节经典工具：SQUID 时代的 MEG/MCG 及其三个先天局限。</li>
+<li>第 4 节新工具：OPM（原子磁力仪）为什么能贴头皮、能戴着走。</li>
+<li>第 5 节实测对比：贴头皮信号强多少、阵列怎么做、源怎么定位。</li>
+<li>第 6 节测量流程：屏蔽、参考通道、刺激-平均、源重建。</li>
+<li>第 7 节应用：临床与科研（癫痫、脑功能、胎儿心磁）。</li>
+<li>第 8 节收束：从实验室到床边的路线图。</li>
+</ul>
+<div class="note">时间少的话：只读第 1、2、4 节。一句话：<b>生物磁测量 = 用 fT 级磁力仪把"器官内部的电活动"从体外"看"出来——磁场穿透组织不失真，所以比脑电更"锐利"</b>。</div>
+</section>
+
+<!-- ============ 1 信号从哪来 ============ -->
+<section id="b1">
+<h2>1 &middot; 信号从哪来：放电的细胞群</h2>
+<p>大脑皮层里几十亿个神经元，每个放电时在树突里产生微弱的电流；单个神经元的磁场太小（远低于 fT），但<b>当大量神经元同步放电（成千上万）时，电流叠加成宏观电流偶极子</b>——在头皮外产生 10&ndash;1000 fT 的可测磁场。心肌更"壮"：一次心跳就是一次巨大的去极化波，心磁图信号达 10&ndash;100 pT。</p>
+<p>关键物理：<b>磁场几乎不被生物组织衰减和扭曲</b>——颅骨、头皮、肌肉对它来说几乎是透明的。相比之下，脑电（EEG）信号要被头皮和颅骨"糊化"（不同组织导电率不同，电流被扭曲）。这就是"磁测"相对"电测"的根本优势：磁场带的是"无失真"的信息。</p>
+</section>
+
+<!-- ============ 2 量级 ============ -->
+<section id="b2">
+<h2>2 &middot; 信号的量级：和背景比差多少</h2>
+<table>
+<tr><th>信号/噪声</th><th>量级</th></tr>
+<tr><td>地球磁场</td><td>~30&ndash;60 &micro;T</td></tr>
+<tr><td>城市电磁噪声</td><td>nT&ndash;&micro;T（50 Hz 及谐波）</td></tr>
+<tr><td>心磁图（MCG）</td><td>~10&ndash;100 pT</td></tr>
+<tr><td>脑磁图（MEG，诱发）</td><td>~10&ndash;100 fT</td></tr>
+<tr><td>脑磁图（自发节律）</td><td>&lt;1 pT</td></tr>
+</table>
+<p>要测的脑磁信号只有地球磁场的约十亿分之一。这就是为什么生物磁测量必须：① 磁屏蔽房（或高灵敏梯度仪）；② 传感器灵敏度 fT 级；③ 大量重复+平均把随机噪声压下去。</p>
+</section>
+
+<!-- ============ 3 SQUID 时代 ============ -->
+<section id="b3">
+<h2>3 &middot; 经典工具：SQUID 与它的三个局限</h2>
+<p>上世纪 70&ndash;2000 年代，生物磁测量几乎被超导量子干涉仪（SQUID）垄断：液氦冷却的线圈阵列，灵敏度 fT 级。SQUID-MEG 一直是脑科学研究的主力（306 通道系统是常见配置）。但 SQUID 有三个先天局限：</p>
+<ul>
+<li><b>必须冷冻</b>：液氦很贵、系统庞大（一整套低温系统）；</li>
+<li><b>传感器离头皮远</b>：液氦杜瓦的热隔离迫使传感器距头皮至少约 2 cm——磁场随距离衰减很快，这 2 cm 让信号大打折扣；</li>
+<li><b>头盔固定、不可适配</b>：固定形状的头盔不能贴合每个人的头，传感器到皮层的距离因人而异，源定位精度受损。</li>
+</ul>
+<p>这三个局限，正是 OPM 要解决的。</p>
+</section>
+
+<!-- ============ 4 OPM：贴头皮的磁力仪 ============ -->
+<section id="b4">
+<h2>4 &middot; 新工具：OPM 为什么能贴着头皮</h2>
+<p>原子磁力仪（OPM，主线的 SERF 磁力仪）室温运行、体积小（~cm² 级）、灵敏度已达 SQUID 水平（3&ndash;5 fT/√Hz 甚至更好）。它的关键优势：</p>
+<ul>
+<li><b>可贴头皮</b>：传感器可以直接放在头皮上（距离几毫米），磁场信号强度大幅提升——仿真显示信号功率比 SQUID 高 5&ndash;7 倍；</li>
+<li><b>可穿戴、可动</b>：做成头盔或头带，受试者甚至可以轻微活动（SQUID 要求躺着不动）；</li>
+<li><b>低成本</b>：不用液氦，传感器单价低，可密集排布；</li>
+<li><b>逐人适配</b>：3D 打印头模贴合个体头型，传感器位置精确已知。</li>
+</ul>
+<p>OPM 的代价：它测的是"磁场本身"（磁力计模式），对环境干扰极敏感——所以要么在磁屏蔽房里用，要么配参考通道做主动抵消（见第 6 节）。</p>
+<div class="side"><b>信号强多少有实测：</b>Boto 等（2017）用单只 OPM + 3D 打印头模，在体感皮层上记录到诱发电位，信号比等效 SQUID 大 4 倍；仿真研究更激进——贴头皮阵列信号功率是 SQUID 的 5&ndash;7 倍，源定位的点扩散函数窄 2 倍以上（空间分辨率更高）。</div>
+</section>
+
+<!-- ============ 5 实测对比 ============ -->
+<section id="b5">
+<h2>5 &middot; 实测：OPM 阵列 vs SQUID 系统</h2>
+<table>
+<tr><th>指标</th><th>SQUID-MEG</th><th>OPM-MEG</th></tr>
+<tr><td>传感器-头皮距离</td><td>~2 cm（杜瓦热隔离）</td><td>~mm（直接贴敷）</td></tr>
+<tr><td>信号强度（仿真）</td><td>基准</td><td>高 5&ndash;7 倍</td></tr>
+<tr><td>源定位误差</td><td>~7.9 mm</td><td>~5.1 mm</td></tr>
+<tr><td>点扩散（空间模糊）</td><td>基准</td><td>窄 2.4&ndash;2.5 倍</td></tr>
+<tr><td>系统形态</td><td>固定杜瓦头盔</td><td>可穿戴、逐人头模</td></tr>
+</table>
+<p>一个标志性结论：<b>13 个 OPM 顺序测量（覆盖体感区）就能达到 271 通道 SQUID 系统的源空间信噪比</b>——因为贴头皮带来的信号增益抵消了通道数差距。也就是说，同等性能下 OPM 系统可以更小、更便宜、更灵活。</p>
+</section>
+
+<!-- ============ 6 测量流程 ============ -->
+<section id="b6">
+<h2>6 &middot; 测量流程：从屏蔽到源重建</h2>
+<ol>
+<li><b>磁屏蔽</b>：磁屏蔽房（MSR）把环境噪声压到 fT 级；开放环境则用梯度仪/参考通道主动抵消；</li>
+<li><b>布阵</b>：OPM 阵列贴敷（或 3D 打印头模定位），与 MRI 图像配准得到传感器位置；</li>
+<li><b>采集</b>：多通道同步记录磁场时间序列（采样率通常数百 Hz&ndash;1 kHz 以上）；</li>
+<li><b>去噪</b>：参考通道相减、50 Hz 陷波、独立成分分析等；</li>
+<li><b>刺激-平均</b>：同一个刺激重复几十上百次，把与刺激锁定的信号平均出来（诱发响应），随机噪声按 1/√N 下降；</li>
+<li><b>源重建</b>：用前向模型（头模型 + 偶极子/分布源）反演，估计"哪个脑区在何时放电"——这是 MEG 最核心的算法环节（最小范数估计等）。</li>
+</ol>
+</section>
+
+<!-- ============ 7 应用 ============ -->
+<section id="b7">
+<h2>7 &middot; 应用：临床与科研</h2>
+<ul>
+<li><b>癫痫病灶定位</b>：术前评估中，MEG 能定位致痫灶（毫秒级时间分辨 + 空间定位），是药物难治性癫痫手术规划的重要工具；</li>
+<li><b>脑功能研究</b>：MEG 以毫秒级时间分辨率追踪听觉、视觉、体感、运动等认知过程——这是 fMRI（秒级）做不到的；</li>
+<li><b>发育与儿科</b>：OPM 头盔贴合儿童头部（SQUID 头盔对婴幼儿不友好），可测新生儿脑磁；</li>
+<li><b>胎儿心磁图（fMCG）</b>：测胎儿心脏，无创且不受母体脂肪干扰，监测宫内缺氧等；</li>
+<li><b>心磁图（MCG）</b>：比心电图多一层信息（电流源方向），用于心肌缺血等研究。</li>
+</ul>
+<div class="side"><b>为什么"能戴着动"很关键：</b>SQUID 要求受试者躺着不动，这对儿童、帕金森患者、以及"自然互动"实验都是障碍。OPM 可穿戴意味着——未来可能在患者活动、说话、甚至行走时记录脑磁，打开"生态化神经成像"的新窗口。</div>
+</section>
+
+<!-- ============ 8 收束 ============ -->
+<section id="b8">
+<h2>8 &middot; 收束：从实验室到床边</h2>
+<p>生物磁测量的故事，是主线磁力仪"从物理到应用"最完整的一条线：</p>
+<div class="formula">SERF 磁力仪（fT 级，室温）&rarr; 可贴头皮 &rarr; 信号强数倍 &rarr; 可穿戴阵列 &rarr; 脑磁/心磁临床</div>
+<p>它同时示范了精密测量的通用规律：<b>灵敏度不是目的，信噪比才是</b>——OPM 的优势不仅是"更灵敏"，更是"离信号更近"（距离每减一半，信号强 4 倍）和"更贴近人"（可穿戴、低成本）。技术突破 + 应用场景，才构成真正的革新。</p>
+<div class="side"><b>一句话总结：</b>生物磁测量 = 用 fT 级磁力仪隔着颅骨"看"神经元放电——SQUID 时代"又冷又远"，OPM 时代"又近又活"；离信号越近，大脑的细节越清楚。</div>
+</section>
+
+<!-- ============ 9 术语表 ============ -->
+<section id="glos">
+<h2>9 &middot; 术语表（随时回来查）</h2>
+<div class="glos"><b>MEG/EEG</b>：脑磁图/脑电图——磁测与电测两种脑信号。</div>
+<div class="glos"><b>MCG/fMCG</b>：心磁图/胎儿心磁图。</div>
+<div class="glos"><b>SQUID</b>：超导量子干涉仪，低温高灵敏磁传感器。</div>
+<div class="glos"><b>OPM</b>：光泵浦磁力仪（原子磁力仪），室温可贴头皮。</div>
+<div class="glos"><b>电流偶极子</b>：大量神经元同步放电的等效电流源模型。</div>
+<div class="glos"><b>诱发电位/诱发响应</b>：与刺激锁定的神经响应，靠重复平均提取。</div>
+<div class="glos"><b>源重建</b>：由头皮磁场反演脑内电流分布（最小范数估计等）。</div>
+<div class="glos"><b>前向模型</b>：给定源分布计算传感器磁场的模型（含头模型）。</div>
+<div class="glos"><b>点扩散函数</b>：源定位的空间模糊度量，越小分辨率越高。</div>
+<div class="glos"><b>磁屏蔽房（MSR）</b>：房间级磁屏蔽，把环境噪声压到 fT 级。</div>
+<div class="glos"><b>参考通道</b>：远离信号的传感器，用于抵消公共环境噪声。</div>
+<div class="glos"><b>头模（head-cast）</b>：3D 打印的贴合头型的传感器定位装置。</div>
+<div class="glos"><b>信噪比（SNR）</b>：信号与噪声之比；生物磁测量的核心指标。</div>
+</section>
+
+<div class="links">
+<a href="index.html">&larr; 返回主线</a>
+<a href="atomic_experiments.html">实验支线：原子磁力仪实验 &rarr;</a>
+<a href="#b0">回到顶部</a>
+</div>
+</main>
+<script>
+(function(){
+  var KEY='siteTheme';
+  function apply(t){document.body.setAttribute('data-theme',t);}
+  try{var saved=localStorage.getItem(KEY);if(saved==='light')apply('light');}catch(e){}
+  var tb=document.getElementById('themeBtn');
+  tb.addEventListener('click',function(){
+    var cur=document.body.getAttribute('data-theme')==='light'?'dark':'light';
+    apply(cur);try{localStorage.setItem(KEY,cur);}catch(e){}
+  });
+  var toc=document.getElementById('toc'),btn=document.getElementById('tocBtn');
+  if(toc&&btn){
+    var links=[];
+    document.querySelectorAll('main section').forEach(function(sec){
+      var h=sec.querySelector('h2');if(sec.id&&h){
+        var a=document.createElement('a');a.href='#'+sec.id;a.textContent=h.textContent;
+        toc.appendChild(a);links.push(a);
+      }
+    });
+    btn.addEventListener('click',function(){toc.classList.toggle('open');});
+    toc.addEventListener('click',function(e){if(e.target.tagName==='A')toc.classList.remove('open');});
+    window.addEventListener('scroll',function(){
+      var cur=null;
+      document.querySelectorAll('main section').forEach(function(sec){
+        if(sec.getBoundingClientRect().top<120)cur=sec.id;
+      });
+      links.forEach(function(a){a.classList.toggle('cur',a.getAttribute('href')==='#'+cur);});
+    });
+  }
+})();
+</script>
+</body>
+</html>
