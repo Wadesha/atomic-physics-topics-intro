@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>冷原子专题：从激光冷却到量子物质</title>
+<style>
+:root{
+  --bg:#0f1115; --card:#171a21; --bord:#23262d; --mut:#9aa4b2;
+  --txt:#e6e8ec; --acc:#7dd3fc; --warn:#fbbf24; --intu:#c4b5fd; --side:#2a2140;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font:16px/1.9 -apple-system,"Segoe UI","Microsoft YaHei",sans-serif;padding:28px 20px 60px}
+main{max-width:820px;margin:0 auto}
+a{color:var(--acc);text-decoration:none}
+a:hover{text-decoration:underline}
+h1{font-size:27px;line-height:1.45;margin-bottom:8px}
+h2{font-size:21px;margin:40px 0 14px;padding-left:12px;border-left:4px solid var(--acc)}
+h3{font-size:17px;margin:24px 0 10px;color:var(--acc)}
+p{margin:12px 0}
+ul,ol{margin:10px 0 10px 24px}
+li{margin:6px 0}
+table{border-collapse:collapse;width:100%;margin:14px 0;font-size:14px}
+th,td{border:1px solid var(--bord);padding:7px 11px;text-align:left}
+th{background:#1c2029;color:var(--acc)}
+tr:nth-child(even) td{background:#151922}
+.sub{color:var(--mut);font-size:14px}
+.formula{background:#11141a;border:1px solid var(--bord);border-radius:8px;padding:12px 18px;margin:14px 0;font-family:"Cambria Math",Georgia,serif;font-size:16px;overflow-x:auto;text-align:center}
+.formula b{color:var(--acc)}
+.note{border-left:3px solid var(--warn);padding:8px 14px;margin:14px 0;background:#1a1710;font-size:14px}
+.side{background:var(--side);border:1px solid #3b2f5e;border-radius:10px;padding:12px 16px;margin:14px 0;font-size:14px}
+.side b{color:#c4b5fd}
+.glos{background:#11141a;border:1px solid var(--bord);border-radius:8px;padding:10px 14px;margin:8px 0;font-size:14px}
+.glos b{color:var(--acc)}
+.links{margin-top:30px;display:flex;gap:16px;flex-wrap:wrap;font-size:14px}
+.toplink{color:var(--mut);font-size:13px;margin-bottom:12px;display:block}
+/* 浅色主题 */
+body[data-theme="light"]{
+  --bg:#f7f8fa; --card:#ffffff; --bord:#dde1e7; --mut:#5a6472;
+  --txt:#1a2029; --acc:#0284c7; --warn:#b45309; --intu:#6d28d9; --side:#f3eefb;
+}
+body[data-theme="light"] .formula{background:#f1f3f6;border-color:#dde1e7}
+body[data-theme="light"] .note{background:#fdf6e3;border-color:#e5c97a}
+body[data-theme="light"] .side{border-color:#c9b8ec}
+body[data-theme="light"] .glos{background:#f1f3f6;border-color:#dde1e7}
+body[data-theme="light"] th{background:#eef1f5}
+body[data-theme="light"] tr:nth-child(even) td{background:#f3f5f8}
+/* 顶部可折叠目录 */
+#tocBtn{position:fixed;top:10px;right:10px;z-index:90;background:transparent;border:1px solid var(--bord);
+  color:var(--mut);border-radius:6px;font-size:14px;padding:3px 9px;cursor:pointer;opacity:.55;transition:opacity .2s}
+#tocBtn:hover{opacity:1;color:var(--acc)}
+#toc{position:fixed;top:0;left:0;right:0;z-index:89;background:var(--bg);border-bottom:1px solid var(--bord);
+  max-height:0;overflow:hidden;transition:max-height .3s ease;display:flex;flex-wrap:wrap;gap:4px 16px;padding:0 16px}
+#toc.open{max-height:70vh;overflow:auto;padding-top:44px;padding-bottom:12px}
+#toc a{font-size:13px;color:var(--mut);padding:2px 0}
+#toc a:hover{color:var(--acc)}
+#toc a.cur{color:var(--acc)}
+/* 主题切换按钮（右下角，不起眼） */
+#themeBtn{position:fixed;right:10px;bottom:10px;z-index:90;width:34px;height:34px;border-radius:50%;
+  background:var(--card);border:1px solid var(--bord);color:var(--mut);font-size:16px;cursor:pointer;
+  opacity:.5;transition:opacity .2s}
+#themeBtn:hover{opacity:1;color:var(--acc)}
+@media(max-width:860px){main{padding:0 4px}h1{font-size:22px}}
+</style>
+</head>
+<body>
+<button id="tocBtn" title="展开/收起目录">☰</button>
+<button id="themeBtn" title="深浅切换">◐</button>
+<div id="toc"></div>
+<main>
+<a class="toplink" href="index.html">&larr; 返回《从原子到磁力仪》主线</a>
+<h1>冷原子专题：从激光冷却到量子物质</h1>
+<p class="sub">主线的姊妹分支。主线讲热蒸气里单个原子的自旋怎么被光摆布；这条线讲的是<b>把原子本身冻到几乎不动</b>——然后原子会展现出完全不同的面孔：像波一样干涉、像液体一样无摩擦流动、整团原子变成"一个波"。所有数字来自公开文献。</p>
+<div class="side"><b style="color:#7dd3fc">这一篇和你有什么关系：</b>原子钟让手机时间精准、GPS 能导航、量子计算上新闻——这些科技的前端都站着一群"被冻住的原子"（微开尔文级，比星际空间还冷）。这一篇讲的就是"怎么把原子冻住"：用激光当"减速带"，把每秒 300 米的原子降到几乎不动，然后它们会展现出像波一样干涉的量子本性。</div>
+
+<!-- ============ 0 学习地图 ============ -->
+<section id="c0">
+<h2>0 &middot; 先看地图：从"300 K 的气体"到"纳开尔文的一团波"</h2>
+<p>冷原子这条线，本质是一场把温度往下压的接力赛。每一步都有明确的物理目标和一个理论极限：</p>
+<ul>
+<li>第 1 节先问"为什么冷"：温度对原子来说是什么？热蒸气有什么搞不定的毛病？</li>
+<li>第 2 节补前置：光子有动量，光可以推原子——这是所有冷却技术的物理基础。</li>
+<li>第 3 节第一棒：多普勒冷却（利用原子朝向光运动时"看见"频率更高），把原子从室温压到 ~毫开尔文。</li>
+<li>第 4 节第二棒：亚多普勒冷却（偏振梯度/西西弗斯机制），突破多普勒极限到 ~微开尔文。</li>
+<li>第 5 节把原子"困住"：磁光阱（MOT）——冷却+囚禁一次完成，10<sup>8</sup>&ndash;10<sup>10</sup> 个原子。</li>
+<li>第 6 节最后一棒：蒸发冷却，跨越量子简并门槛，得到玻色-爱因斯坦凝聚（BEC）。</li>
+<li>第 7 节讲怎么看：飞行时间膨胀 + 吸收成像，冷原子最经典的"拍照"方式。</li>
+<li>第 8&ndash;9 节讲"冷了能干什么"：精密测量（原子钟、原子干涉仪、冷原子磁力仪）与量子模拟/量子计算。</li>
+<li>第 10 节收束：从室温到 nK 的完整旅程，和主线热蒸气磁力仪的对照。</li>
+</ul>
+<div class="note">时间少的话：只读每节第一段和结果表。整篇的一条主线——<b>每往下一级温度，就要付出一个数量级的工程复杂度，换来一类全新的物理</b>。</div>
+</section>
+
+<!-- ============ 1 为什么冷 ============ -->
+<section id="c1">
+<h2>1 &middot; 为什么要把原子冷却</h2>
+<p>温度对一团原子来说，就是它们"乱动"的剧烈程度。室温下，铷原子的平均速度约 300 米/秒——接近音速。这样一群高速乱窜的原子，对实验者来说有三重麻烦：</p>
+<ul>
+<li><b>光谱被"抹糊"（多普勒展宽）</b>：原子朝你飞来时"看见"的光频率偏高，背你飞走时偏低——每个原子看到的频率都不一样，于是整团原子的吸收线被摊成一条宽线，精细的能级结构看不清；</li>
+<li><b>碰撞太频繁</b>：高速原子互相撞、撞壁，任何准备好的量子状态（比如自旋极化）都会被迅速打乱；</li>
+<li><b>根本"拿不住"</b>：对运动的原子施加的力，要么太小推不动，要么像"用手抓子弹"——无法把单个原子稳定地控制住。</li>
+</ul>
+<p>而一旦把原子冷却到接近静止，这三个麻烦同时消失：光谱线变得极窄（可以当频率标准）、碰撞几乎绝迹（量子态可以长时间保持）、原子可以被光场或磁场"拿捏"（可以排成任意阵列）。<b>冷却不是目的，是手段——它是让原子从"一团混乱的噪声"变成"一件精密的工具"的前提</b>。</p>
+<div class="side"><b>一个直观对照：</b>室温和微开尔文差 9 个数量级。如果把原子比作子弹，室温是音速的子弹，激光冷却后的原子慢得像"爬行的蜗牛"——慢到你可以用一束光像"夹子"一样把它夹起来摆到任何位置。这就是 1997 年诺贝尔物理学奖（朱棣文、科恩-塔诺季、菲利普斯）带来的能力。</div>
+</section>
+
+<!-- ============ 2 前置：光的动量 ============ -->
+<section id="c2">
+<h2>2 &middot; 前置知识：光子有动量，光能推原子</h2>
+<p>冷却原子的"手"是光。光不仅有能量，还有动量——一个光子携带的动量是 p = h/&lambda;（h 是普朗克常数，&lambda; 是波长）。原子吸收一个光子，就获得这份动量；向某个方向"被踢"一下。这个反冲很小（对铷原子，一个光子让它速度改变约 6 毫米/秒），但光子数量可以极多：</p>
+<div class="formula">一个光子 &rarr; 原子速度改变 ~6 mm/s&nbsp;&nbsp;（⁸&#8317;Rb，780 nm）<br>要让一个室温原子停下来 &rarr; 需要吸收约 5&times;10<sup>4</sup> 个光子</div>
+<p>这就是激光冷却的基本画面：<b>用成千上万次"光子踢"，把原子从音速踢到几乎静止</b>。而让这些踢产生"净减速"而不是"随机乱踢"的关键，是多普勒效应——下一节。</p>
+<p>还有一个重要的量叫<b>反冲能量</b> E<sub>rec</sub> = (&hbar;k)²/(2m)：原子吸收一个光子获得的动能。它对应的温度叫<b>反冲温度</b> T<sub>rec</sub> = 2E<sub>rec</sub>/k<sub>B</sub>，是激光冷却理论上的"地板"——铷约 360 纳开尔文、钠约 2.4 微开尔文、铯约 200 纳开尔文。</p>
+<div class="side"><b>为什么单光子反冲这么小：</b>光子动量 &hbar;k 与原子动量 mv 相比微不足道——但正因为小，冷却过程才"温柔"：每次只改变一点速度，可以精细控制。这个"小步慢跑"正是所有量子控制技术的基础。</div>
+</section>
+
+<!-- ============ 3 多普勒冷却 ============ -->
+<section id="c3">
+<h2>3 &middot; 第一棒：多普勒冷却——朝光飞来的原子会被减速</h2>
+<p>多普勒效应：朝你运动的东西，你"看见"它的频率偏高；背你运动，频率偏低。原子也是这样看光的。把激光调到比原子跃迁频率<b>略低</b>（红失谐）：</p>
+<ul>
+<li>朝激光飞来的原子，看到的光被"蓝移"到接近共振 &rarr; 强烈吸收光子 &rarr; 被踢得减速；</li>
+<li>背着激光飞的原子，看到的光更偏红 &rarr; 吸收很少 &rarr; 几乎不受影响。</li>
+</ul>
+<p>于是两束对射的光，总在"拦"原子的运动——不管它往哪个方向跑，总有一束光在它前进方向迎着它踢。这个速度依赖的阻尼力 F = -&alpha;v 像黏稠的糖浆，所以三对正交光束的配置叫<b>光学黏团</b>（optical molasses）。1985 年朱棣文团队首次实现：几毫秒内把钠原子从室温冷却到约 1 毫开尔文。</p>
+<p>多普勒冷却的理论极限来自"冷却 vs 加热"的平衡：吸收光子减速，但自发辐射方向随机，每次发射都是一次随机"踢"——这个随机加热最终和冷却抵消：</p>
+<div class="formula">T<sub>D</sub> = &hbar;&Gamma; / (2k<sub>B</sub>)&nbsp;&nbsp;（多普勒极限）<br>铷约 140 &micro;K、钠 240 &micro;K、铯 125 &micro;K</div>
+<p>多普勒冷却从室温一步到 ~毫开尔文，把速度从 ~300 m/s 压到 ~1 m/s 以下——但还不够：这个温度下原子仍然"跑得很快"，而且光学黏团没有空间约束力，原子会慢慢漂出光束区域。两个问题分别由第 4 节（更冷）和第 5 节（困住）解决。</p>
+<div class="side"><b>历史注脚：</b>多普勒冷却的想法 1975 年由亨施和肖洛提出，1985 年实验成功。但随后一个意外的发现改变了整个领域——测量到的温度竟然<b>低于</b>多普勒极限！这个"不可能"的结果，催生了第 4 节的西西弗斯冷却理论（1989 年由达利巴德和科恩-塔诺季解释）。科学史上，"实验比理论更好"往往意味着新机制。</div>
+</section>
+
+<!-- ============ 4 亚多普勒冷却 ============ -->
+<section id="c4">
+<h2>4 &middot; 第二棒：亚多普勒冷却——西西弗斯机制</h2>
+<p>1985 年后的测量显示，光学黏团里的原子温度远低于多普勒极限——有些实验低到 40 微开尔文，而理论说极限是 240 微开尔文。1989 年，达利巴德和科恩-塔诺季给出了解释，机制的名字来自希腊神话：<b>西西弗斯冷却</b>。</p>
+<p>故事是这样的。当两束正交线偏振光（lin&perp;lin）对射时，它们的叠加在空间上产生周期变化的偏振——空间某处是线偏振、某处是圆偏振，以半个波长为周期交替。而不同偏振对原子的两个基态子能级产生不同的光移（AC 斯塔克效应）：</p>
+<ul>
+<li>原子在"势垒峰"处，会被光泵浦到"势阱底"的态——相当于被"扔"到谷底；</li>
+<li>原子继续运动，爬上下一座势垒——爬坡消耗动能；</li>
+<li>到坡顶又被泵浦回谷底——又损失动能。</li>
+</ul>
+<p>周而复始，原子永远在"爬坡-被扔回谷底"，动能被一遍遍抽走——就像西西弗斯永远推石头上山。这个过程把温度压到远低于多普勒极限，最终极限由反冲能量决定：</p>
+<div class="formula">T &asymp; 几倍 T<sub>rec</sub>&nbsp;&nbsp;（铷 ~微开尔文级；1990 年铯实验达到 2.5 &micro;K，远低于 125 &micro;K 多普勒极限）</div>
+<p>亚多普勒冷却的代价：它只对有多能级结构的原子（比如有超精细结构的碱金属）有效——对锂、钾这类激发态超精细结构"分辨不开"的原子，要用更复杂的灰色黏团等技术。这也是为什么不同原子各有各的"专属冷却配方"。</p>
+<div class="side"><b>为什么叫"偏振梯度冷却"：</b>空间上变化的偏振，等价于原子感受到的"地势"在变化。整个机制就是"光场给原子造了一座山，原子每次爬完都被扔下来"——利用的是光与原子基态子能级的耦合，完全绕开了多普勒效应的速度依赖。这也是"比理论更好"的实验逼出来的新物理。</div>
+</section>
+
+<!-- ============ 5 MOT ============ -->
+<section id="c5">
+<h2>5 &middot; 把原子困住：磁光阱（MOT）</h2>
+<p>光学黏团能减速，但困不住原子——它没有位置信息，原子会慢慢漂走。1987 年，拉布等人发明了磁光阱（magneto-optical trap，MOT），把"减速"和"囚禁"一次完成，从此冷原子实验有了标准起点。</p>
+<p>MOT 的结构：三对正交的反向圆偏振光束（&sigma;<sup>+</sup>/&sigma;<sup>-</sup>）+ 一对<b>反亥姆霍兹线圈</b>（电流反向，产生四极磁场：中心为零，向四周线性增强）。磁场的作用是给原子一个"位置感觉"：</p>
+<ul>
+<li>四极磁场使原子能级产生<b>塞曼位移</b>——偏离中心越远，位移越大；</li>
+<li>配合圆偏振光的<b>选择定则</b>，偏离中心的原子会"更偏爱"吸收把它推回中心的那束光；</li>
+<li>于是原子被"夹"在中心：朝哪边跑，就有更强的力把它推回来。</li>
+</ul>
+<p>MOT 的成绩单：一次装载 10<sup>8</sup>&ndash;10<sup>10</sup> 个原子，温度 10&ndash;100 微开尔文，密度约 10<sup>11</sup> cm<sup>-3</sup>。它是后面所有实验（BEC、原子钟、量子模拟）的"起点站"。从原子炉（加热铷源产生蒸气）→ 塞曼减速器（预减速原子束）→ MOT（冷却+囚禁），是一套标准的装载流水线。</p>
+<div class="side"><b>MOT 与主线磁力仪的关系：</b>主线里的磁力仪是"热蒸气 + 磁场读出"，MOT 是"冷原子 + 磁场囚禁"——同一个原子、同一类物理（塞曼效应、光与自旋），用途相反：一个是探测磁场，一个是被磁场抓住。这条线在冷原子磁力仪里（第 8 节）会重新交汇。</div>
+</section>
+
+<!-- ============ 6 蒸发冷却与 BEC ============ -->
+<section id="c6">
+<h2>6 &middot; 最后一棒：蒸发冷却与玻色-爱因斯坦凝聚</h2>
+<p>激光冷却到 ~微开尔文已经是光的极限（反冲温度兜底）。要进入量子简并（纳开尔文级），必须换工具——<b>蒸发冷却</b>：把势阱里最"热"的原子放走，剩下的原子重新热化，温度进一步下降。这和你吹热咖啡一个道理：最热的水分子跑掉，剩下的咖啡变凉。</p>
+<p>流程：MOT 之后，把原子转移到纯磁阱（利用原子的磁矩在磁场梯度中的受力囚禁）或光偶极阱，然后逐步"降下阱沿"——每次放走一批高能原子，剩下的碰撞重新分布能量，温度降一截。1995 年 6 月 5 日，康奈尔和威曼（JILA）用这个流程把约 10 万个 ⁸&#8317;Rb 原子冷却到 170 纳开尔文，得到第一个气体玻色-爱因斯坦凝聚体（BEC）；几个月后，克特勒（MIT）用钠做出原子数多一百倍的凝聚体。2001 年三人共享诺贝尔奖。</p>
+<p>BEC 是什么？当玻色子（整数自旋，如 ⁸&#8317;Rb 的 F=1）的温度低到热德布罗意波长超过原子间距时，大量原子会<b>同时落入同一个量子态</b>——整团原子变成一个宏观的"物质波"，行为像一个整体。1995 年那张著名的"三维图像"（蓝白相间的双峰结构）就是它的证据：冷凝部分形成一个尖峰（量子基态），周围是仍处于热态的"帽子"（热分布）。</p>
+<p>这里还有一个经典的技术细节：JILA 的磁阱有个"漏孔"（磁场零点让原子漏走），康奈尔设计了<b>TOP 阱</b>——加一个小旋转磁场，让漏孔快速移动，原子追不上，就被留住了。这个"补漏"设计是 1995 年成功的关键之一。</p>
+<table>
+<tr><th>里程碑</th><th>年份</th><th>关键数字</th></tr>
+<tr><td>激光冷却理论（亨施-肖洛）</td><td>1975</td><td>光压减速的设想</td></tr>
+<tr><td>光学黏团实验（朱棣文组）</td><td>1985</td><td>室温 &rarr; ~1 mK</td></tr>
+<tr><td>磁光阱（拉布等）</td><td>1987</td><td>10<sup>8</sup>&ndash;10<sup>10</sup> 原子，10&ndash;100 &micro;K</td></tr>
+<tr><td>西西弗斯冷却理论（达利巴德-科恩-塔诺季）</td><td>1989</td><td>解释低于多普勒极限的温度</td></tr>
+<tr><td>首个 BEC（JILA，⁸&#8317;Rb）</td><td>1995</td><td>~2000 原子，~170 nK</td></tr>
+<tr><td>首个 BEC（MIT，²³Na）</td><td>1995</td><td>原子数多 ~100 倍</td></tr>
+<tr><td>简并费米气体（Jin 组，⁴&deg;K）</td><td>1999&ndash;2003</td><td>费米统计的量子简并</td></tr>
+</table>
+<div class="side"><b>为什么 1995 年才做到：</b>BEC 的理论 1924 年就有了，但需要"10 万原子、170 nK、高真空、可控磁场"四件事同时成立。激光冷却给了微开尔文起点，TOP 阱补了漏孔，蒸发冷却做了最后一步——<b>工程上每一环都缺一不可</b>。这也是"理论到实验隔了 70 年"的经典案例。</div>
+</section>
+
+<!-- ============ 7 探测方法 ============ -->
+<section id="c7">
+<h2>7 &middot; 怎么"看"冷原子：飞行时间与吸收成像</h2>
+<p>冷原子太小、太冷，用普通相机根本看不见。标准"拍照"方法是<b>飞行时间（time-of-flight）吸收成像</b>——这也是 1995 年那幅 BEC 图背后的技术：</p>
+<ol>
+<li>关掉所有囚禁场，让原子团在真空中自由膨胀（弹道飞行）几到几十毫秒；</li>
+<li>打一束共振激光穿过原子团，CCD 相机拍下原子的"影子"（吸收阴影）；</li>
+<li>从阴影的二维分布，反推原子在飞行中的速度分布——膨胀得越快，说明初始温度越高。</li>
+</ol>
+<p>温度从膨胀的宽度读出：膨胀半宽 &prop; 初始速度 &times; 飞行时间。这就是"测量冷原子温度"的标准做法。进阶的测量还有：</p>
+<ul>
+<li><b>原位成像</b>（囚禁着拍）：直接看空间分布，配合飞行时间可以求相空间密度；</li>
+<li><b>荧光成像</b>：用激发光让原子发光再收集，量子气显微镜用它做到"单个格点、单个原子"分辨；</li>
+<li><b>射频/磁场操控探测</b>：用微波或磁场改变态分布，再成像——得到的是"态分辨"的信息。</li>
+</ul>
+<div class="side"><b>一个关键判据：</b>1995 年 JILA 组判断"真的做成 BEC 了"，靠的是飞行时间图像里冷凝部分呈<b>椭圆形</b>而非圆形——这是量子力学各向异性势阱的基态波函数特征，其他解释（比如纯粹的热云）给不出这个形状。细节决定成败，这可能是冷原子史上最著名的"椭圆"。</div>
+</section>
+
+<!-- ============ 8 应用一：精密测量 ============ -->
+<section id="c8">
+<h2>8 &middot; 冷了能干什么（一）：精密测量</h2>
+<p>冷原子最大的价值之一，是它让测量变得极端精确——因为"热"是测量的最大敌人（多普勒展宽、碰撞、退相干）。冷却到接近静止后：</p>
+
+<h3>8.1 原子钟：从微波喷泉钟到光钟</h3>
+<p>铯喷泉钟（NIST-F2 定义了"秒"）用光学黏团把原子冷却到约 1 微开尔文，再向上发射——原子像喷泉一样上去再掉下来，微波在"上升-下落"中两次作用，把探测时间拉到接近 1 秒，精度因此大幅提升。新一代<b>光钟</b>（锶、镱等，用窄线宽跃迁，频率在可见光区）更进一步：把原子囚禁在光晶格里，消除多普勒和反冲效应，分数不确定度已达 <b>10<sup>-18</sup></b> 量级——相当于 140 亿年（宇宙年龄）不差 1 秒。它们已经能"测出"1 厘米高度差的相对论时间膨胀。</p>
+
+<h3>8.2 原子干涉仪：用物质波做测量</h3>
+<p>冷原子是德布罗意波，可以被激光脉冲"分束"（&pi;/2 脉冲）和"反射"（&pi; 脉冲）——就像光学干涉仪里的分束镜和镜子，只不过对象是物质波。两条路径的相位差携带着重力、加速度、旋转等惯性信息：</p>
+<div class="formula">激光脉冲序列 &pi;/2 &ndash; &pi; &ndash; &pi;/2 &nbsp;&rarr;&nbsp; 物质波分束-反射-合束 &nbsp;&rarr;&nbsp; 干涉条纹含 g 的信息</div>
+<p>原子干涉仪已用于：精确测量重力加速度 g、引力常数 G、精细结构常数；做成重力仪（精度 ~10<sup>-9</sup>g）、重力梯度仪、惯性导航；斯坦福大学的 10 米高原子干涉仪在做等效原理的最严格检验。</p>
+
+<h3>8.3 冷原子磁力仪：与主线的交汇</h3>
+<p>冷却同样让磁力仪受益：冷原子没有热蒸气里那些碰撞弛豫，自旋相干时间更长，可以做更精密的磁测量。冷原子磁力仪/原子干涉磁力仪能测梯度更干净的磁场图。它和主线热蒸气 SERF 磁力仪互补：<b>热蒸气靠"原子多"拼灵敏度，冷原子靠"原子安静"拼精度</b>——一个吃密度，一个吃相干时间。</p>
+<div class="side"><b>一个数字的感受：</b>光钟 10<sup>-18</sup> 的精度，相当于把地球到太阳的距离测到一根头发丝的宽度。而这一切的起点，只是"把原子冷却下来"这一件事——温度是一切测量精度的公共敌人。</div>
+</section>
+
+<!-- ============ 9 应用二：量子模拟与量子计算 ============ -->
+<section id="c9">
+<h2>9 &middot; 冷了能干什么（二）：量子模拟与量子计算</h2>
+<p>冷原子另一个大用途，是把"固体物理里的模型"搬到实验室里现造一个。方法是用激光干涉制造<b>光晶格</b>——周期性排列的光学势阱，原子一个个"住"进去，就像电子住在晶体里。晶格深度、间距、原子间相互作用都可以精确调节，比真实晶体可控得多：</p>
+
+<h3>9.1 量子模拟：造一个"看得见的晶体"</h3>
+<p>2002 年，格雷纳等人用铷原子在光晶格里实现了<b>Bose-Hubbard 模型</b>的超流-莫特绝缘体量子相变——一个凝聚态物理的标志性模型，第一次在干净的量子气体里被完整实现。原子从"到处流动"（超流相）变成"每个格点锁住整数个"（莫特相），用飞行时间成像直接"看见"相变。这就是<b>量子模拟</b>：用可控的量子系统去模拟算不动的量子系统。</p>
+<p>对费米原子（锂-6、钾-40）做同样的事，就得到 Fermi-Hubbard 模型——被认为与高温超导机制相关。冷原子模拟已成为研究量子磁性、无序、热化、拓扑态的主力平台。</p>
+
+<h3>9.2 量子计算：光镊阵列与里德伯原子</h3>
+<p>近十年最热的方向：用<b>光镊</b>（高度聚焦的激光束）一个个抓住中性原子，排成任意二维/三维阵列作为量子比特。原子间的相互作用通过<b>里德伯激发</b>（把原子激发到高主量子数，电偶极矩巨大）实现——一个原子激发到里德伯态后，会"阻塞"附近原子激发（里德伯阻塞），从而构成两比特门：</p>
+<ul>
+<li>中性原子阵列 + 里德伯阻塞，两比特门保真度已超过 99%；</li>
+<li>量子气显微镜能对每个格点的原子逐个成像、逐个操控；</li>
+<li>中性原子平台正成为可扩展量子计算机的有力候选（与其他平台如离子阱、超导并驾齐驱）。</li>
+</ul>
+<div class="side"><b>一个共同的底层逻辑：</b>量子模拟和量子计算，靠的都是冷原子两个特性——<b>极长的相干时间</b>（没有热噪声打扰）和<b>极强的可操控性</b>（光场、磁场、碰撞都能精确调节）。这两点都来自同一个前提：把原子冷却到接近不动。冷，是这一切的入场券。</div>
+</section>
+
+<!-- ============ 10 收束 ============ -->
+<section id="c10">
+<h2>10 &middot; 收束：从室温到纳开尔文的旅程</h2>
+<p>把整条冷却链串起来，是一张阶梯表——每一级的目标、工具、极限：</p>
+<table>
+<tr><th>阶段</th><th>温度</th><th>工具</th><th>极限/目标</th></tr>
+<tr><td>室温蒸气</td><td>~300 K</td><td>原子炉</td><td>速度 ~300 m/s，多普勒展宽大</td></tr>
+<tr><td>多普勒冷却</td><td>~1 mK</td><td>光学黏团（6 束红失谐光）</td><td>多普勒极限 ~100 &micro;K 级</td></tr>
+<tr><td>亚多普勒冷却</td><td>~&micro;K</td><td>偏振梯度/西西弗斯</td><td>反冲极限 ~几百 nK&ndash;&micro;K</td></tr>
+<tr><td>MOT 囚禁</td><td>10&ndash;100 &micro;K</td><td>MOT（6 束 + 四极磁场）</td><td>10<sup>8</sup>&ndash;10<sup>10</sup> 原子</td></tr>
+<tr><td>蒸发冷却</td><td>~100 nK</td><td>磁阱/光阱 + 降阱沿</td><td>量子简并（BEC/费米简并）</td></tr>
+</table>
+<p>这条链的每一级都是下一级的"起点站"：多普勒冷却喂饱 MOT，MOT 喂饱磁阱，蒸发冷却越过量子门槛。而越过门槛之后，原子展现出的是全新的物理——相干物质波、超流、量子相变——这些在"热"的世界里根本不存在。</p>
+<p><b>和主线的关系：</b>主线热蒸气磁力仪靠的是"把原子加热到够密、再用光读出自旋"；冷原子路线靠的是"把原子冷却到够静、再用光控制一切"。一个吃密度、一个吃相干时间，殊途同归到同一个主题——<b>用光驯服原子</b>。这也是从原子物理通往量子技术时代的共同主线：先学会安静，才能学会精确。</p>
+<div class="side"><b>一句话总结全篇：</b>激光冷却不是"让东西变凉"的小事，而是把原子从"一团混乱的气体"改造成"一件可编程的量子工具"的工业革命——温度每降一级，量子世界就打开一层。</div>
+</section>
+
+<!-- ============ 11 术语表 ============ -->
+<section id="glos">
+<h2>11 &middot; 术语表（随时回来查）</h2>
+<div class="glos"><b>多普勒冷却</b>：利用原子朝光运动时看到频率升高，红失谐光只拦"迎面"原子，实现减速。</div>
+<div class="glos"><b>光学黏团</b>：三对正交反向红失谐光束，产生速度阻尼力，但无空间囚禁。</div>
+<div class="glos"><b>多普勒极限 T<sub>D</sub></b>：&hbar;&Gamma;/(2k<sub>B</sub>)，冷却与自发辐射随机加热平衡的温度。</div>
+<div class="glos"><b>亚多普勒冷却</b>：利用偏振梯度/光移/光泵浦，突破多普勒极限。</div>
+<div class="glos"><b>西西弗斯冷却</b>：原子反复"爬光势垒-被泵回谷底"，每次爬坡消耗动能。</div>
+<div class="glos"><b>反冲能量/反冲温度</b>：单个光子反冲对应的能量/温度，激光冷却的地板。</div>
+<div class="glos"><b>磁光阱（MOT）</b>：6 束圆偏振光 + 四极磁场梯度，冷却+囚禁一次完成。</div>
+<div class="glos"><b>塞曼位移</b>：磁场使原子能级移动，MOT 用它给原子"位置感"。</div>
+<div class="glos"><b>蒸发冷却</b>：放走最热原子、剩余原子重新热化降温（像吹咖啡）。</div>
+<div class="glos"><b>磁阱/TOP 阱</b>：用磁场梯度囚禁原子；TOP 阱用旋转场补漏孔。</div>
+<div class="glos"><b>光偶极阱</b>：聚焦激光束产生的势阱，形状可任意设计。</div>
+<div class="glos"><b>玻色-爱因斯坦凝聚（BEC）</b>：玻色子低温下大量占据同一量子态，整团变成"一个波"。</div>
+<div class="glos"><b>简并费米气体</b>：费米子低温下被泡利原理撑开的量子简并态。</div>
+<div class="glos"><b>热德布罗意波长</b>：&lambda;=h/&radic;(2&pi;mk<sub>B</sub>T)，与原子间距可比时进入量子简并。</div>
+<div class="glos"><b>飞行时间成像</b>：关阱自由膨胀后用共振光拍"影子"，反推速度/温度分布。</div>
+<div class="glos"><b>吸收成像</b>：共振光被原子吸收留下的阴影，CCD 记录。</div>
+<div class="glos"><b>光晶格</b>：干涉激光形成的周期性势阱阵列，模拟晶体。</div>
+<div class="glos"><b>Bose-Hubbard 模型</b>：晶格上玻色子的隧穿+在位相互作用模型，量子模拟标志性实验。</div>
+<div class="glos"><b>光镊</b>：聚焦激光束逐原子捕获，排成可编程阵列（量子比特）。</div>
+<div class="glos"><b>里德伯阻塞</b>：一个原子激发到里德伯态后阻止邻近原子激发，用于量子门。</div>
+<div class="glos"><b>喷泉钟/光钟</b>：冷原子做频率标准的原子钟；光钟精度已达 10<sup>-18</sup>。</div>
+<div class="glos"><b>原子干涉仪</b>：用激光脉冲分束/反射物质波，干涉条纹测重力/惯性。</div>
+<div class="glos"><b>量子模拟</b>：用可控量子系统模拟难解的量子模型（如 Hubbard 模型）。</div>
+</section>
+
+<div class="links">
+<a href="index.html">&larr; 返回主线</a>
+<a href="atomic_experiments.html">实验支线：原子磁力仪实验 &rarr;</a>
+<a href="noise_suppression.html">专题：噪声抑制 &rarr;</a>
+<a href="#c0">回到顶部</a>
+</div>
+</main>
+<script>
+(function(){
+  var KEY='siteTheme';
+  function apply(t){document.body.setAttribute('data-theme',t);}
+  try{var saved=localStorage.getItem(KEY);if(saved==='light')apply('light');}catch(e){}
+  var tb=document.getElementById('themeBtn');
+  tb.addEventListener('click',function(){
+    var cur=document.body.getAttribute('data-theme')==='light'?'dark':'light';
+    apply(cur);try{localStorage.setItem(KEY,cur);}catch(e){}
+  });
+  var toc=document.getElementById('toc'),btn=document.getElementById('tocBtn');
+  if(toc&&btn){
+    var links=[];
+    document.querySelectorAll('main section').forEach(function(sec){
+      var h=sec.querySelector('h2');if(sec.id&&h){
+        var a=document.createElement('a');a.href='#'+sec.id;a.textContent=h.textContent;
+        toc.appendChild(a);links.push(a);
+      }
+    });
+    btn.addEventListener('click',function(){toc.classList.toggle('open');});
+    toc.addEventListener('click',function(e){if(e.target.tagName==='A')toc.classList.remove('open');});
+    window.addEventListener('scroll',function(){
+      var cur=null;
+      document.querySelectorAll('main section').forEach(function(sec){
+        if(sec.getBoundingClientRect().top<120)cur=sec.id;
+      });
+      links.forEach(function(a){a.classList.toggle('cur',a.getAttribute('href')==='#'+cur);});
+    });
+  }
+})();
+</script>
+</body>
+</html>
