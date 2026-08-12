@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>磁屏蔽与磁场环境：给实验造一个"无磁病房"</title>
+<style>
+:root{
+  --bg:#0f1115; --card:#171a21; --bord:#23262d; --mut:#9aa4b2;
+  --txt:#e6e8ec; --acc:#7dd3fc; --warn:#fbbf24; --intu:#c4b5fd; --side:#2a2140;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font:16px/1.9 -apple-system,"Segoe UI","Microsoft YaHei",sans-serif;padding:28px 20px 60px}
+main{max-width:820px;margin:0 auto}
+a{color:var(--acc);text-decoration:none}
+a:hover{text-decoration:underline}
+h1{font-size:27px;line-height:1.45;margin-bottom:8px}
+h2{font-size:21px;margin:40px 0 14px;padding-left:12px;border-left:4px solid var(--acc)}
+h3{font-size:17px;margin:24px 0 10px;color:var(--acc)}
+p{margin:12px 0}
+ul,ol{margin:10px 0 10px 24px}
+li{margin:6px 0}
+table{border-collapse:collapse;width:100%;margin:14px 0;font-size:14px}
+th,td{border:1px solid var(--bord);padding:7px 11px;text-align:left}
+th{background:#1c2029;color:var(--acc)}
+tr:nth-child(even) td{background:#151922}
+.sub{color:var(--mut);font-size:14px}
+.formula{background:#11141a;border:1px solid var(--bord);border-radius:8px;padding:12px 18px;margin:14px 0;font-family:"Cambria Math",Georgia,serif;font-size:16px;overflow-x:auto;text-align:center}
+.formula b{color:var(--acc)}
+.note{border-left:3px solid var(--warn);padding:8px 14px;margin:14px 0;background:#1a1710;font-size:14px}
+.side{background:var(--side);border:1px solid #3b2f5e;border-radius:10px;padding:12px 16px;margin:14px 0;font-size:14px}
+.side b{color:#c4b5fd}
+.glos{background:#11141a;border:1px solid var(--bord);border-radius:8px;padding:10px 14px;margin:8px 0;font-size:14px}
+.glos b{color:var(--acc)}
+.links{margin-top:30px;display:flex;gap:16px;flex-wrap:wrap;font-size:14px}
+.toplink{color:var(--mut);font-size:13px;margin-bottom:12px;display:block}
+body[data-theme="light"]{
+  --bg:#f7f8fa; --card:#ffffff; --bord:#dde1e7; --mut:#5a6472;
+  --txt:#1a2029; --acc:#0284c7; --warn:#b45309; --intu:#6d28d9; --side:#f3eefb;
+}
+body[data-theme="light"] .formula{background:#f1f3f6;border-color:#dde1e7}
+body[data-theme="light"] .note{background:#fdf6e3;border-color:#e5c97a}
+body[data-theme="light"] .side{border-color:#c9b8ec}
+body[data-theme="light"] .glos{background:#f1f3f6;border-color:#dde1e7}
+body[data-theme="light"] th{background:#eef1f5}
+body[data-theme="light"] tr:nth-child(even) td{background:#f3f5f8}
+#tocBtn{position:fixed;top:10px;right:10px;z-index:90;background:transparent;border:1px solid var(--bord);
+  color:var(--mut);border-radius:6px;font-size:14px;padding:3px 9px;cursor:pointer;opacity:.55;transition:opacity .2s}
+#tocBtn:hover{opacity:1;color:var(--acc)}
+#toc{position:fixed;top:0;left:0;right:0;z-index:89;background:var(--bg);border-bottom:1px solid var(--bord);
+  max-height:0;overflow:hidden;transition:max-height .3s ease;display:flex;flex-wrap:wrap;gap:4px 16px;padding:0 16px}
+#toc.open{max-height:70vh;overflow:auto;padding-top:44px;padding-bottom:12px}
+#toc a{font-size:13px;color:var(--mut);padding:2px 0}
+#toc a:hover{color:var(--acc)}
+#toc a.cur{color:var(--acc)}
+#themeBtn{position:fixed;right:10px;bottom:10px;z-index:90;width:34px;height:34px;border-radius:50%;
+  background:var(--card);border:1px solid var(--bord);color:var(--mut);font-size:16px;cursor:pointer;
+  opacity:.5;transition:opacity .2s}
+#themeBtn:hover{opacity:1;color:var(--acc)}
+@media(max-width:860px){main{padding:0 4px}h1{font-size:22px}}
+</style>
+</head>
+<body>
+<button id="tocBtn" title="展开/收起目录">☰</button>
+<button id="themeBtn" title="深浅切换">◐</button>
+<div id="toc"></div>
+<main>
+<a class="toplink" href="index.html">&larr; 返回《从原子到磁力仪》主线</a>
+<h1>磁屏蔽与磁场环境：给实验造一个"无磁病房"</h1>
+<p class="sub">《噪声抑制》专题的"环境篇"。噪声抑制讲怎么处理四类噪声，这一篇把其中最重的一块单独展开：<b>怎么把地球磁场和城市噪声挡在门外，让实验在"真空般的磁场环境"里工作</b>。所有数字来自公开文献。</p>
+<div class="side"><b style="color:#7dd3fc">这一篇和你有什么关系：</b>你手机里的电子罗盘偶尔会提示"校准"——因为周围磁场太乱，它"迷路"了。这一篇讲的是怎么造一个让原子完全"不受打扰"的磁场环境：屏蔽房、消磁、主动补偿。脑磁图、暗物质搜寻、磁力仪实验全都依赖它——就像做手术前要无菌消毒，精密测量前要先"无磁消毒"。</div>
+
+<!-- ============ 0 学习地图 ============ -->
+<section id="m0">
+<h2>0 &middot; 先看地图：挡磁场的"三层防御"</h2>
+<p>磁屏蔽不是一层，而是"被动+主动+差分"三层的协同。推进逻辑：</p>
+<ul>
+<li>第 1 节敌人有多大：地球磁场、城市噪声、人体自身——量级对比。</li>
+<li>第 2 节材料：坡莫合金、铁氧体、超导体——"吸磁"的原理。</li>
+<li>第 3 节被动屏蔽：单层到多层桶/房间，屏蔽比怎么算。</li>
+<li>第 4 节低频短板：为什么被动屏蔽对慢变场无能，需要补招。</li>
+<li>第 5 节主动稳定：传感器+反馈线圈，把漏网之"场"顶回去。</li>
+<li>第 6 节差分（梯度仪）：让噪声自己抵消（与噪声抑制篇呼应）。</li>
+<li>第 7 节内部环境：线圈系统、消磁、磁学卫生。</li>
+<li>第 8 节验收与标定：怎么知道屏蔽效果到底多少。</li>
+<li>第 9 节收束：三层防御的配合逻辑。</li>
+</ul>
+<div class="note">时间少的话：只读第 1、3、5 节。一句话——<b>磁屏蔽 = 被动材料"吸"掉大部分（高频效果好）+ 主动线圈"顶"回剩下的（补低频短板）+ 差分测量"减"掉共模</b>。</div>
+</section>
+
+<!-- ============ 1 敌人 ============ -->
+<section id="m1">
+<h2>1 &middot; 敌人有多大：磁场环境全景</h2>
+<table>
+<tr><th>来源</th><th>量级</th><th>频率特征</th></tr>
+<tr><td>地球磁场</td><td>~30&ndash;60 &micro;T</td><td>准静态（缓慢变化）</td></tr>
+<tr><td>城市电磁噪声</td><td>nT&ndash;&micro;T</td><td>50 Hz 及谐波（电力线）</td></tr>
+<tr><td>电梯/地铁/车辆</td><td>nT&ndash;&micro;T 级跳动</td><td>秒级瞬变</td></tr>
+<tr><td>实验室仪器（电源、马达）</td><td>nT&ndash;&micro;T</td><td>宽带+离散峰</td></tr>
+<tr><td>人体/设备剩磁</td><td>nT 级</td><td>随移动变化</td></tr>
+<tr><td>目标信号（脑磁）</td><td>10&ndash;100 fT</td><td>低频（&lt;100 Hz）</td></tr>
+</table>
+<p>核心问题一眼可见：要测的信号（fT 级）比环境噪声（nT&ndash;&micro;T 级）小 <b>5&ndash;8 个数量级</b>。磁屏蔽的任务就是把环境压下去，直到"信号 vs 剩余噪声"的比例可接受。</p>
+</section>
+
+<!-- ============ 2 材料 ============ -->
+<section id="m2">
+<h2>2 &middot; 材料：谁在"吸"磁场</h2>
+<ul>
+<li><b>坡莫合金（&mu;-金属）</b>：镍铁合金（约 80% 镍），磁导率极高——磁力线"喜欢"走它，于是被"吸"进材料里、绕开内部空间。主力材料，价格适中；</li>
+<li><b>铁氧体</b>：陶瓷类磁性材料，自身磁噪声更低（热噪声小），但屏蔽效率低于坡莫合金——2010 年创纪录的 0.16 fT/√Hz 磁力仪用它；</li>
+<li><b>超导体</b>：完全抗磁（迈斯纳效应），磁场无法穿透——但需要液氦，只有特殊场合用。</li>
+</ul>
+<p>关键概念：材料把磁力线"引导"进自己体内，内部空间磁场被"排空"——这就是被动屏蔽的物理。</p>
+</section>
+
+<!-- ============ 3 被动屏蔽 ============ -->
+<section id="m3">
+<h2>3 &middot; 被动屏蔽：一层不够就多层</h2>
+<p>屏蔽性能用<b>屏蔽比</b>（抑制因子）衡量：屏蔽前后磁场之比。单层坡莫合金桶的屏蔽比有限，多层叠套可以指数级提升：</p>
+<table>
+<tr><th>配置</th><th>低频（0.01 Hz）</th><th>高频（~1 kHz）</th></tr>
+<tr><td>单层 &mu;-金属桶</td><td>~10²</td><td>~10³&ndash;10⁴</td></tr>
+<tr><td>4 层实验桶</td><td>~10⁴&ndash;10⁵</td><td>~10⁶&ndash;10⁷</td></tr>
+<tr><td>7 层高性能</td><td>7.5&times;10⁴</td><td>~10⁹</td></tr>
+</table>
+<p>两个规律：① 高频屏蔽远好于低频；② 层间留空隙（不接触）才能逐层衰减。房间级屏蔽（磁屏蔽房，MSR）用同样原理把整个房间包起来——脑磁图等生物磁实验的标配。</p>
+</section>
+
+<!-- ============ 4 低频短板 ============ -->
+<section id="m4">
+<h2>4 &middot; 低频短板：被动屏蔽的"命门"</h2>
+<p>被动屏蔽有一个物理上限：<b>频率越低越难挡</b>。原因：准静态磁场穿透厚材料的能力与频率有关，而环境噪声恰恰在低频最大（1/f 谱）。所以"多包几层"解决不了低频问题——</p>
+<div class="formula">被动屏蔽：0.01 Hz 处比 1 kHz 处差 4 个数量级以上<br>环境噪声：低频处恰恰最大 &rArr; 短板叠加，必须补招</div>
+<p>补招就是第 5 节的主动稳定和第 6 节的差分。</p>
+</section>
+
+<!-- ============ 5 主动稳定 ============ -->
+<section id="m5">
+<h2>5 &middot; 主动稳定：用磁力仪"顶"回漏网之场</h2>
+<p>思路：在屏蔽桶外（或内）放传感器监测环境场，与目标值比较产生误差信号，反馈控制线圈电流，主动把噪声"顶回去"：</p>
+<ul>
+<li>主动稳定的抑制比典型 10&ndash;1000（取决于传感器噪声和环路带宽）；</li>
+<li>示范实验：无屏蔽地球磁场环境，用原子磁力仪主动稳定，环境噪声压到 ~40 fT/√Hz，低频抑制比 &gt;800；</li>
+<li>与被动互补：SQUID 在桶外监测+主动稳定，把 0.01 Hz 处的总抑制比从 7.5&times;10⁴ 再提升 30 倍到 2&times;10⁶。</li>
+</ul>
+<p>主动稳定的优点：便宜、可大范围（比屏蔽房小得多）、专治低频；缺点：抑制比有限、依赖传感器够好。它和被动屏蔽是"互补"而非"替代"。</p>
+</section>
+
+<!-- ============ 6 差分 ============ -->
+<section id="m6">
+<h2>6 &middot; 差分（梯度仪）：让噪声自己抵消</h2>
+<p>环境噪声在空间上近似均匀——两个靠得近的探头感受到的噪声几乎一样。相减后噪声消掉，而近场信号（大脑/心脏）保留：</p>
+<div class="formula">输出 = 探头₁ - 探头₂ &nbsp;&rArr;&nbsp; 远场公共噪声抵消、近场信号保留</div>
+<ul>
+<li><b>一阶梯度仪</b>：两个独立磁力仪电相减（简单，但电噪声叠加）；</li>
+<li><b>光学梯度仪</b>：一束光直接读出两个区域之差（一个偏振计，电噪声不叠加）；</li>
+<li><b>脑磁阵列</b>：参考通道 + 主通道相减，是开放环境 OPM-MEG 的标准做法。</li>
+</ul>
+<p>梯度仪是"数学上的屏蔽"：不需要更多材料，只需要"两个探头 + 减法"——与物理屏蔽互补。</p>
+</section>
+
+<!-- ============ 7 内部环境 ============ -->
+<section id="m7">
+<h2>7 &middot; 内部环境：线圈、消磁与"磁学卫生"</h2>
+<ul>
+<li><b>线圈系统</b>：亥姆霍兹线圈对/三轴线圈提供均匀工作场，还能主动补偿剩余场；</li>
+<li><b>消磁（degauss）</b>：坡莫合金会被地球磁场"磁化"留下剩磁——用衰减交流场周期性消磁，把剩磁清掉（剩磁可做到 &lt;1 nT）；</li>
+<li><b>磁学卫生</b>：实验室内禁止铁磁性工具、加热丝用高频交流电、电缆双绞、移动设备远离——"干净"是习惯也是制度；</li>
+<li><b>无磁材料</b>：支撑结构用铝/塑料/陶瓷，铷泡加热用无磁加热膜。</li>
+</ul>
+</section>
+
+<!-- ============ 8 验收 ============ -->
+<section id="m8">
+<h2>8 &middot; 验收与标定：怎么知道屏蔽了多少</h2>
+<p>屏蔽效果不能靠"感觉"，要测：</p>
+<ul>
+<li><b>屏蔽比测量</b>：在桶内外各放一个磁力仪，同时记录环境场——两者之比就是实测屏蔽比（扫频率画曲线）；</li>
+<li><b>剩磁测量</b>：关掉所有主动场，测中心剩余磁场大小和均匀性；</li>
+<li><b>噪声谱测量</b>：桶内磁力仪记录噪声功率谱——看白噪声底、50 Hz 峰、低频 1/f 是否被压下去；</li>
+<li><b>长期稳定性</b>：小时级监测，确认没有慢漂和突跳。</li>
+</ul>
+</section>
+
+<!-- ============ 9 收束 ============ -->
+<section id="m9">
+<h2>9 &middot; 收束：三层防御的配合逻辑</h2>
+<div class="formula">被动屏蔽（吸高频、压主体）&rarr; 主动稳定（顶低频、补短板）&rarr; 差分（减共模、兜底）</div>
+<p>三层各司其职、互相补位：被动层负责"大头"（把 10⁵&ndash;10⁹ 倍的场挡掉），主动层负责被动层最弱的低频段，差分层负责"最后一公里"（剩下来的共模噪声）。现代高灵敏度实验（0.16 fT/√Hz 的 SERF、脑磁图）几乎都是三层全上。</p>
+<p>回到主线：磁屏蔽不是"附属工程"，而是灵敏度公式里 T<sub>2</sub> 和信噪比的"地基"——没有它，第 4 节实验二那些数字一个都达不到。<b>先造环境，再谈测量</b>——这是精密物理的第一课。</p>
+<div class="side"><b>一句话总结：</b>磁屏蔽 = 被动材料"吸"（高频好）+ 主动线圈"顶"（补低频）+ 差分"减"（兜共模）——三层配合，才能把 fT 级信号从 nT&ndash;&micro;T 级的海洋里捞出来。</div>
+</section>
+
+<!-- ============ 10 术语表 ============ -->
+<section id="glos">
+<h2>10 &middot; 术语表（随时回来查）</h2>
+<div class="glos"><b>屏蔽比（抑制因子）</b>：屏蔽前后磁场之比（10⁴ 表示万分之一）。</div>
+<div class="glos"><b>坡莫合金（&mu;-金属）</b>：高磁导率镍铁合金，主力屏蔽材料。</div>
+<div class="glos"><b>铁氧体</b>：陶瓷磁性材料，自身磁噪声更低。</div>
+<div class="glos"><b>迈斯纳效应</b>：超导体的完全抗磁。</div>
+<div class="glos"><b>主动磁场稳定</b>：传感器+反馈线圈顶回环境噪声。</div>
+<div class="glos"><b>梯度仪</b>：两探头相减，抵消共模、保留近场。</div>
+<div class="glos"><b>消磁（degauss）</b>：衰减交流场清除坡莫合金剩磁。</div>
+<div class="glos"><b>亥姆霍兹线圈</b>：一对同轴线圈产生均匀场。</div>
+<div class="glos"><b>磁屏蔽房（MSR）</b>：房间级屏蔽，生物磁实验标配。</div>
+<div class="glos"><b>剩磁</b>：屏蔽体被磁化后留下的残余磁场。</div>
+<div class="glos"><b>1/f 谱</b>：低频噪声随频率下降而上升的谱形。</div>
+</section>
+
+<div class="links">
+<a href="index.html">&larr; 返回主线</a>
+<a href="noise_suppression.html">噪声抑制（母专题）&rarr;</a>
+<a href="#m0">回到顶部</a>
+</div>
+</main>
+<script>
+(function(){
+  var KEY='siteTheme';
+  function apply(t){document.body.setAttribute('data-theme',t);}
+  try{var saved=localStorage.getItem(KEY);if(saved==='light')apply('light');}catch(e){}
+  var tb=document.getElementById('themeBtn');
+  tb.addEventListener('click',function(){
+    var cur=document.body.getAttribute('data-theme')==='light'?'dark':'light';
+    apply(cur);try{localStorage.setItem(KEY,cur);}catch(e){}
+  });
+  var toc=document.getElementById('toc'),btn=document.getElementById('tocBtn');
+  if(toc&&btn){
+    var links=[];
+    document.querySelectorAll('main section').forEach(function(sec){
+      var h=sec.querySelector('h2');if(sec.id&&h){
+        var a=document.createElement('a');a.href='#'+sec.id;a.textContent=h.textContent;
+        toc.appendChild(a);links.push(a);
+      }
+    });
+    btn.addEventListener('click',function(){toc.classList.toggle('open');});
+    toc.addEventListener('click',function(e){if(e.target.tagName==='A')toc.classList.remove('open');});
+    window.addEventListener('scroll',function(){
+      var cur=null;
+      document.querySelectorAll('main section').forEach(function(sec){
+        if(sec.getBoundingClientRect().top<120)cur=sec.id;
+      });
+      links.forEach(function(a){a.classList.toggle('cur',a.getAttribute('href')==='#'+cur);});
+    });
+  }
+})();
+</script>
+</body>
+</html>
