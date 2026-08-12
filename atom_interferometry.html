@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>原子干涉仪：用物质波测重力与惯性</title>
+<style>
+:root{
+  --bg:#0f1115; --card:#171a21; --bord:#23262d; --mut:#9aa4b2;
+  --txt:#e6e8ec; --acc:#7dd3fc; --warn:#fbbf24; --intu:#c4b5fd; --side:#2a2140;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font:16px/1.9 -apple-system,"Segoe UI","Microsoft YaHei",sans-serif;padding:28px 20px 60px}
+main{max-width:820px;margin:0 auto}
+a{color:var(--acc);text-decoration:none}
+a:hover{text-decoration:underline}
+h1{font-size:27px;line-height:1.45;margin-bottom:8px}
+h2{font-size:21px;margin:40px 0 14px;padding-left:12px;border-left:4px solid var(--acc)}
+h3{font-size:17px;margin:24px 0 10px;color:var(--acc)}
+p{margin:12px 0}
+ul,ol{margin:10px 0 10px 24px}
+li{margin:6px 0}
+table{border-collapse:collapse;width:100%;margin:14px 0;font-size:14px}
+th,td{border:1px solid var(--bord);padding:7px 11px;text-align:left}
+th{background:#1c2029;color:var(--acc)}
+tr:nth-child(even) td{background:#151922}
+.sub{color:var(--mut);font-size:14px}
+.formula{background:#11141a;border:1px solid var(--bord);border-radius:8px;padding:12px 18px;margin:14px 0;font-family:"Cambria Math",Georgia,serif;font-size:16px;overflow-x:auto;text-align:center}
+.formula b{color:var(--acc)}
+.note{border-left:3px solid var(--warn);padding:8px 14px;margin:14px 0;background:#1a1710;font-size:14px}
+.side{background:var(--side);border:1px solid #3b2f5e;border-radius:10px;padding:12px 16px;margin:14px 0;font-size:14px}
+.side b{color:#c4b5fd}
+.glos{background:#11141a;border:1px solid var(--bord);border-radius:8px;padding:10px 14px;margin:8px 0;font-size:14px}
+.glos b{color:var(--acc)}
+.links{margin-top:30px;display:flex;gap:16px;flex-wrap:wrap;font-size:14px}
+.toplink{color:var(--mut);font-size:13px;margin-bottom:12px;display:block}
+body[data-theme="light"]{
+  --bg:#f7f8fa; --card:#ffffff; --bord:#dde1e7; --mut:#5a6472;
+  --txt:#1a2029; --acc:#0284c7; --warn:#b45309; --intu:#6d28d9; --side:#f3eefb;
+}
+body[data-theme="light"] .formula{background:#f1f3f6;border-color:#dde1e7}
+body[data-theme="light"] .note{background:#fdf6e3;border-color:#e5c97a}
+body[data-theme="light"] .side{border-color:#c9b8ec}
+body[data-theme="light"] .glos{background:#f1f3f6;border-color:#dde1e7}
+body[data-theme="light"] th{background:#eef1f5}
+body[data-theme="light"] tr:nth-child(even) td{background:#f3f5f8}
+#tocBtn{position:fixed;top:10px;right:10px;z-index:90;background:transparent;border:1px solid var(--bord);
+  color:var(--mut);border-radius:6px;font-size:14px;padding:3px 9px;cursor:pointer;opacity:.55;transition:opacity .2s}
+#tocBtn:hover{opacity:1;color:var(--acc)}
+#toc{position:fixed;top:0;left:0;right:0;z-index:89;background:var(--bg);border-bottom:1px solid var(--bord);
+  max-height:0;overflow:hidden;transition:max-height .3s ease;display:flex;flex-wrap:wrap;gap:4px 16px;padding:0 16px}
+#toc.open{max-height:70vh;overflow:auto;padding-top:44px;padding-bottom:12px}
+#toc a{font-size:13px;color:var(--mut);padding:2px 0}
+#toc a:hover{color:var(--acc)}
+#toc a.cur{color:var(--acc)}
+#themeBtn{position:fixed;right:10px;bottom:10px;z-index:90;width:34px;height:34px;border-radius:50%;
+  background:var(--card);border:1px solid var(--bord);color:var(--mut);font-size:16px;cursor:pointer;
+  opacity:.5;transition:opacity .2s}
+#themeBtn:hover{opacity:1;color:var(--acc)}
+@media(max-width:860px){main{padding:0 4px}h1{font-size:22px}}
+</style>
+</head>
+<body>
+<button id="tocBtn" title="展开/收起目录">☰</button>
+<button id="themeBtn" title="深浅切换">◐</button>
+<div id="toc"></div>
+<main>
+<a class="toplink" href="index.html">&larr; 返回《从原子到磁力仪》主线</a>
+<h1>原子干涉仪：用物质波测重力与惯性</h1>
+<p class="sub">冷原子专题的姊妹篇。冷原子站讲"怎么把原子冻住"，这一篇讲"把冻住的原子当成一束波，用激光给它做分束镜和反射镜"——造出比光学干涉仪更灵敏的惯性传感器。所有数字来自公开文献。</p>
+<div class="side"><b style="color:#7dd3fc">这一篇和你有什么关系：</b>你手机里有一个微型陀螺仪和一个加速度计（MEMS 传感器）——自动驾驶、游戏"甩手机"、地震预警都靠它们测加速度。原子干涉仪就是这两个传感器的"物理学家版"：用原子波替代硅片，精度高几百万倍，能测地球重力场的细微起伏，甚至测引力常数。</div>
+
+<!-- ============ 0 学习地图 ============ -->
+<section id="a0">
+<h2>0 &middot; 先看地图：把原子当成"一束波"</h2>
+<p>原子有波动性（德布罗意波）。用激光脉冲可以像控制光一样"分束-反射-合束"原子波——这就是原子干涉仪。路线：</p>
+<ul>
+<li>第 1 节为什么用"原子波"：波长比光短约 10 万倍，对惯性更敏感。</li>
+<li>第 2 节核心：拉曼脉冲——用双光子跃迁给原子"分束"和"反射"。</li>
+<li>第 3 节干涉仪构型：Mach-Zehnder（π/2-π-π/2）与相移公式。</li>
+<li>第 4 节测重力（重力仪）：喷泉构型、精度演进。</li>
+<li>第 5 节测旋转（陀螺仪）与梯度（梯度仪）。</li>
+<li>第 6 节基础物理：等效原理、引力常数、引力波探测（MAGIS-100）。</li>
+<li>第 7 节工程化：可移动重力仪、商业系统、惯性导航。</li>
+<li>第 8 节收束：与主线/量子计量的连接。</li>
+</ul>
+<div class="note">时间少的话：只读第 2、3、4 节。一句话——<b>原子干涉仪 = 用激光脉冲当"镜子"，让原子波的两条路径干涉；干涉相位携带重力/旋转信息，且比光干涉仪灵敏得多</b>。</div>
+</section>
+
+<!-- ============ 1 为什么用原子波 ============ -->
+<section id="a1">
+<h2>1 &middot; 为什么用"原子波"来测惯性</h2>
+<p>光的波长 ~500 nm，而冷原子的德布罗意波长虽然也短，真正的优势不在波长本身，而在两点：</p>
+<ul>
+<li><b>原子是"自由落体测试质量"</b>：超高真空中原子不受任何力（除了引力），是理想的惯性传感器探头——不存在"支架振动""材料热膨胀"这类固体传感器的毛病；</li>
+<li><b>原子的波可以"分裂-传播-复合"</b>：两条路径在空间上分开、再合拢，任何加速度/旋转都会在两条路径间产生相位差——如同光学干涉仪里两臂的光程差。</li>
+</ul>
+<p>结果：原子干涉仪测重力/旋转的灵敏度与"自由飞行时间 T 的平方"成正比——所以大趋势是"越高越好"（喷泉）、"越久越好"（太空、微重力）。</p>
+</section>
+
+<!-- ============ 2 拉曼脉冲 ============ -->
+<section id="a2">
+<h2>2 &middot; 核心工具：拉曼脉冲——原子的"分束镜与镜子"</h2>
+<p>1991 年，卡泽维奇和朱棣文首次用<b>受激拉曼跃迁</b>实现原子干涉仪。关键是用<b>两束对射的激光</b>（频率差 &omega;&#8321;&ndash;&omega;&#8322; 调到原子的超精细跃迁，比如铷 6.8 GHz）：</p>
+<ul>
+<li>原子同时吸收一束光子、受激辐射另一束光子（双光子过程）——从基态 |1&rang; 跃迁到超精细态 |2&rang;，同时获得 <b>2&hbar;k</b> 的动量（两束光的光子动量叠加）；</li>
+<li>超精细基态寿命极长（不衰减），原子在这两个态之间可以"挂"很久——干涉时间因此可以很长；</li>
+<li>&pi;/2 脉冲 = 分束器（把原子波劈成两半，一半留 |1&rang;、一半进 |2&rang;），&pi; 脉冲 = 反射镜（交换两个态的动量，让两路折返）——就像光学 Mach-Zehnder 里的分束镜和镜子。</li>
+</ul>
+</section>
+
+<!-- ============ 3 构型与相移 ============ -->
+<section id="a3">
+<h2>3 &middot; 干涉仪构型：Mach-Zehnder 与相移</h2>
+<p>标准的三个脉冲序列（时间间隔 T）：</p>
+<div class="formula">&pi;/2 &ndash; [自由飞行 T] &ndash; &pi; &ndash; [自由飞行 T] &ndash; &pi;/2</div>
+<p>第一个 &pi;/2 把原子波分成两路；&pi; 脉冲让两路"折返"；最后一个 &pi;/2 让两路重新复合、干涉。两路波在重力下走的轨迹不同，累积的相位差：</p>
+<div class="formula">&Delta;&phi; = k<sub>eff</sub> &middot; a &middot; T²&nbsp;&nbsp;（a 是加速度；k<sub>eff</sub> = 2k 是拉曼有效波矢）</div>
+<p>测量流程：改变激光的啁啾率（chirp，补偿原子下落的多普勒频移），扫描干涉条纹；条纹位置对应使相位为零的加速度——直接读出 g。干涉时间 T 越长，同样的加速度产生的相位越大，灵敏度越高（&prop;T²）。</p>
+</section>
+
+<!-- ============ 4 重力仪 ============ -->
+<section id="a4">
+<h2>4 &middot; 测重力：从实验室到 10 米喷泉</h2>
+<table>
+<tr><th>实验</th><th>精度/灵敏度</th></tr>
+<tr><td>1999 年喷泉重力仪（Peters 等）</td><td>&Delta;g/g = 3&times;10&#8315;&#8313;（绝对精度）</td></tr>
+<tr><td>10 米喷泉（斯坦福，卡泽维奇组）</td><td>~3&times;10&#8315;¹¹ g/√Hz（潜在灵敏度）</td></tr>
+<tr><td>可移动重力仪（HUST-QG 等）</td><td>ICAG 国际比对 ~1.3 &micro;Gal</td></tr>
+<tr><td>商业便携系统（Muquans/Infleqtion/AOSense）</td><td>~10&#8315;&#8313; g 级、野外部署</td></tr>
+</table>
+<p>原子重力仪的绝招是<b>绝对、自校准</b>：它直接数"自由落体的相位"，不依赖刻度——长期稳定性远超经典下落角反射镜重力仪。应用：地震/火山监测（前兆性的微弱加速度变化）、大地水准面测量（geoid，水储量/冰川变化）、地下资源勘探（深埋矿体、空洞、下水道检测）。</p>
+</section>
+
+<!-- ============ 5 陀螺仪与梯度仪 ============ -->
+<section id="a5">
+<h2>5 &middot; 测旋转与梯度：从"一台"到"一对"</h2>
+<p><b>原子陀螺仪</b>：旋转（萨格纳克效应）也会在干涉仪两路间产生相位差——把原子干涉仪做成陀螺，测旋转速率。敏感度已达 ~10⁻¹⁰ rad/s/√Hz 量级。工程技巧：用两台反向传播的干涉仪共享受同一套拉曼光，共模噪声大幅抵消（1998 年卡泽维奇组的双干涉仪设计是关键突破）。</p>
+<p><b>原子重力梯度仪</b>：把两台重力仪放在相距 D 的上下两处，同时测量——取差值除以 D 得到重力梯度。梯度仪对"本底振动"天然免疫（两个探头同时抖），所以是野外测量（振动环境）的主力构型。Tino 组用移动测试质量法测引力常数 G，统计不确定度 0.011&times;10⁻¹¹ m³kg⁻¹s⁻²。</p>
+</section>
+
+<!-- ============ 6 基础物理 ============ -->
+<section id="a6">
+<h2>6 &middot; 基础物理：等效原理、G、引力波</h2>
+<ul>
+<li><b>等效原理检验</b>：让两种不同原子（如 ⁸&#8315;Rb 和 ⁸&#8317;Rb，或铷和钾）同时自由下落，比较它们的加速度是否完全相同——目前精度到 ~10⁻¹² 量级；</li>
+<li><b>测引力常数 G</b>：用移动测试质量扰动原子干涉仪，测出 G（牛顿引力常数一直是测得最不准的基本常数）；</li>
+<li><b>引力波探测</b>：MAGIS-100 计划在费米实验室用 <b>100 米竖井</b>做长基线原子干涉仪，探测 LIGO 覆盖不到的频率段（中频引力波）和暗物质候选粒子（如超轻玻色子）；更远的 MAGIS-1km 和空间方案（AEDGE，两颗卫星间距做基线）把基线推向公里级。</li>
+</ul>
+</section>
+
+<!-- ============ 7 工程化 ============ -->
+<section id="a7">
+<h2>7 &middot; 工程化：从实验室走向野外</h2>
+<p>原子干涉仪长期被"大、慢、贵"限制。近年工程化进展：</p>
+<ul>
+<li><b>可移动重力仪</b>：集装箱/面包车大小，参与国际重力比对（ICAG），与经典重力仪对表一致（~1 &micro;Gal 级）；</li>
+<li><b>商业系统</b>：Muquans（法国，后并入 Exail）、Infleqtion、AOSense 等公司已交付便携冷原子重力仪，用于地下勘探和水文监测；</li>
+<li><b>惯性导航</b>：GPS 被干扰/深水/地下时，原子惯性导航（重力+旋转积分定位）是未来候选——只在必要时用外部信号校正。</li>
+</ul>
+</section>
+
+<!-- ============ 8 收束 ============ -->
+<section id="a8">
+<h2>8 &middot; 收束：与主线/量子计量的连接</h2>
+<p>原子干涉仪是主线原子物理技术的"集大成"：它同时用了激光冷却（冷原子站）、稳频（光谱学站）、量子操控（拉曼脉冲）。而它的灵敏度极限同样是量子极限——目前工作在标准量子极限（&delta;&phi;~1/&radic;N），通过自旋压缩可以逼近海森堡极限：</p>
+<ul>
+<li>BEC 自旋压缩干涉仪（2010，海德堡）首次突破 SQL；</li>
+<li>腔介导压缩（2014，MIT）在冷原子系综实现 20 dB 自旋压缩——相位灵敏度提升一个数量级；</li>
+<li>斯坦福已在喷泉干涉仪里演示纠缠增强。</li>
+</ul>
+<p>一句话：<b>原子干涉仪把"原子波"变成了一把最灵敏的惯性尺子——测重力、测旋转、测 G、测等效原理，下一步还要在 100 米竖井里听引力波</b>。它是主线"用光驯服原子"这条主线的极致延伸。</p>
+<div class="side"><b>一个直觉对照：</b>光学干涉仪的臂长是"米"级，原子干涉仪的"有效臂长"是原子波包的传播距离——10 米喷泉里原子飞 1 秒多，等效"臂长"达数千公里（原子波的相位累积）。这就是为什么原子干涉仪能比光干涉仪灵敏那么多。</div>
+</section>
+
+<!-- ============ 9 术语表 ============ -->
+<section id="glos">
+<h2>9 &middot; 术语表（随时回来查）</h2>
+<div class="glos"><b>德布罗意波</b>：原子的波动性，波长 &lambda;=h/p。</div>
+<div class="glos"><b>拉曼跃迁</b>：双光子过程，原子在超精细态间跃迁并获得 2&hbar;k 动量。</div>
+<div class="glos"><b>&pi;/2 脉冲</b>：分束器，把原子波劈成两半。</div>
+<div class="glos"><b>&pi; 脉冲</b>：反射镜，交换两路的动量使它们折返。</div>
+<div class="glos"><b>Mach-Zehnder 干涉仪</b>：&pi;/2-&pi;-&pi;/2 三段式构型，测加速度。</div>
+<div class="glos"><b>啁啾（chirp）</b>：补偿原子下落多普勒频移的频率扫描。</div>
+<div class="glos"><b>萨格纳克效应</b>：旋转引起的两路相位差（陀螺仪原理）。</div>
+<div class="glos"><b>重力梯度仪</b>：两台重力仪差分测重力梯度，免疫本底振动。</div>
+<div class="glos"><b>等效原理</b>：不同物质自由落体加速度相同（原子干涉仪检验）。</div>
+<div class="glos"><b>MAGIS-100</b>：费米实验室 100 米竖井长基线原子干涉仪（引力波/暗物质）。</div>
+<div class="glos"><b>大地水准面（geoid）</b>：地球重力等势面，精确测绘用于气候/水文。</div>
+<div class="glos"><b>ICAG</b>：国际绝对重力仪比对，验证可移动重力仪精度。</div>
+</section>
+
+<div class="links">
+<a href="index.html">&larr; 返回主线</a>
+<a href="cold_atoms.html">冷原子专题（前置篇）&rarr;</a>
+<a href="quantum_metrology.html">量子计量学（极限篇）&rarr;</a>
+<a href="#a0">回到顶部</a>
+</div>
+</main>
+<script>
+(function(){
+  var KEY='siteTheme';
+  function apply(t){document.body.setAttribute('data-theme',t);}
+  try{var saved=localStorage.getItem(KEY);if(saved==='light')apply('light');}catch(e){}
+  var tb=document.getElementById('themeBtn');
+  tb.addEventListener('click',function(){
+    var cur=document.body.getAttribute('data-theme')==='light'?'dark':'light';
+    apply(cur);try{localStorage.setItem(KEY,cur);}catch(e){}
+  });
+  var toc=document.getElementById('toc'),btn=document.getElementById('tocBtn');
+  if(toc&&btn){
+    var links=[];
+    document.querySelectorAll('main section').forEach(function(sec){
+      var h=sec.querySelector('h2');if(sec.id&&h){
+        var a=document.createElement('a');a.href='#'+sec.id;a.textContent=h.textContent;
+        toc.appendChild(a);links.push(a);
+      }
+    });
+    btn.addEventListener('click',function(){toc.classList.toggle('open');});
+    toc.addEventListener('click',function(e){if(e.target.tagName==='A')toc.classList.remove('open');});
+    window.addEventListener('scroll',function(){
+      var cur=null;
+      document.querySelectorAll('main section').forEach(function(sec){
+        if(sec.getBoundingClientRect().top<120)cur=sec.id;
+      });
+      links.forEach(function(a){a.classList.toggle('cur',a.getAttribute('href')==='#'+cur);});
+    });
+  }
+})();
+</script>
+</body>
+</html>
