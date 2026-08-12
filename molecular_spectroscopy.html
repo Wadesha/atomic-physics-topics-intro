@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>分子光谱与费米共振专题</title>
+<style>
+:root{
+  --bg:#0f1115; --card:#171a21; --bord:#23262d; --mut:#9aa4b2;
+  --txt:#e6e8ec; --acc:#7dd3fc; --warn:#fbbf24; --intu:#c4b5fd; --side:#2a2140;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font:16px/1.9 -apple-system,"Segoe UI","Microsoft YaHei",sans-serif;padding:28px 20px 60px}
+main{max-width:820px;margin:0 auto}
+a{color:var(--acc);text-decoration:none}
+a:hover{text-decoration:underline}
+h1{font-size:27px;line-height:1.45;margin-bottom:8px}
+h2{font-size:21px;margin:40px 0 14px;padding-left:12px;border-left:4px solid var(--acc)}
+h3{font-size:17px;margin:24px 0 10px;color:var(--acc)}
+p{margin:12px 0}
+ul,ol{margin:10px 0 10px 24px}
+li{margin:6px 0}
+table{border-collapse:collapse;width:100%;margin:14px 0;font-size:14px}
+th,td{border:1px solid var(--bord);padding:7px 11px;text-align:left}
+th{background:#1c2029;color:var(--acc)}
+tr:nth-child(even) td{background:#151922}
+.sub{color:var(--mut);font-size:14px}
+.formula{background:#11141a;border:1px solid var(--bord);border-radius:8px;padding:12px 18px;margin:14px 0;font-family:"Cambria Math",Georgia,serif;font-size:16px;overflow-x:auto;text-align:center}
+.formula b{color:var(--acc)}
+.note{border-left:3px solid var(--warn);padding:8px 14px;margin:14px 0;background:#1a1710;font-size:14px}
+.side{background:var(--side);border:1px solid #3b2f5e;border-radius:10px;padding:12px 16px;margin:14px 0;font-size:14px}
+.side b{color:#c4b5fd}
+.glos{background:#11141a;border:1px solid var(--bord);border-radius:8px;padding:10px 14px;margin:8px 0;font-size:14px}
+.glos b{color:var(--acc)}
+.links{margin-top:30px;display:flex;gap:16px;flex-wrap:wrap;font-size:14px}
+.toplink{color:var(--mut);font-size:13px;margin-bottom:12px;display:block}
+body[data-theme="light"]{
+  --bg:#f7f8fa; --card:#ffffff; --bord:#dde1e7; --mut:#5a6472;
+  --txt:#1a2029; --acc:#0284c7; --warn:#b45309; --intu:#6d28d9; --side:#f3eefb;
+}
+body[data-theme="light"] .formula{background:#f1f3f6;border-color:#dde1e7}
+body[data-theme="light"] .note{background:#fdf6e3;border-color:#e5c97a}
+body[data-theme="light"] .side{border-color:#c9b8ec}
+body[data-theme="light"] .glos{background:#f1f3f6;border-color:#dde1e7}
+body[data-theme="light"] th{background:#eef1f5}
+body[data-theme="light"] tr:nth-child(even) td{background:#f3f5f8}
+#tocBtn{position:fixed;top:10px;right:10px;z-index:90;background:transparent;border:1px solid var(--bord);
+  color:var(--mut);border-radius:6px;font-size:14px;padding:3px 9px;cursor:pointer;opacity:.55;transition:opacity .2s}
+#tocBtn:hover{opacity:1;color:var(--acc)}
+#toc{position:fixed;top:0;left:0;right:0;z-index:89;background:var(--bg);border-bottom:1px solid var(--bord);
+  max-height:0;overflow:hidden;transition:max-height .3s ease;display:flex;flex-wrap:wrap;gap:4px 16px;padding:0 16px}
+#toc.open{max-height:70vh;overflow:auto;padding-top:44px;padding-bottom:12px}
+#toc a{font-size:13px;color:var(--mut);padding:2px 0}
+#toc a:hover{color:var(--acc)}
+#toc a.cur{color:var(--acc)}
+#themeBtn{position:fixed;right:10px;bottom:10px;z-index:90;width:34px;height:34px;border-radius:50%;
+  background:var(--card);border:1px solid var(--bord);color:var(--mut);font-size:16px;cursor:pointer;
+  opacity:.5;transition:opacity .2s}
+#themeBtn:hover{opacity:1;color:var(--acc)}
+@media(max-width:860px){main{padding:0 4px}h1{font-size:22px}}
+</style>
+</head>
+<body>
+<button id="tocBtn" title="展开/收起目录">☰</button>
+<button id="themeBtn" title="深浅切换">◐</button>
+<div id="toc"></div>
+<main>
+<a class="toplink" href="index.html">&larr; 返回《从原子到磁力仪》主线</a>
+<h1>分子光谱与费米共振：当两个振动"撞车"</h1>
+<p class="sub">主线分支 C 的完整展开。原子磁力仪看的是原子，这一篇把镜头对准分子——分子是"会振动的弹簧 + 会转动的哑铃"，而费米共振讲的是：当分子里两个不同振动恰好能量相同、形状又一样时，会发生什么。所有数字来自公开文献。</p>
+<div class="side"><b style="color:#7dd3fc">这一篇和你有什么关系：</b>大气里的 CO₂ 浓度已从工业革命前的约 280 ppm 涨到 420 ppm 以上——这个数字你多半在新闻里见过，而它的分子机制（CO₂ 吸收红外辐射）正是这一篇的主题之一。更近一点：超市扫码枪用激光，安检、酒驾检测、红外测温枪都在用光谱学原理，你手机相机的"夜景"也受益于同源技术。</div>
+
+<!-- ============ 0 学习地图 ============ -->
+<section id="m0">
+<h2>0 &middot; 先看地图：从"一根弹簧"到"二氧化碳双峰"</h2>
+<p>这一篇沿着一条自然的链条推进：</p>
+<ul>
+<li>第 1 节为什么做分子光谱：分子振动和转动是"分子身份证"上的指纹。</li>
+<li>第 2&ndash;3 节前置：双原子分子的振动（谐振子）和转动（刚性转子）——分子光谱的两块地基。</li>
+<li>第 4 节多原子分子：从 2 个原子到 N 个原子，振动变成了"简正模式"（CO₂ 有 4 种基本振动）。</li>
+<li>第 5 节非谐性：真实弹簧不是线性的，能级被压缩、出现泛频——费米共振的"导火索"。</li>
+<li>第 6 节核心：费米共振——两个近简并、同对称性的振动态互相混合、互相排斥、共享强度。</li>
+<li>第 7 节实例：CO₂ 的 1285/1388 cm⁻¹ 双峰（Fermi diad），理论怎么算、实验怎么测。</li>
+<li>第 8 节怎么观测：红外吸收 vs 拉曼散射——两个"窗口"各有分工。</li>
+<li>第 9 节应用：HITRAN 数据库、温室效应、大气遥感——为什么这很重要。</li>
+<li>第 10 节收束 + 术语表。</li>
+</ul>
+<div class="note">时间少的话：只读第 6 节（费米共振的机制）和第 7 节（CO₂ 实例）。一句话先记住：<b>两个振动"撞车"后不会各走各的，而是混合成两个新的、被推开的振动</b>。</div>
+</section>
+
+<!-- ============ 1 为什么 ============ -->
+<section id="m1">
+<h2>1 &middot; 为什么研究分子光谱</h2>
+<p>分子由原子通过化学键相连。化学键不是刚性的棍子，而是有弹性的"弹簧"——原子会绕着平衡位置振动；整个分子还会像哑铃一样转动。振动和转动的频率，完全由分子的"身份"决定：什么原子、什么键、什么几何构型。所以分子光谱是"分子身份证"上的指纹：</p>
+<ul>
+<li><b>识别</b>：每一种分子的红外/拉曼谱都独一无二，可以当"条形码"扫——汽车尾气、呼出气体、工业气体都靠这个识别；</li>
+<li><b>测温</b>：谱线强度随温度变化，反演气体温度；</li>
+<li><b>定量</b>：谱线强度正比于分子数目，测浓度；</li>
+<li><b>看结构</b>：振动频率反映键的强弱，转动间隔反映键长——分子的"身材"能被光谱"量"出来。</li>
+</ul>
+<p>而费米共振这个现象，恰好是光谱分析里最容易"认错人"的陷阱：两个峰可能是两个不同振动，也可能是同一个振动被"撞"出来的双峰。理解它，才能正确解读光谱。</p>
+</section>
+
+<!-- ============ 2 前置：振动 ============ -->
+<section id="m2">
+<h2>2 &middot; 前置：双原子分子的振动——谐振子模型</h2>
+<p>把双原子分子（比如 HCl）看成一个弹簧连着两个球。弹簧的势能近似是抛物线的（谐振子近似），量子力学给出分立能级：</p>
+<div class="formula">E<sub>v</sub> = &hbar;&omega;(v + 1/2)&nbsp;&nbsp;（v = 0,1,2,&hellip;）</div>
+<p>要点：</p>
+<ul>
+<li>相邻能级间隔相等，都是 &hbar;&omega;（对应振动频率 &omega;，通常在红外区，波数 10²&ndash;10³ cm⁻¹ 量级）；</li>
+<li>基态能量不是 0 而是 &hbar;&omega;/2（零点能）——即使绝对零度，分子也在"发抖"；</li>
+<li>红外吸收发生在能级跃迁 &Delta;v = &plusmn;1 时，吸收光子的频率等于振动频率——这就是为什么振动光谱落在红外波段。</li>
+</ul>
+<p>谐振子近似够用，但有一个致命缺陷：它给出的能级是等间隔的，无法解释"泛频"（&Delta;v = 2、3 的跃迁）——真实分子里这些跃迁确实存在，而且很弱。第 5 节的非谐性修正就是为这个准备的。</p>
+</section>
+
+<!-- ============ 3 前置：转动 ============ -->
+<section id="m3">
+<h2>3 &middot; 前置：转动——分子像哑铃一样转</h2>
+<p>分子还整体转动。刚性转子模型（把分子当哑铃）给出转动能级：</p>
+<div class="formula">E<sub>J</sub> = B&middot;J(J+1)&nbsp;&nbsp;（J = 0,1,2,&hellip;，B 是转动常数）</div>
+<p>转动常数 B = &hbar;²/(2I)，I 是转动惯量——分子越"胖"（I 越大），B 越小，能级越密。转动能级间隔远小于振动间隔（差 2&ndash;3 个数量级），所以：</p>
+<ul>
+<li>转动光谱在微波/远红外区；</li>
+<li>振动跃迁会"带着"转动跃迁一起发生——每个振动谱带其实是一簇"振转谱线"（P 支、Q 支、R 支），像一条带子；</li>
+<li>从振转谱线的间隔可以推出 B，再推出键长——<b>光谱量出分子的"身材"</b>。</li>
+</ul>
+</section>
+
+<!-- ============ 4 简正模式 ============ -->
+<section id="m4">
+<h2>4 &middot; 多原子分子：振动变成"简正模式"</h2>
+<p>N 个原子的分子有 3N 个自由度：3 个平动 + 3 个转动（直线分子 2 个），剩下 <b>3N&ndash;6 个（直线分子 3N&ndash;5 个）是振动自由度</b>。这些振动不是"某个原子单独动"，而是全体原子协同的集体运动——每个叫一个<b>简正模式</b>，各有一个特征频率。</p>
+<p>以 CO₂（直线分子 O=C=O，3 原子）为例：3&times;3&ndash;5 = 4 个振动模式：</p>
+<table>
+<tr><th>模式</th><th>运动方式</th><th>频率（谐波近似）</th><th>红外活性？</th></tr>
+<tr><td>&nu;&#8321; 对称伸缩</td><td>两个 O 同步远离/靠近 C</td><td>~1319&ndash;1337 cm⁻¹</td><td>否（偶极矩不变）</td></tr>
+<tr><td>&nu;&#8322; 弯曲（二重简并）</td><td>分子像蛇一样左右弯</td><td>~667 cm⁻¹</td><td>是</td></tr>
+<tr><td>&nu;&#8323; 反对称伸缩</td><td>一个 O 靠近 C、另一个远离</td><td>~2349 cm⁻¹</td><td>是</td></tr>
+</table>
+<p>注意 &nu;&#8321; 的"红外不活性"：对称伸缩不改变偶极矩，所以红外吸收看不到它——但它会在拉曼散射中出现。这个"对称伸缩红外看不到"的设定，正是费米共振故事的伏笔。</p>
+<div class="side"><b>为什么对称伸缩红外不活跃：</b>红外吸收需要分子偶极矩随振动变化。对称伸缩时两个 O 对称运动，偶极矩不变（CO₂ 本来就没有永久偶极矩），所以不吸收红外光。但拉曼散射看的是"极化率变化"，对称伸缩会改变分子"软硬"程度，所以拉曼看得到——两种光谱技术互补，缺一不可。</div>
+</section>
+
+<!-- ============ 5 非谐性 ============ -->
+<section id="m5">
+<h2>5 &middot; 非谐性：真实弹簧不是线性的</h2>
+<p>真实分子的势能面不是标准抛物线：压缩时原子间强烈排斥（势能陡升），拉伸时键逐渐断裂（势能趋于平缓）。这个"上陡下缓"的势阱叫<b>非谐性</b>，它的后果：</p>
+<ul>
+<li><b>能级不再等间隔</b>：越往高处能级越密（间隔缩小）；</li>
+<li><b>出现泛频</b>（overtone）：&Delta;v = 2、3 的跃迁不再是严格禁戒，虽然弱但真实存在；</li>
+<li>泛频的频率略小于基频的整数倍（因为能级被压缩）。</li>
+</ul>
+<p>费米共振正是靠"泛频"登场的：CO₂ 里弯曲模式的一阶泛频（2&nu;&#8322;）能量恰好落在对称伸缩 &nu;&#8321; 附近——而泛频的存在，本身就得归功于非谐性。所以这条链是：<b>非谐性 &rarr; 泛频 &rarr; 泛频与基频近简并 &rarr; 费米共振</b>。</p>
+</section>
+
+<!-- ============ 6 费米共振 ============ -->
+<section id="m6">
+<h2>6 &middot; 核心：费米共振——两个振动态"撞车"之后</h2>
+<p>费米共振的触发条件有两条，缺一不可：</p>
+<ul>
+<li><b>能量近简并</b>：两个振动态能量几乎相等（比如 &nu;&#8321; 和 2&nu;&#8322;）；</li>
+<li><b>对称性相同</b>：两个态属于同一个对称类别（否则没有耦合矩阵元）。</li>
+</ul>
+<p>当这两个条件满足时，量子力学不允许两个"一样形状、一样能量"的态并排存在——它们会混合成两个新态，并且互相排斥：</p>
+<div class="formula">2&times;2 混合矩阵：新态 = 旧态的叠加&nbsp;&nbsp;&rArr;&nbsp;&nbsp;<br>能量被推开（能级排斥）：一个更高、一个更低，间距大于原来的差<br>强度被共享：原本"强基频 + 弱泛频"，变成"两个中等强度的峰"</div>
+<p>结果在光谱上：本来只该有一个强峰（基频）的地方，出现<b>两个被拉开的、强度相近的峰</b>。这就是"费米双峰"（Fermi diad）。理解它的关键心态：<b>光谱上的峰不一定一一对应"某个原始振动"——它们可能是混合态的投影</b>。</p>
+<div class="side"><b>能级排斥是个普适规律：</b>两个"几乎撞车"的量子态永远会推开彼此（量子力学里的"avoided crossing"）。费米共振只是它在分子振动里的一个具体表现——同样的机制也出现在原子物理、凝聚态物理的很多地方。学会一次，处处能用。</div>
+</section>
+
+<!-- ============ 7 CO₂ 实例 ============ -->
+<section id="m7">
+<h2>7 &middot; CO₂ 的费米双峰：1285 和 1388 cm⁻¹</h2>
+<p>CO₂ 是费米共振最经典的例子，历史也最清楚：</p>
+<ul>
+<li>对称伸缩 &nu;&#8321; 谐波频率约 1333&ndash;1337 cm⁻¹；</li>
+<li>弯曲模式的一阶泛频 2&nu;&#8322; 约 1334 cm⁻¹——两者能量几乎相同、对称性相同；</li>
+<li>混合后：一个态被推向 1285 cm⁻¹，另一个被推向 1388 cm⁻¹（HITRAN 记号里叫 10001 和 10002 态）；</li>
+<li>分裂约 103 cm⁻¹——比原来两个"未扰动"能量的差（几 cm⁻¹）大得多，这就是"排斥"的痕迹。</li>
+</ul>
+<table>
+<tr><th>量</th><th>实验值</th><th>高精度理论（CCSD(T)+VCI）</th></tr>
+<tr><td>费米双峰低频支</td><td>1285.4 cm⁻¹</td><td>1288.9 cm⁻¹</td></tr>
+<tr><td>费米双峰高频支</td><td>1388.2 cm⁻¹</td><td>1389.3 cm⁻¹</td></tr>
+<tr><td>弯曲基频 &nu;&#8322;</td><td>667.4 cm⁻¹</td><td>669.1 cm⁻¹</td></tr>
+<tr><td>反对称伸缩 &nu;&#8323;</td><td>2349.2 cm⁻¹</td><td>2349.2 cm⁻¹</td></tr>
+</table>
+<p>理论要"看到"费米双峰，必须在谐振子近似之上做两件事：把非谐性势能面算准（耦合簇方法 CCSD(T)），再把振动多体问题用振动组态相互作用（VCI）解出来——谐波近似和单参考 VSCF 都给不出双峰。理论-实验一致到 ~3 cm⁻¹，是当代量子化学的精度水准。</p>
+<div class="side"><b>一个常被误会的点：</b>1285/1388 这两个峰在拉曼光谱里都很强，但 CO₂ 的对称伸缩红外不活跃——所以这两个峰主要出现在拉曼和高压红外实验里。高压下（超临界 CO₂）两个峰强度还会随压力和温度变化——这正是第 9 节工业应用里要小心的地方。</div>
+</section>
+
+<!-- ============ 8 观测方法 ============ -->
+<section id="m8">
+<h2>8 &middot; 怎么观测：红外吸收与拉曼散射</h2>
+<p>两种主力手段，物理机制不同、看到的信息互补：</p>
+<ul>
+<li><b>红外吸收光谱</b>：光被分子吸收，偶极矩随振动变化的模式才会出现（&nu;&#8322;、&nu;&#8323;）。测的是透射光减弱的波长。优势：灵敏、定量、便宜，工业现场主力；</li>
+<li><b>拉曼散射</b>：光被分子"弹"了一下，频率发生微小移动（斯托克斯/反斯托克斯），移动量等于振动频率。看到的是极化率变化的模式（&nu;&#8321;、费米双峰）。优势：对水不敏感、无破坏、可显微。</li>
+</ul>
+<p>费米共振在这两种光谱里都可能出现（只要耦合态里有一支"看得见"）——这既是麻烦（双峰容易被误认成两个分子），也是机会（双峰的间距和强度比是"分子指纹"的一部分）。</p>
+</section>
+
+<!-- ============ 9 应用 ============ -->
+<section id="m9">
+<h2>9 &middot; 应用：HITRAN、温室效应与大气遥感</h2>
+<p>分子光谱最大的工程应用是大气科学。HITRAN（高分辨率分子透射数据库）存了上亿条谱线参数：每条线的位置、强度、展宽、温度依赖，覆盖 CO₂、H₂O、CH₄、O₃ 等大气分子，从微波到可见光全波段。</p>
+<ul>
+<li><b>温室效应</b>：CO₂ 的 &nu;&#8323; 反对称伸缩（2349 cm⁻¹）和弯曲模式（667 cm⁻¹）吸收红外辐射——费米双峰本身（1285/1388）也在红外窗口里起作用。大气中 CO₂ 吸收地球辐射、再向各方重发射，是温室效应的分子机制；</li>
+<li><b>卫星遥感</b>：从太空看大气，反演 CO₂/CH₄ 浓度分布，靠的就是分子光谱指纹 + HITRAN 查表；</li>
+<li><b>工业检测</b>：高压反应器里的 CO₂ 光谱（含费米双峰随压力/温度的变化）若不理解，容易被误判成催化剂表面的其他物种——光谱解析错了，化学结论就错了。</li>
+</ul>
+<p>可以说：<b>费米共振这种"小现象"，因为发生在 CO₂ 这个"大分子"身上，直接影响我们对全球气候变化的理解</b>——这就是分子光谱"从实验室到地球"的路线。</p>
+</section>
+
+<!-- ============ 10 收束 ============ -->
+<section id="m10">
+<h2>10 &middot; 收束：一条链，一个普适思想</h2>
+<p>把全篇串成一条链：</p>
+<div class="formula">谐振子（等间隔）&rarr; 非谐性（能级压缩）&rarr; 泛频出现 &rarr; 泛频与基频近简并 &rarr; 费米共振（混合+排斥+共享）&rarr; 光谱双峰</div>
+<p>核心思想其实超越分子物理：<b>当两个量子态"几乎撞车"时，它们不会各走各的，而是混合成新态并互相排斥</b>。这是量子力学"能级回避交叉"的普适规律，费米共振只是它在分子振动中最著名的一个版本。理解了它，你就同时理解了：为什么光谱峰不能简单"一对一"读、为什么强峰能"借"强度给弱峰、为什么精确计算必须超越谐波近似。</p>
+<div class="side"><b>一句话总结：</b>费米共振 = 两个振动态因近简并而同对称性"撞车"，被量子力学混合、推开、共享强度——从 CO₂ 的双峰到温室效应，这是分子光谱里"小而重要"的必修课。</div>
+</section>
+
+<!-- ============ 11 术语表 ============ -->
+<section id="glos">
+<h2>11 &middot; 术语表（随时回来查）</h2>
+<div class="glos"><b>谐振子</b>：势能是抛物线的振动模型，能级等间隔。</div>
+<div class="glos"><b>简正模式</b>：全体原子协同的集体振动方式（3N&ndash;6 个）。</div>
+<div class="glos"><b>非谐性</b>：真实势阱偏离抛物线，能级压缩、出现泛频。</div>
+<div class="glos"><b>泛频（overtone）</b>：&Delta;v &gt; 1 的跃迁，频率约等于基频整数倍（略小）。</div>
+<div class="glos"><b>费米共振</b>：近简并+同对称性的两振动态混合，能级排斥、强度共享。</div>
+<div class="glos"><b>费米双峰（Fermi diad）</b>：混合产生的两个被拉开的峰（CO₂：1285/1388 cm⁻¹）。</div>
+<div class="glos"><b>能级排斥</b>：近简并量子态互相推开（avoided crossing）。</div>
+<div class="glos"><b>转动常数 B</b>：转动能级间隔的度量，B=&hbar;²/(2I)。</div>
+<div class="glos"><b>红外活性</b>：振动是否改变偶极矩，决定能否被红外吸收看到。</div>
+<div class="glos"><b>拉曼散射</b>：光与分子交换振动能量后的频移散射，看极化率变化。</div>
+<div class="glos"><b>振转谱带</b>：振动跃迁叠加转动跃迁形成的一簇谱线（P/Q/R 支）。</div>
+<div class="glos"><b>HITRAN</b>：高分辨率分子透射数据库，大气遥感的查表标准。</div>
+<div class="glos"><b>VCI（振动组态相互作用）</b>：超越谐波近似的振动多体计算方法。</div>
+<div class="glos"><b>CCSD(T)</b>：高精度电子结构方法（耦合簇），用于算准势能面。</div>
+<div class="glos"><b>cm⁻¹（波数）</b>：光谱学常用频率单位，1 cm⁻¹ = 29.98 GHz。</div>
+</section>
+
+<div class="links">
+<a href="index.html">&larr; 返回主线</a>
+<a href="#m0">回到顶部</a>
+</div>
+</main>
+<script>
+(function(){
+  var KEY='siteTheme';
+  function apply(t){document.body.setAttribute('data-theme',t);}
+  try{var saved=localStorage.getItem(KEY);if(saved==='light')apply('light');}catch(e){}
+  var tb=document.getElementById('themeBtn');
+  tb.addEventListener('click',function(){
+    var cur=document.body.getAttribute('data-theme')==='light'?'dark':'light';
+    apply(cur);try{localStorage.setItem(KEY,cur);}catch(e){}
+  });
+  var toc=document.getElementById('toc'),btn=document.getElementById('tocBtn');
+  if(toc&&btn){
+    var links=[];
+    document.querySelectorAll('main section').forEach(function(sec){
+      var h=sec.querySelector('h2');if(sec.id&&h){
+        var a=document.createElement('a');a.href='#'+sec.id;a.textContent=h.textContent;
+        toc.appendChild(a);links.push(a);
+      }
+    });
+    btn.addEventListener('click',function(){toc.classList.toggle('open');});
+    toc.addEventListener('click',function(e){if(e.target.tagName==='A')toc.classList.remove('open');});
+    window.addEventListener('scroll',function(){
+      var cur=null;
+      document.querySelectorAll('main section').forEach(function(sec){
+        if(sec.getBoundingClientRect().top<120)cur=sec.id;
+      });
+      links.forEach(function(a){a.classList.toggle('cur',a.getAttribute('href')==='#'+cur);});
+    });
+  }
+})();
+</script>
+</body>
+</html>
