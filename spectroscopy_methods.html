@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>光谱学方法：如何把激光"钉"在原子线上</title>
+<style>
+:root{
+  --bg:#0f1115; --card:#171a21; --bord:#23262d; --mut:#9aa4b2;
+  --txt:#e6e8ec; --acc:#7dd3fc; --warn:#fbbf24; --intu:#c4b5fd; --side:#2a2140;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font:16px/1.9 -apple-system,"Segoe UI","Microsoft YaHei",sans-serif;padding:28px 20px 60px}
+main{max-width:820px;margin:0 auto}
+a{color:var(--acc);text-decoration:none}
+a:hover{text-decoration:underline}
+h1{font-size:27px;line-height:1.45;margin-bottom:8px}
+h2{font-size:21px;margin:40px 0 14px;padding-left:12px;border-left:4px solid var(--acc)}
+h3{font-size:17px;margin:24px 0 10px;color:var(--acc)}
+p{margin:12px 0}
+ul,ol{margin:10px 0 10px 24px}
+li{margin:6px 0}
+table{border-collapse:collapse;width:100%;margin:14px 0;font-size:14px}
+th,td{border:1px solid var(--bord);padding:7px 11px;text-align:left}
+th{background:#1c2029;color:var(--acc)}
+tr:nth-child(even) td{background:#151922}
+.sub{color:var(--mut);font-size:14px}
+.formula{background:#11141a;border:1px solid var(--bord);border-radius:8px;padding:12px 18px;margin:14px 0;font-family:"Cambria Math",Georgia,serif;font-size:16px;overflow-x:auto;text-align:center}
+.formula b{color:var(--acc)}
+.note{border-left:3px solid var(--warn);padding:8px 14px;margin:14px 0;background:#1a1710;font-size:14px}
+.side{background:var(--side);border:1px solid #3b2f5e;border-radius:10px;padding:12px 16px;margin:14px 0;font-size:14px}
+.side b{color:#c4b5fd}
+.glos{background:#11141a;border:1px solid var(--bord);border-radius:8px;padding:10px 14px;margin:8px 0;font-size:14px}
+.glos b{color:var(--acc)}
+.links{margin-top:30px;display:flex;gap:16px;flex-wrap:wrap;font-size:14px}
+.toplink{color:var(--mut);font-size:13px;margin-bottom:12px;display:block}
+body[data-theme="light"]{
+  --bg:#f7f8fa; --card:#ffffff; --bord:#dde1e7; --mut:#5a6472;
+  --txt:#1a2029; --acc:#0284c7; --warn:#b45309; --intu:#6d28d9; --side:#f3eefb;
+}
+body[data-theme="light"] .formula{background:#f1f3f6;border-color:#dde1e7}
+body[data-theme="light"] .note{background:#fdf6e3;border-color:#e5c97a}
+body[data-theme="light"] .side{border-color:#c9b8ec}
+body[data-theme="light"] .glos{background:#f1f3f6;border-color:#dde1e7}
+body[data-theme="light"] th{background:#eef1f5}
+body[data-theme="light"] tr:nth-child(even) td{background:#f3f5f8}
+#tocBtn{position:fixed;top:10px;right:10px;z-index:90;background:transparent;border:1px solid var(--bord);
+  color:var(--mut);border-radius:6px;font-size:14px;padding:3px 9px;cursor:pointer;opacity:.55;transition:opacity .2s}
+#tocBtn:hover{opacity:1;color:var(--acc)}
+#toc{position:fixed;top:0;left:0;right:0;z-index:89;background:var(--bg);border-bottom:1px solid var(--bord);
+  max-height:0;overflow:hidden;transition:max-height .3s ease;display:flex;flex-wrap:wrap;gap:4px 16px;padding:0 16px}
+#toc.open{max-height:70vh;overflow:auto;padding-top:44px;padding-bottom:12px}
+#toc a{font-size:13px;color:var(--mut);padding:2px 0}
+#toc a:hover{color:var(--acc)}
+#toc a.cur{color:var(--acc)}
+#themeBtn{position:fixed;right:10px;bottom:10px;z-index:90;width:34px;height:34px;border-radius:50%;
+  background:var(--card);border:1px solid var(--bord);color:var(--mut);font-size:16px;cursor:pointer;
+  opacity:.5;transition:opacity .2s}
+#themeBtn:hover{opacity:1;color:var(--acc)}
+@media(max-width:860px){main{padding:0 4px}h1{font-size:22px}}
+</style>
+</head>
+<body>
+<button id="tocBtn" title="展开/收起目录">☰</button>
+<button id="themeBtn" title="深浅切换">◐</button>
+<div id="toc"></div>
+<main>
+<a class="toplink" href="index.html">&larr; 返回《从原子到磁力仪》主线</a>
+<h1>光谱学方法：怎么把激光"钉"在原子线上</h1>
+<p class="sub">主线专题。主线讲原子怎么被光摆布，这一篇讲实验者的基本功：<b>怎么知道激光频率在哪儿、怎么让它稳在原子跃迁的"正中心"</b>——所有精密原子实验（磁力仪、原子钟、冷原子）都从这里出发。所有数字来自公开文献。</p>
+<div class="side"><b style="color:#7dd3fc">这一篇和你有什么关系：</b>超市扫码枪、激光笔、光纤宽带里的信号、酒驾检测仪——它们都在做同一件事："看"一束光的频率。光谱学方法就是这门手艺的极致：把激光钉在原子线上，精度高到每秒 384 万亿次的振动能对准到兆赫兹以内。你每次扫码付款，都在使用这一篇的原理。</div>
+
+<!-- ============ 0 学习地图 ============ -->
+<section id="s0">
+<h2>0 &middot; 先看地图：从"看不见的线"到"锁死的光"</h2>
+<p>激光频率的稳定性是一切原子实验的地基。这条线：</p>
+<ul>
+<li>第 1 节问题：为什么需要稳频——激光会漂，而原子要求"精确到 MHz"。</li>
+<li>第 2 节多普勒展宽：为什么"直接看吸收"不行——热原子把线抹糊了。</li>
+<li>第 3 节饱和吸收光谱：用两束光"挑出"零速度原子，得到窄的兰姆凹陷。</li>
+<li>第 4 节误差信号与锁定：怎么把"凹陷"变成"能闭环控制"的信号。</li>
+<li>第 5 节其他原子锁定法：MTS、DAVLL——各有绝活。</li>
+<li>第 6 节腔锁定（PDH）：用光学腔当"参考尺"，比原子线更硬。</li>
+<li>第 7 节频率梳：把光频"翻译"成可数的微波——现代计量学的桥梁。</li>
+<li>第 8 节实战：一整套稳定激光系统长什么样。</li>
+<li>第 9 节收束：稳频的"最终墙"（量子极限）。</li>
+</ul>
+<div class="note">时间少的话：只读第 3 节（兰姆凹陷）和第 6 节（PDH）。一句话——<b>稳频 = 找一个"绝对参考"（原子线或光腔），把激光"锁"上去，再用误差信号不停纠偏</b>。</div>
+</section>
+
+<!-- ============ 1 为什么需要稳频 ============ -->
+<section id="s1">
+<h2>1 &middot; 为什么激光必须"钉"在原子线上</h2>
+<p>自由运转的半导体激光，频率会漂：温度变一点、电流抖一下、气流吹过，频率就移动 MHz 甚至 GHz 量级。而原子实验的要求苛刻得多：</p>
+<ul>
+<li>光抽运要求泵浦光"正中" D 线（比如铷 780 nm，中心频率约 384 THz），偏几 MHz 就明显失谐；</li>
+<li>原子钟要求激光频率稳定到 10⁻¹⁵ 量级——相当于把 384 THz 的"尺子"定到 0.4 mHz；</li>
+<li>磁力仪的探测光失谐量是"可调参数"，但必须稳定——否则光移波动变成噪声（见噪声抑制篇）。</li>
+</ul>
+<p>所以每个原子实验室的第一件事，就是建一套"稳频系统"：一个绝对参考 + 一个误差信号 + 一个反馈回路。</p>
+</section>
+
+<!-- ============ 2 多普勒展宽 ============ -->
+<section id="s2">
+<h2>2 &middot; 为什么"直接看吸收"不行</h2>
+<p>室温铷蒸气里，原子以约 300 m/s 乱飞。原子朝光运动时"看见"的频率变高、背光时变低（多普勒效应）——每个原子看到的都不一样，于是整团原子的吸收线被摊宽：</p>
+<div class="formula">多普勒线宽（铷室温）~ 500 MHz&ndash;1 GHz<br>自然线宽（铷 D2）~ 6 MHz</div>
+<p>要锁频，参考信号必须"窄"——一个 500 MHz 宽的凹陷，中心位置根本定不准。所以要先把多普勒展宽"抹掉"，露出 6 MHz 的自然线宽。这就是饱和吸收光谱做的事。</p>
+</section>
+
+<!-- ============ 3 饱和吸收 ============ -->
+<section id="s3">
+<h2>3 &middot; 饱和吸收光谱：挑出"零速度"的原子</h2>
+<p>核心思想：用两束<b>对射</b>的光，一强（泵浦）一弱（探测），同时穿过蒸气泡：</p>
+<ul>
+<li>对普通原子：泵浦和探测看到的多普勒频移相反，互不影响；</li>
+<li>对"速度恰好为零"的原子（相对光静止）：两束光同时共振——泵浦光把它们<b>饱和</b>（激发态被占满、来不及吸收），探测光的吸收因此<b>突然变少</b>；</li>
+<li>在吸收谱的"正中心"出现一个窄的<b>兰姆凹陷</b>（Lamb dip）——宽度接近自然线宽（~6 MHz），位置就是真实的原子跃迁频率（不受多普勒影响）。</li>
+</ul>
+<p>这个凹陷就是"绝对参考"：它告诉你"原子跃迁的正中心在哪"，误差不过 ~MHz 量级。铷 780 nm 的饱和吸收谱里有多个超精细峰，选一个锁上去即可。</p>
+</section>
+
+<!-- ============ 4 误差信号与锁定 ============ -->
+<section id="s4">
+<h2>4 &middot; 怎么把"凹陷"变成"能控制的信号"</h2>
+<p>锁频需要的是一个"过零点的色散型误差信号"——偏离中心时，信号正比于偏差且有符号（偏左为正、偏右为负），正好给反馈回路用。最常用的方法：</p>
+<ol>
+<li><b>调制</b>：给激光频率加一个小正弦调制（比如 500 Hz&ndash;MHz 量级）；</li>
+<li><b>锁相放大</b>：对探测信号做与调制同频的解调——提取的正是"信号随频率变化"的斜率；</li>
+<li><b>误差信号</b>：解调结果在兰姆凹陷中心是过零的色散曲线（一阶导数）；</li>
+<li><b>PID 闭环</b>：误差信号经比例-积分-微分放大，反馈到激光器的压电陶瓷（PZT）或电流，把频率拉回中心。</li>
+</ol>
+<p>锁上之后，激光频率被"钉"在原子线上，短期稳定性可达 MHz 以下（比如 DBR 激光锁铷 D2，线宽维持 0.5 MHz 量级）。</p>
+</section>
+
+<!-- ============ 5 其他原子锁定法 ============ -->
+<section id="s5">
+<h2>5 &middot; 其他原子锁定法：MTS 与 DAVLL</h2>
+<ul>
+<li><b>调制转移光谱（MTS）</b>：泵浦光先被调制，饱和效应把调制"转移"到探测光上——得到无背景、更纯的误差信号，抗噪声能力强，是原子钟锁频的首选之一；</li>
+<li><b>DAVLL（二向色原子蒸气激光锁定）</b>：利用磁场里原子对两种圆偏振光吸收率不同，直接产生"宽范围、无调制"的色散信号——适合大范围粗锁，再配合饱和吸收精锁，两级组合是实验室标准做法；</li>
+<li><b>边带调制/注入锁定</b>：给激光加边带、拍频产生误差信号——家族里的其他成员。</li>
+</ul>
+</section>
+
+<!-- ============ 6 PDH：腔锁定 ============ -->
+<section id="s6">
+<h2>6 &middot; 腔锁定：PDH 方法——用光腔当"更硬的尺子"</h2>
+<p>原子线的绝对频率是"宇宙标准"，但线宽有 ~MHz 下限。要更窄的参考（比如光钟的 Hz 级线宽），用<b>光学腔</b>（超高精细法布里-珀罗腔）当参考——腔长极其稳定（超低膨胀材料、真空、隔振），共振线宽可达 kHz 甚至更低。Pound-Drever-Hall（PDH）方法是锁腔的黄金标准：</p>
+<ol>
+<li>激光经电光调制器（EOM）加相位调制，产生一对"边带"；</li>
+<li>光进腔，从腔反射回来——腔就像一个频率相关反射镜：载波和边带反射的相位/幅度不同；</li>
+<li>反射光打到快光电探测器，载波和边带"拍频"出调制频率的信号；</li>
+<li>解调后得到一个<b>宽、陡、过零</b>的色散误差信号——在共振点处最敏感，且对激光功率噪声不敏感；</li>
+<li>反馈锁定激光到腔共振。</li>
+</ol>
+<p>PDH 的优点是：锁定范围宽、抗功率抖动、误差信号干净——从原子钟到引力波探测器都在用它。</p>
+</section>
+
+<!-- ============ 7 频率梳 ============ -->
+<section id="s7">
+<h2>7 &middot; 频率梳：把光频"翻译"成可数的微波</h2>
+<p>稳频有了，但还差最后一步：<b>光频是 500 THz，电子线路只能数 GHz</b>。频率梳（1999 年，霍尔/亨施，2005 诺奖）解决翻译问题：</p>
+<div class="formula">飞秒锁模激光 &rarr; 频域等间隔"梳齿" &rarr; 相邻梳齿间隔 = 重复频率（微波，可数）<br>未知光频 = 某根梳齿 &plusmn; 拍频（微波，可测）&nbsp;&rArr;&nbsp; 光频精确到 Hz</div>
+<p>频率梳让"激光频率"和"秒定义（铯微波）"之间有了精确的桥梁——光钟的频率因此可以被测量和比对，也让它成为原子钟/光频计量体系的"基础设施"。</p>
+</section>
+
+<!-- ============ 8 实战 ============ -->
+<section id="s8">
+<h2>8 &middot; 实战：一套完整的稳频激光系统</h2>
+<p>一个典型的原子实验室激光栈：</p>
+<div class="formula">自由激光 &rarr; DAVLL 粗锁（先稳住大范围）&rarr; 饱和吸收精锁（钉到原子线）&rarr; [光钟级再加] 超稳腔 PDH（Hz 级）&rarr; 频率梳（计量校准）</div>
+<p>分层的原因：每一级的"参考"越硬（原子线&gt;腔），就越难直接锁上（捕捉范围小），所以先用粗锁"带过来"、再用精锁"钉死"——这是工程上的标准接法。现代系统越来越多用 FPGA 做数字化锁定：自动搜索、自动锁定、自动重锁，甚至支持空间站等无人环境（11.6 秒内自动完成锁定/重锁）。</p>
+</section>
+
+<!-- ============ 9 收束 ============ -->
+<section id="s9">
+<h2>9 &middot; 收束：稳频的"最终墙"在哪</h2>
+<p>稳频技术一路提升，但也有终极限制——<b>标准量子极限（SQL）</b>：用光子探测激光频率时，光子太少有散粒噪声（定不准），光子太多有辐射压噪声（把腔镜踢得发抖）——两者权衡出一个最小可测频移。这就是"测量本身扰动被测量"的海森堡本质。要越过它，就需要量子计量学（自旋压缩/压缩光）那一篇的工具。</p>
+<p>把这一篇和主线接起来：主线磁力仪、原子钟、冷原子实验里那些"稳定的激光"，背后全是这套基本功——饱和吸收的凹陷、锁相的误差信号、PDH 的拍频、频率梳的齿。光谱学方法不是"一个分支"，而是<b>所有原子实验的公共地基</b>。</p>
+<div class="side"><b>一句话总结：</b>稳频 = 拿一把"绝对尺子"（原子线或光腔）+ 一个"误差信号"（凹陷/拍频）+ 一条"反馈回路"（PID）；尺子越硬、信号越干净，激光就越稳——直到撞上量子极限。</div>
+</section>
+
+<!-- ============ 10 术语表 ============ -->
+<section id="glos">
+<h2>10 &middot; 术语表（随时回来查）</h2>
+<div class="glos"><b>多普勒展宽</b>：热原子运动把吸收线摊宽（铷室温 ~500 MHz&ndash;1 GHz）。</div>
+<div class="glos"><b>自然线宽</b>：由激发态寿命决定的量子线宽（铷 D2 ~6 MHz）。</div>
+<div class="glos"><b>饱和吸收光谱（SAS）</b>：泵浦-探测对射，挑出零速度原子，得到兰姆凹陷。</div>
+<div class="glos"><b>兰姆凹陷（Lamb dip）</b>：吸收谱正中心的窄凹陷，位置=真实跃迁频率。</div>
+<div class="glos"><b>色散型误差信号</b>：过零点的、带符号的频率偏差信号，用于闭环。</div>
+<div class="glos"><b>锁相放大</b>：只提取与调制同频分量的窄带检测。</div>
+<div class="glos"><b>PID</b>：比例-积分-微分反馈控制器，锁定回路的"大脑"。</div>
+<div class="glos"><b>MTS</b>：调制转移光谱，无背景、更纯的误差信号。</div>
+<div class="glos"><b>DAVLL</b>：二向色原子蒸气锁定，宽范围、无调制粗锁。</div>
+<div class="glos"><b>PDH</b>：Pound-Drever-Hall，腔锁定的黄金标准（边带拍频）。</div>
+<div class="glos"><b>光学腔</b>：高精细法布里-珀罗腔，作为超窄频率参考。</div>
+<div class="glos"><b>频率梳</b>：飞秒激光的等间隔梳齿谱，把光频翻译成微波。</div>
+<div class="glos"><b>EOM</b>：电光调制器，给光加相位调制（产生边带）。</div>
+<div class="glos"><b>SQL（测量）</b>：散粒噪声与辐射压噪声权衡出的测量极限。</div>
+</section>
+
+<div class="links">
+<a href="index.html">&larr; 返回主线</a>
+<a href="atomic_clocks.html">原子钟专题（稳频的极致应用）&rarr;</a>
+<a href="#s0">回到顶部</a>
+</div>
+</main>
+<script>
+(function(){
+  var KEY='siteTheme';
+  function apply(t){document.body.setAttribute('data-theme',t);}
+  try{var saved=localStorage.getItem(KEY);if(saved==='light')apply('light');}catch(e){}
+  var tb=document.getElementById('themeBtn');
+  tb.addEventListener('click',function(){
+    var cur=document.body.getAttribute('data-theme')==='light'?'dark':'light';
+    apply(cur);try{localStorage.setItem(KEY,cur);}catch(e){}
+  });
+  var toc=document.getElementById('toc'),btn=document.getElementById('tocBtn');
+  if(toc&&btn){
+    var links=[];
+    document.querySelectorAll('main section').forEach(function(sec){
+      var h=sec.querySelector('h2');if(sec.id&&h){
+        var a=document.createElement('a');a.href='#'+sec.id;a.textContent=h.textContent;
+        toc.appendChild(a);links.push(a);
+      }
+    });
+    btn.addEventListener('click',function(){toc.classList.toggle('open');});
+    toc.addEventListener('click',function(e){if(e.target.tagName==='A')toc.classList.remove('open');});
+    window.addEventListener('scroll',function(){
+      var cur=null;
+      document.querySelectorAll('main section').forEach(function(sec){
+        if(sec.getBoundingClientRect().top<120)cur=sec.id;
+      });
+      links.forEach(function(a){a.classList.toggle('cur',a.getAttribute('href')==='#'+cur);});
+    });
+  }
+})();
+</script>
+</body>
+</html>
