@@ -58,6 +58,17 @@ body[data-theme="light"] tr:nth-child(even) td{background:#f3f5f8}
   opacity:.5;transition:opacity .2s}
 #themeBtn:hover{opacity:1;color:var(--acc)}
 @media(max-width:860px){main{padding:0 4px}h1{font-size:22px}}
+
+/* 参与感：文末自测 */
+.quiz .q{margin:14px 0}
+.quiz .q b{color:var(--txt)}
+.quiz .opt{display:block;margin:4px 0;padding:7px 10px;border:1px solid var(--bord);border-radius:8px;cursor:pointer;font-size:14px}
+.quiz .opt:hover{border-color:var(--acc)}
+.quiz .opt.sel{border-color:var(--acc);background:#11131c}
+body[data-theme="light"] .quiz .opt.sel{background:#eef3ff}
+.qres{margin-top:12px;font-size:14px;line-height:1.8}
+.qres .ok{color:var(--ok)} .qres .no{color:#fca5a5}
+
 </style>
 </head>
 <body>
@@ -243,6 +254,55 @@ body[data-theme="light"] tr:nth-child(even) td{background:#f3f5f8}
       links.forEach(function(a){a.classList.toggle('cur',a.getAttribute('href')==='#'+cur);});
     });
   }
+})();
+</script>
+
+<script>
+// PARTICIPATION_QUIZ_V1
+// PARTICIPATION_QUIZ_V1
+(function(){
+  "use strict";
+  var $=function(id){return document.getElementById(id);};
+  function strip(t){return (t||'').replace(/^\s*[\d]+\s*[·•.\-·]*\s*/,'').trim();}
+  // 自测：用本页小标题考自己，把"和你有关"那条线印进脑子
+  (function(){
+    var heads=[].slice.call(document.querySelectorAll('main section h2'));
+    if(heads.length<3) return;
+    var titles=heads.map(function(h){return strip(h.textContent);}).filter(Boolean);
+    var sec=document.createElement('section'); sec.id='quiz';
+    var h=document.createElement('h2'); h.textContent='自测：你真的把这条线串起来了吗？'; sec.appendChild(h);
+    var p=document.createElement('p'); p.className='sub'; p.textContent='别急着关——用本页的小标题考考自己，看地图有没有印进脑子。'; sec.appendChild(p);
+    var box=document.createElement('div'); box.className='quiz'; box.id='quizBox'; sec.appendChild(box);
+    var res=document.createElement('div'); res.className='qres'; res.id='quizRes'; sec.appendChild(res);
+    document.querySelector('main').appendChild(sec);
+    var n=Math.min(5,titles.length), qs=[];
+    for(var i=0;i<n;i++){
+      var correct=titles[i]; if(!correct) continue;
+      var opts=[correct];
+      var pool=titles.filter(function(t){return t!==correct;});
+      for(var k=pool.length-1;k>0;k--){var j=Math.floor(Math.random()*(k+1));var t=pool[k];pool[k]=pool[j];pool[j]=t;}
+      for(var m=0;m<3 && m<pool.length;m++) opts.push(pool[m]);
+      for(var k2=opts.length-1;k2>0;k2--){var j2=Math.floor(Math.random()*(k2+1));var t2=opts[k2];opts[k2]=opts[j2];opts[j2]=t2;}
+      qs.push({q:'\u300A'+correct+'\u300B\u8FD9\u4E00\u8282\u4E3B\u8981\u5728\u8BB2\uFF1F',o:opts,a:opts.indexOf(correct)});
+    }
+    qs.forEach(function(item,idx){
+      var d=document.createElement('div'); d.className='q';
+      d.innerHTML='<b>'+(idx+1)+'. '+item.q+'</b>';
+      item.o.forEach(function(t,oi){ var op=document.createElement('label'); op.className='opt';
+        op.innerHTML='<input type="radio" name="q'+idx+'" value="'+oi+'"> '+t;
+        op.addEventListener('click',function(){ d.querySelectorAll('.opt').forEach(function(x){x.classList.remove('sel');}); op.classList.add('sel'); });
+        d.appendChild(op); });
+      box.appendChild(d);
+    });
+    var btn=document.createElement('button'); btn.textContent='\u5224\u5206'; btn.style.marginTop='6px'; box.appendChild(btn);
+    btn.addEventListener('click',function(){
+      var score=0,html='';
+      qs.forEach(function(item,idx){ var sel=box.querySelector('input[name="q'+idx+'"]:checked'); var ok=sel&&(+sel.value===item.a);
+        if(ok)score++;
+        html+='<div class="'+(ok?'ok':'no')+'">'+(ok?'\u2713':'\u2717')+' \u7B2C'+(idx+1)+'\u9898：'+(ok?'\u7B54\u5BF9\u3002':('\u4F60\u9009\u4E86\u300C'+(sel?item.o[+sel.value]:'\u672A\u7B54')+'\u300D\uFF0C\u6B63\u786E\u662F\u300C'+item.o[item.a]+'\u3002'))+'</div>'; });
+      $('quizRes').innerHTML='<b>\u4F60\u7B54\u5BF9 '+score+' / '+qs.length+' \u9898\u3002</b><br>'+html;
+    });
+  })();
 })();
 </script>
 </body>
