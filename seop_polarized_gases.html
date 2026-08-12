@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SEOP 与极化气体：给原子核"充磁"</title>
+<style>
+:root{
+  --bg:#0f1115; --card:#171a21; --bord:#23262d; --mut:#9aa4b2;
+  --txt:#e6e8ec; --acc:#7dd3fc; --warn:#fbbf24; --intu:#c4b5fd; --side:#2a2140;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font:16px/1.9 -apple-system,"Segoe UI","Microsoft YaHei",sans-serif;padding:28px 20px 60px}
+main{max-width:820px;margin:0 auto}
+a{color:var(--acc);text-decoration:none}
+a:hover{text-decoration:underline}
+h1{font-size:27px;line-height:1.45;margin-bottom:8px}
+h2{font-size:21px;margin:40px 0 14px;padding-left:12px;border-left:4px solid var(--acc)}
+h3{font-size:17px;margin:24px 0 10px;color:var(--acc)}
+p{margin:12px 0}
+ul,ol{margin:10px 0 10px 24px}
+li{margin:6px 0}
+table{border-collapse:collapse;width:100%;margin:14px 0;font-size:14px}
+th,td{border:1px solid var(--bord);padding:7px 11px;text-align:left}
+th{background:#1c2029;color:var(--acc)}
+tr:nth-child(even) td{background:#151922}
+.sub{color:var(--mut);font-size:14px}
+.formula{background:#11141a;border:1px solid var(--bord);border-radius:8px;padding:12px 18px;margin:14px 0;font-family:"Cambria Math",Georgia,serif;font-size:16px;overflow-x:auto;text-align:center}
+.formula b{color:var(--acc)}
+.note{border-left:3px solid var(--warn);padding:8px 14px;margin:14px 0;background:#1a1710;font-size:14px}
+.side{background:var(--side);border:1px solid #3b2f5e;border-radius:10px;padding:12px 16px;margin:14px 0;font-size:14px}
+.side b{color:#c4b5fd}
+.glos{background:#11141a;border:1px solid var(--bord);border-radius:8px;padding:10px 14px;margin:8px 0;font-size:14px}
+.glos b{color:var(--acc)}
+.links{margin-top:30px;display:flex;gap:16px;flex-wrap:wrap;font-size:14px}
+.toplink{color:var(--mut);font-size:13px;margin-bottom:12px;display:block}
+body[data-theme="light"]{
+  --bg:#f7f8fa; --card:#ffffff; --bord:#dde1e7; --mut:#5a6472;
+  --txt:#1a2029; --acc:#0284c7; --warn:#b45309; --intu:#6d28d9; --side:#f3eefb;
+}
+body[data-theme="light"] .formula{background:#f1f3f6;border-color:#dde1e7}
+body[data-theme="light"] .note{background:#fdf6e3;border-color:#e5c97a}
+body[data-theme="light"] .side{border-color:#c9b8ec}
+body[data-theme="light"] .glos{background:#f1f3f6;border-color:#dde1e7}
+body[data-theme="light"] th{background:#eef1f5}
+body[data-theme="light"] tr:nth-child(even) td{background:#f3f5f8}
+#tocBtn{position:fixed;top:10px;right:10px;z-index:90;background:transparent;border:1px solid var(--bord);
+  color:var(--mut);border-radius:6px;font-size:14px;padding:3px 9px;cursor:pointer;opacity:.55;transition:opacity .2s}
+#tocBtn:hover{opacity:1;color:var(--acc)}
+#toc{position:fixed;top:0;left:0;right:0;z-index:89;background:var(--bg);border-bottom:1px solid var(--bord);
+  max-height:0;overflow:hidden;transition:max-height .3s ease;display:flex;flex-wrap:wrap;gap:4px 16px;padding:0 16px}
+#toc.open{max-height:70vh;overflow:auto;padding-top:44px;padding-bottom:12px}
+#toc a{font-size:13px;color:var(--mut);padding:2px 0}
+#toc a:hover{color:var(--acc)}
+#toc a.cur{color:var(--acc)}
+#themeBtn{position:fixed;right:10px;bottom:10px;z-index:90;width:34px;height:34px;border-radius:50%;
+  background:var(--card);border:1px solid var(--bord);color:var(--mut);font-size:16px;cursor:pointer;
+  opacity:.5;transition:opacity .2s}
+#themeBtn:hover{opacity:1;color:var(--acc)}
+@media(max-width:860px){main{padding:0 4px}h1{font-size:22px}}
+</style>
+</head>
+<body>
+<button id="tocBtn" title="展开/收起目录">☰</button>
+<button id="themeBtn" title="深浅切换">◐</button>
+<div id="toc"></div>
+<main>
+<a class="toplink" href="index.html">&larr; 返回《从原子到磁力仪》主线</a>
+<h1>SEOP 与极化气体：给原子核"充磁"一百万倍</h1>
+<p class="sub">主线专题。主线的光抽运把碱金属<b>电子</b>自旋极化（读磁场用），这一篇讲把极化"接力"给惰性气体<b>原子核</b>——让 ³He/¹²⁹Xe 的核磁信号暴涨一万倍以上，用于肺成像、中子物理、基础测量。所有数字来自公开文献。</p>
+<div class="side"><b style="color:#7dd3fc">这一篇和你有什么关系：</b>氙气你多半见过（汽车大灯里的"氙气灯"就是它），氦气更是气球和潜水里的常客。这一篇把它们变成"超极化"状态后送进 MRI——你或家人做过的肺功能检查、肺结节筛查，未来可能就靠它"看见"空气。给原子核"充磁"一百万倍，让看不见的肺变得可见。</div>
+
+<!-- ============ 0 学习地图 ============ -->
+<section id="h0">
+<h2>0 &middot; 先看地图：把"电子极化"接力给"核"</h2>
+<p>SEOP（自旋交换光泵浦）是一条接力链，每个环节都缺一不可：</p>
+<ul>
+<li>第 1 节为什么要"超极化"：核磁信号太弱，热平衡极化小得可怜。</li>
+<li>第 2 节第一棒：光抽运极化碱金属电子（主线已经讲过的技术）。</li>
+<li>第 3 节第二棒：自旋交换——电子自旋怎么"传给"惰性气体核。</li>
+<li>第 4 节工程：一台 SEOP 极化器长什么样（激光、泡、加热、磁场）。</li>
+<li>第 5 节产物：³He 和 ¹²⁹Xe 各自的本事与用途。</li>
+<li>第 6 节应用一：肺成像（MRI 里看不见的气体，现在看得见了）。</li>
+<li>第 7 节应用二：中子物理与基础测量（3He 当"中子假目标"和极化分析器）。</li>
+<li>第 8 节其他极化路线：MEOP、DNP——横向对比。</li>
+<li>第 9 节收束：与主线的连接。</li>
+</ul>
+<div class="note">时间少的话：只读第 1、3、6 节。一句话——<b>SEOP = 用光先把碱金属电子自旋极化，再通过碰撞把这份极化"移交"给惰性气体原子核，让核磁信号强一万倍以上——气体也能做 MRI 了</b>。</div>
+</section>
+
+<!-- ============ 1 为什么需要超极化 ============ -->
+<section id="h1">
+<h2>1 &middot; 核磁信号太弱，是"极化率"的问题</h2>
+<p>核磁共振（NMR/MRI）的信号正比于核自旋的极化率——即"朝一个方向的核占多少"。热平衡下这个比例由玻尔兹曼分布决定：</p>
+<div class="formula">极化率 &prop; &gamma;B / (k<sub>B</sub>T)&nbsp;&nbsp;（&gamma; 是旋磁比，B 是磁场，T 是温度）</div>
+<p>在临床 MRI 的 1.5&ndash;3 T 磁场下，水的氢核极化率只有约百万分之五——也就是说每百万个氢核，只有 5 个"多余地"朝一个方向。信号就是靠这 5 个撑起来的。<b>气体更惨</b>：密度比组织低约 4 个数量级，直接成像根本没信号。这就是为什么"普通 MRI"看不了肺里的气体。</p>
+<p><b>超极化</b>的思路：不靠磁场和温度（那只能挤出百万分之几），而是用激光"硬灌"——把极化率做到 10%&ndash;60%，比热平衡高 <b>10⁴&ndash;10⁵ 倍（最高近百万倍）</b>。信号强了一万倍以上，气体就能成像了。</p>
+</section>
+
+<!-- ============ 2 第一棒：光抽运 ============ -->
+<section id="h2">
+<h2>2 &middot; 第一棒：光抽运极化碱金属电子</h2>
+<p>这一步和主线磁力仪的光抽运完全同源（详见主线第 3 节）：</p>
+<ul>
+<li>圆偏振红外激光（铷 795 nm / 铯 894 nm）打在碱金属蒸气上；</li>
+<li>&sigma;&#8314; 光把铷的价电子自旋"刷"向同一方向（电子极化 &asymp;100%）；</li>
+<li>泡里充氮气（猝灭气）：吸收自发辐射光子，防止荧光把极化"洗掉"。</li>
+</ul>
+<p>注意：这里极化的是<b>电子</b>，而我们要的是<b>核</b>——所以需要下一棒。</p>
+</section>
+
+<!-- ============ 3 第二棒：自旋交换 ============ -->
+<section id="h3">
+<h2>3 &middot; 第二棒：自旋交换——极化"移交给"核</h2>
+<p>铷原子与惰性气体原子在泡里不断碰撞。碰撞瞬间，铷的极化电子与惰性气体核通过<b>费米接触相互作用</b>交换角动量——电子自旋的极化"移交"给核：</p>
+<div class="formula">圆偏光 &rarr; 铷电子极化 &rarr;（碰撞+费米接触）&rarr; 惰性气体核极化（10&ndash;60%）</div>
+<p>为什么选惰性气体：化学惰性（不与碱金属反应）、核自旋 1/2（³He、¹²⁹Xe 最理想）、T₁ 弛豫时间长（极化可以保存几分钟到几小时，足够送进 MRI）。自旋交换是连续过程：激光持续泵浦铷，铷持续"喂"极化给气体，几分钟到几十分钟后气体极化达到平衡。</p>
+</section>
+
+<!-- ============ 4 工程：极化器 ============ -->
+<section id="h4">
+<h2>4 &middot; 工程：一台 SEOP 极化器长什么样</h2>
+<div class="note" style="border-color:#7dd3fc">
+<b>装置清单：</b>① 高功率激光（40&ndash;200 W 线宽压窄二极管阵列，波长对准铷 D1）；② 玻璃泡（内壁涂覆抗弛豫涂层，减少壁碰撞退极化）；③ 泡内：碱金属（铷/铯）+ 惰性气体（³He/¹²⁹Xe）+ 氮气（猝灭）；④ 加热（几十度&ndash;180 &deg;C，产生碱金属蒸气）；⑤ 亥姆霍兹线圈提供 ~mT 量级的均匀磁场（定义极化方向）；⑥ 极化完成后把气体转移/冷冻保存（液氮冷指），再输送给用户。
+</div>
+<p>性能参考：连续流极化 ¹²⁹Xe 达 1&ndash;2 L/min、极化率 &gt;50%（富集氙）；³He 批量极化 40&ndash;60%。产出规模已足够临床使用。</p>
+</section>
+
+<!-- ============ 5 两种气体 ============ -->
+<section id="h5">
+<h2>5 &middot; 产物：³He 与 ¹²⁹Xe 各有所长</h2>
+<table>
+<tr><th>指标</th><th>³He</th><th>¹²⁹Xe</th></tr>
+<tr><td>旋磁比</td><td>32.4 MHz/T（高）</td><td>11.8 MHz/T（低）</td></tr>
+<tr><td>自由扩散系数</td><td>1.8 cm²/s（大）</td><td>0.06 cm²/s（小）</td></tr>
+<tr><td>血液溶解度</td><td>~1%（小）</td><td>~17%（大）</td></tr>
+<tr><td>典型极化</td><td>35&ndash;60%</td><td>8&ndash;60%（富集）</td></tr>
+<tr><td>特点</td><td>信号强、成像快</td><td>可溶入组织/血液、有化学位移</td></tr>
+</table>
+<p>一句话：<b>³He 是"高信号快成像"型，¹²⁹Xe 是"多功能探针"型</b>——氙能溶解进组织和血液（溶解度 17%），在体内不同化学环境里化学位移差约 200 ppm，可以同时看到"气体相"和"溶解相"。</p>
+</section>
+
+<!-- ============ 6 应用：肺成像 ============ -->
+<section id="h6">
+<h2>6 &middot; 应用一：肺成像——MRI 终于"看见"气体</h2>
+<p>常规 MRI 对肺部几乎无能为力（肺是空气，没有氢质子信号）。超极化气体改变了一切：让患者吸入超极化 ³He/¹²⁹Xe，然后做 MRI：</p>
+<ul>
+<li><b>通气成像</b>：气体分布直接显示"哪里通气、哪里堵塞"——COPD、哮喘、支气管狭窄一目了然；</li>
+<li><b>弥散加权成像</b>：用气体扩散系数反推<b>肺泡尺寸（50&ndash;300 &micro;m）</b>和微结构——肺气肿的早期诊断；</li>
+<li><b>溶解相成像</b>（¹²⁹Xe）：气体从肺泡进入血液/组织的化学位移信号，测量肺的"气体交换效率"和血流；</li>
+<li><b>特殊人群</b>：早产儿（肺部发育评估）、哮喘患者（支气管热成型治疗导引）。</li>
+</ul>
+<p>肺病是美国第四大死因，但一直缺少无创的功能成像手段——超极化气体 MRI 正在填补这个空白。</p>
+</section>
+
+<!-- ============ 7 应用：中子物理 ============ -->
+<section id="h7">
+<h2>7 &middot; 应用二：中子物理与基础测量</h2>
+<ul>
+<li><b>中子"假目标"</b>：³He 只有一个中子且自旋占主导——高密度高极化 ³He 气体可以作为"中子目标"，用于电子散射实验研究中子结构（比固体氘靶更干净）；</li>
+<li><b>中子极化分析器</b>：³He 核吸收中子时遵循自旋选择规则（吸收相反自旋的中子）——所以极化 ³He 泡可以当"中子极化过滤器"，用于中子散射实验分析中子束的自旋；</li>
+<li><b>测量与校验</b>：EPR 频移法可以无创地实时监测泡内极化度（极化氙对铷的 EPR 线有特征频移）。</li>
+</ul>
+</section>
+
+<!-- ============ 8 其他路线 ============ -->
+<section id="h8">
+<h2>8 &middot; 其他极化路线：MEOP 与 DNP</h2>
+<ul>
+<li><b>MEOP（亚稳态交换光泵浦）</b>：直接激发 ³He 原子（1083 nm），不用碱金属——产率高（0.4 L/h 达 60% 极化），但需要低压；</li>
+<li><b>DNP（动态核极化）</b>：把分子（如 ¹³C-丙酮酸盐）与电子自由基混合、冷却到 1&ndash;2 K，用微波把电子极化传给核，再快速升温注射——用于<b>代谢成像</b>：注射后实时追踪丙酮酸盐→乳酸/碳酸氢盐的转化，乳酸高是癌症标志。</li>
+</ul>
+<p>三条路线互补：SEOP 做惰性气体，MEOP 做氦，DNP 做代谢分子。</p>
+</section>
+
+<!-- ============ 9 收束 ============ -->
+<section id="h9">
+<h2>9 &middot; 收束：与主线的连接</h2>
+<p>SEOP 是主线光抽运技术的"接力版"：主线用光抽运极化电子自旋来<b>读磁场</b>（磁力仪），SEOP 用同一个物理把极化<b>移交</b>给核来<b>做成像/分析</b>。二者共享的根基：</p>
+<div class="formula">圆偏光 &rarr; 选择定则 &rarr; 电子自旋极化 &rarr; [读磁场 / 传核] &rarr; 磁力仪 / 超极化气体</div>
+<p>这也说明主线"用光驯服原子"的框架多么通用——同一个机制，换一个"下游"，就是另一个产业（医学影像 vs 精密测量）。超极化气体的故事里还有一层：<b>物理到临床的转化往往要几十年</b>（1960 年自旋交换原理 → 2000 年代临床肺成像），耐心和工程同样重要。</p>
+<div class="side"><b>一句话总结：</b>SEOP = 用光把碱金属电子极化，再通过碰撞把这份极化"充"进惰性气体原子核——核磁信号暴涨一万倍以上，让"看不见的肺"和"看不见的中子自旋"都变得可见。</div>
+</section>
+
+<!-- ============ 10 术语表 ============ -->
+<section id="glos">
+<h2>10 &middot; 术语表（随时回来查）</h2>
+<div class="glos"><b>超极化</b>：把核极化从热平衡的百万分之几做到 10&ndash;60%。</div>
+<div class="glos"><b>SEOP</b>：自旋交换光泵浦——光极化的碱金属电子把极化传给惰性气体核。</div>
+<div class="glos"><b>费米接触相互作用</b>：碰撞中电子与核交换角动量的机制。</div>
+<div class="glos"><b>猝灭气</b>：泡内氮气，吸收荧光防止极化被洗掉。</div>
+<div class="glos"><b>T₁ 弛豫</b>：极化衰减的时间常数（惰性气体可保存分钟&ndash;小时）。</div>
+<div class="glos"><b>³He</b>：高旋磁比惰性气体，信号强，用于中子物理和肺成像。</div>
+<div class="glos"><b>¹²⁹Xe</b>：可溶入组织的惰性气体，用于多功能肺/组织成像。</div>
+<div class="glos"><b>MEOP</b>：亚稳态交换光泵浦，直接激发 ³He（1083 nm）。</div>
+<div class="glos"><b>DNP</b>：动态核极化，低温+微波极化 ¹³C 代谢分子。</div>
+<div class="glos"><b>中子极化分析器</b>：极化 ³He 泡按自旋选择性吸收中子，用于分析中子束极化。</div>
+<div class="glos"><b>通气/弥散/灌注成像</b>：肺功能成像的三种模式（分布/微结构/血流）。</div>
+<div class="glos"><b>代谢成像</b>：DNP 追踪 ¹³C 分子的体内代谢转化（乳酸=癌症标志）。</div>
+</section>
+
+<div class="links">
+<a href="index.html">&larr; 返回主线</a>
+<a href="atomic_experiments.html">实验支线：原子磁力仪实验 &rarr;</a>
+<a href="#h0">回到顶部</a>
+</div>
+</main>
+<script>
+(function(){
+  var KEY='siteTheme';
+  function apply(t){document.body.setAttribute('data-theme',t);}
+  try{var saved=localStorage.getItem(KEY);if(saved==='light')apply('light');}catch(e){}
+  var tb=document.getElementById('themeBtn');
+  tb.addEventListener('click',function(){
+    var cur=document.body.getAttribute('data-theme')==='light'?'dark':'light';
+    apply(cur);try{localStorage.setItem(KEY,cur);}catch(e){}
+  });
+  var toc=document.getElementById('toc'),btn=document.getElementById('tocBtn');
+  if(toc&&btn){
+    var links=[];
+    document.querySelectorAll('main section').forEach(function(sec){
+      var h=sec.querySelector('h2');if(sec.id&&h){
+        var a=document.createElement('a');a.href='#'+sec.id;a.textContent=h.textContent;
+        toc.appendChild(a);links.push(a);
+      }
+    });
+    btn.addEventListener('click',function(){toc.classList.toggle('open');});
+    toc.addEventListener('click',function(e){if(e.target.tagName==='A')toc.classList.remove('open');});
+    window.addEventListener('scroll',function(){
+      var cur=null;
+      document.querySelectorAll('main section').forEach(function(sec){
+        if(sec.getBoundingClientRect().top<120)cur=sec.id;
+      });
+      links.forEach(function(a){a.classList.toggle('cur',a.getAttribute('href')==='#'+cur);});
+    });
+  }
+})();
+</script>
+</body>
+</html>
