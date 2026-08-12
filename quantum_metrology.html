@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>量子计量学：突破标准量子极限</title>
+<style>
+:root{
+  --bg:#0f1115; --card:#171a21; --bord:#23262d; --mut:#9aa4b2;
+  --txt:#e6e8ec; --acc:#7dd3fc; --warn:#fbbf24; --intu:#c4b5fd; --side:#2a2140;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font:16px/1.9 -apple-system,"Segoe UI","Microsoft YaHei",sans-serif;padding:28px 20px 60px}
+main{max-width:820px;margin:0 auto}
+a{color:var(--acc);text-decoration:none}
+a:hover{text-decoration:underline}
+h1{font-size:27px;line-height:1.45;margin-bottom:8px}
+h2{font-size:21px;margin:40px 0 14px;padding-left:12px;border-left:4px solid var(--acc)}
+h3{font-size:17px;margin:24px 0 10px;color:var(--acc)}
+p{margin:12px 0}
+ul,ol{margin:10px 0 10px 24px}
+li{margin:6px 0}
+table{border-collapse:collapse;width:100%;margin:14px 0;font-size:14px}
+th,td{border:1px solid var(--bord);padding:7px 11px;text-align:left}
+th{background:#1c2029;color:var(--acc)}
+tr:nth-child(even) td{background:#151922}
+.sub{color:var(--mut);font-size:14px}
+.formula{background:#11141a;border:1px solid var(--bord);border-radius:8px;padding:12px 18px;margin:14px 0;font-family:"Cambria Math",Georgia,serif;font-size:16px;overflow-x:auto;text-align:center}
+.formula b{color:var(--acc)}
+.note{border-left:3px solid var(--warn);padding:8px 14px;margin:14px 0;background:#1a1710;font-size:14px}
+.side{background:var(--side);border:1px solid #3b2f5e;border-radius:10px;padding:12px 16px;margin:14px 0;font-size:14px}
+.side b{color:#c4b5fd}
+.glos{background:#11141a;border:1px solid var(--bord);border-radius:8px;padding:10px 14px;margin:8px 0;font-size:14px}
+.glos b{color:var(--acc)}
+.links{margin-top:30px;display:flex;gap:16px;flex-wrap:wrap;font-size:14px}
+.toplink{color:var(--mut);font-size:13px;margin-bottom:12px;display:block}
+body[data-theme="light"]{
+  --bg:#f7f8fa; --card:#ffffff; --bord:#dde1e7; --mut:#5a6472;
+  --txt:#1a2029; --acc:#0284c7; --warn:#b45309; --intu:#6d28d9; --side:#f3eefb;
+}
+body[data-theme="light"] .formula{background:#f1f3f6;border-color:#dde1e7}
+body[data-theme="light"] .note{background:#fdf6e3;border-color:#e5c97a}
+body[data-theme="light"] .side{border-color:#c9b8ec}
+body[data-theme="light"] .glos{background:#f1f3f6;border-color:#dde1e7}
+body[data-theme="light"] th{background:#eef1f5}
+body[data-theme="light"] tr:nth-child(even) td{background:#f3f5f8}
+#tocBtn{position:fixed;top:10px;right:10px;z-index:90;background:transparent;border:1px solid var(--bord);
+  color:var(--mut);border-radius:6px;font-size:14px;padding:3px 9px;cursor:pointer;opacity:.55;transition:opacity .2s}
+#tocBtn:hover{opacity:1;color:var(--acc)}
+#toc{position:fixed;top:0;left:0;right:0;z-index:89;background:var(--bg);border-bottom:1px solid var(--bord);
+  max-height:0;overflow:hidden;transition:max-height .3s ease;display:flex;flex-wrap:wrap;gap:4px 16px;padding:0 16px}
+#toc.open{max-height:70vh;overflow:auto;padding-top:44px;padding-bottom:12px}
+#toc a{font-size:13px;color:var(--mut);padding:2px 0}
+#toc a:hover{color:var(--acc)}
+#toc a.cur{color:var(--acc)}
+#themeBtn{position:fixed;right:10px;bottom:10px;z-index:90;width:34px;height:34px;border-radius:50%;
+  background:var(--card);border:1px solid var(--bord);color:var(--mut);font-size:16px;cursor:pointer;
+  opacity:.5;transition:opacity .2s}
+#themeBtn:hover{opacity:1;color:var(--acc)}
+@media(max-width:860px){main{padding:0 4px}h1{font-size:22px}}
+</style>
+</head>
+<body>
+<button id="tocBtn" title="展开/收起目录">☰</button>
+<button id="themeBtn" title="深浅切换">◐</button>
+<div id="toc"></div>
+<main>
+<a class="toplink" href="index.html">&larr; 返回《从原子到磁力仪》主线</a>
+<h1>量子计量学：测量能有多准</h1>
+<p class="sub">主线专题，与《噪声抑制》互为姊妹篇——那一篇讲"技术噪声怎么压"，这一篇讲"量子噪声是不是最后的墙，以及怎么拆掉它"。所有数字来自公开文献。</p>
+<div class="side"><b style="color:#7dd3fc">这一篇和你有什么关系：</b>2015 年 LIGO 首次测到引力波时，靠的就是压缩光把测量噪声压下去——那是量子计量学第一次进入大众视野。你手机相机的"噪点"、天文照片的信噪比，本质都是散粒噪声（量子涨落）；这一篇讲的是物理学家如何不只是"忍受"它，而是用纠缠和压缩"驯服"它。</div>
+
+<!-- ============ 0 学习地图 ============ -->
+<section id="q0">
+<h2>0 &middot; 先看地图：从"数粒子"到"排布粒子"</h2>
+<p>这一篇回答一个问题：测量精度的极限到底在哪，以及能不能突破。路线：</p>
+<ul>
+<li>第 1 节为什么有"量子极限"：粒子的分立性（光子、原子都是一个个"数"出来的）。</li>
+<li>第 2 节标准量子极限（SQL）：互不相关的 N 个粒子，精度 ~1/&radic;N——这是"常规操作"的天花板。</li>
+<li>第 3 节海森堡极限（HL）：让 N 个粒子纠缠起来，精度 ~1/N——比 SQL 好 &radic;N 倍。</li>
+<li>第 4 节自旋压缩：把噪声从"信号方向"挤到"别处"，最实用的纠缠态。</li>
+<li>第 5 节怎么造：QND 测量、冷原子碰撞、光晶格。</li>
+<li>第 6 节实验结果：压缩光 10 dB、自旋压缩 11 倍增益、引力波探测器。</li>
+<li>第 7 节难点：为什么"真正有用"的压缩这么难——Wineland 判据与计量增益。</li>
+<li>第 8 节收束：量子计量学与主线磁力仪/原子钟的接口。</li>
+</ul>
+<div class="note">时间少的话：只读第 2、3、4 节。一句话——<b>不相关的 N 个粒子，精度只能到 1/&radic;N（SQL）；让它们纠缠起来，能到 1/N（海森堡极限）——自旋压缩是通向那里的实用阶梯</b>。</div>
+</section>
+
+<!-- ============ 1 为什么有量子极限 ============ -->
+<section id="q1">
+<h2>1 &middot; 为什么测量有"量子极限"</h2>
+<p>所有测量最后都要"数数"：数光子、数原子、数跃迁。而量子力学最反直觉的一点是——<b>粒子的数量本身有涨落</b>：</p>
+<ul>
+<li><b>光子散粒噪声</b>：激光不是均匀的"水流"，而是一颗颗"雨滴"（光子）随机到达，计数有泊松涨落 ~&radic;N；</li>
+<li><b>原子投影噪声</b>：测量原子自旋方向时，每个原子的投影是随机的（测量坍缩），N 个原子的集体结果有 ~&radic;N 的涨落。</li>
+</ul>
+<p>这两种"量子噪声"不是仪器不好，而是物理本质：只要粒子是分立的、只要测量会坍缩，噪声就存在。问题是——能不能通过"安排粒子的状态"来减少它？答案是可以，代价是要纠缠。</p>
+</section>
+
+<!-- ============ 2 标准量子极限 ============ -->
+<section id="q2">
+<h2>2 &middot; 标准量子极限（SQL）：常规操作的天花板</h2>
+<p>如果 N 个粒子互不相关（比如一束普通激光、一群独立原子），测量误差的极限是：</p>
+<div class="formula">&delta;&phi; ~ 1/&radic;N&nbsp;&nbsp;（标准量子极限，SQL）</div>
+<p>直觉：数 N 个随机到达的光子，计数涨落 ~&radic;N，相对精度 ~&radic;N/N = 1/&radic;N。<b>增加粒子数（提高功率/密度/体积）就能压噪声</b>——这正是主线磁力仪公式 &delta;B ~ 1/&radic;(n&middot;T<sub>2</sub>&middot;V&middot;t) 里每一项的由来。SQL 不是极限的"墙"，而是"普通路线的尽头"：想提高精度，除了加粒子，还有别的路吗？</p>
+</section>
+
+<!-- ============ 3 海森堡极限 ============ -->
+<section id="q3">
+<h2>3 &middot; 海森堡极限（HL）：纠缠带来的加速</h2>
+<p>如果 N 个粒子制备成<b>纠缠态</b>（比如 NOON 态：所有光子要么全走一路、要么全走另一路），测量误差变成：</p>
+<div class="formula">&delta;&phi; ~ 1/N&nbsp;&nbsp;（海森堡极限，HL）</div>
+<p>比 SQL 好 &radic;N 倍——N 个粒子，精度用出 N² 个粒子的效果。直觉：纠缠让 N 个粒子"同进退"，计数涨落不再是 &radic;N 而是 1（集体行为），于是相对精度 ~1/N。代价是：纠缠态极脆弱，任何损耗/退相干都会迅速"解缠"——这是实验上最大的敌人。</p>
+</section>
+
+<!-- ============ 4 自旋压缩 ============ -->
+<section id="q4">
+<h2>4 &middot; 自旋压缩：把噪声"挤到一边"</h2>
+<p>海森堡极限是理想目标，但"全体纠缠"太难。现实中走的是<b>自旋压缩</b>这条路——一种"部分纠缠"的态，把集体自旋的不确定度从测量方向挤到正交方向：</p>
+<div class="formula">海森堡不确定：&Delta;S<sub>z</sub>&middot;&Delta;S<sub>y</sub> &ge; |&lang;S<sub>x</sub>&rang;|/2<br>自旋压缩：&Delta;S<sub>z</sub> 变小（测量方向）、&Delta;S<sub>y</sub> 变大（浪费方向）</div>
+<p>类比：一团圆形雾（各方向噪声相同）被"压"成一片竖长的薄饼——测竖方向（相位方向）时噪声变小，代价是横方向（不用来测量）噪声变大。在 Ramsey 干涉仪（原子钟/干涉仪的核心）里，把 &Delta;S<sub>z</sub> 压下去，相位测量的精度就突破 SQL。</p>
+</section>
+
+<!-- ============ 5 怎么造 ============ -->
+<section id="q5">
+<h2>5 &middot; 怎么造自旋压缩态</h2>
+<p>三条主路径：</p>
+<ul>
+<li><b>QND 测量（量子非破坏测量）</b>：用一束光"偷看"原子的集体自旋，测量本身就把噪声压下去（因为知道了集体态、投影到更确定的方向）。关键是测量不能破坏要测的量——2009 年铯原子实验用光学 QND 得到 3.4 dB 计量压缩；</li>
+<li><b>冷原子碰撞</b>：玻色-爱因斯坦凝聚（BEC）里的原子间碰撞相互作用，天然产生纠缠——光晶格里或原子芯片上都可以做；</li>
+<li><b>光场压缩</b>：光本身的散粒噪声也可以被"挤"——用光学参量放大器（OPA）产生压缩光，一个正交分量的噪声低于散粒噪声。</li>
+</ul>
+</section>
+
+<!-- ============ 6 实验结果 ============ -->
+<section id="q6">
+<h2>6 &middot; 实验结果：压缩真的有用</h2>
+<table>
+<tr><th>实验</th><th>成果</th></tr>
+<tr><td>压缩光（光场）</td><td>&gt;10 dB 噪声压缩（比 SQL 好 10 倍）</td></tr>
+<tr><td>自旋压缩（原子系综）</td><td>&gt;10 dB；50 万原子 ~11 倍计量增益</td></tr>
+<tr><td>引力波探测器（LIGO）</td><td>压缩光增强灵敏度 ~3 dB（3.2 dB）</td></tr>
+<tr><td>光钟</td><td>自旋压缩实现可验证的计量增益（频率比对确认）</td></tr>
+<tr><td>原子干涉仪/蒸气磁力仪</td><td>已演示压缩增强</td></tr>
+</table>
+<p>这些数字说明两件事：① 压缩光已经在<a href="noise_suppression.html">大型设施</a>（引力波台）里"服役"；② 自旋压缩在实验室级原子钟/磁力仪里已经能给出"可以上论文的增益"，但离"日常使用"还有距离。</p>
+</section>
+
+<!-- ============ 7 难点 ============ -->
+<section id="q7">
+<h2>7 &middot; 为什么"真正有用"的压缩这么难</h2>
+<p>压缩 ≠ 直接变好。原因：</p>
+<ul>
+<li><b>Wineland 判据</b>：压缩过程本身可能"消耗"原子（比如 QND 测量的光会把原子踢走、降低对比度）——如果总信噪比没有提升，压缩就是"假压缩"。Wineland 判据 &xi;<sub>R</sub>² = C²/&xi;² 只认"扣除损失后仍低于 1"的压缩（C 是干涉对比度）；</li>
+<li><b>退相干</b>：纠缠态对环境极其敏感，原子碰撞、磁场抖动、光散射都会"解缠"——压缩态必须在足够短的时间内用完；</li>
+<li><b>资源消耗</b>：造压缩需要额外的激光、腔、原子数——对很多应用，直接"加粒子"（更简单）比"压缩"（更复杂）更划算。NIST 的综述说得直白：压缩需要额外资源，在很多实际场景里"用更多原子和光子"是更简单的路。</li>
+</ul>
+<p>所以量子计量的工程判断是：<b>只有当"加粒子"不可行时（比如生物样品怕光、原子密度有上限、光功率有损伤阈值），压缩才值得</b>。</p>
+</section>
+
+<!-- ============ 8 收束 ============ -->
+<section id="q8">
+<h2>8 &middot; 收束：量子计量与主线传感器</h2>
+<p>把这一篇和主线接起来：</p>
+<div class="formula">主线磁力仪/原子钟：&delta;B ~ 1/&radic;(n&middot;T<sub>2</sub>&middot;V&middot;t)（SQL 形态）<br>量子增强：自旋压缩 &rarr; 把 n 的"效率"从 &radic;N 提升到 N</div>
+<p>换句话说，量子计量学是在主线所有传感器（磁力仪、原子钟、干涉仪）的"购物清单"里，提供了一种新的"充值方式"——不是加原子数，而是让已有原子"更团结"。目前它还是实验室利器，但引力波探测已经证明：<b>当精度需求超过 SQL 时，量子压缩就是"印钞机"</b>。下一代原子钟、下一代磁力仪、下一代引力波台阵，都把压缩写进了路线图。</p>
+<div class="side"><b>一句话总结：</b>SQL 是"各干各的粒子"的天花板，海森堡极限是"团结的粒子"的地平线，自旋压缩是从一个到另一个的实用阶梯——而判断是否值得爬，先看能不能"加粒子"。</div>
+</section>
+
+<!-- ============ 9 术语表 ============ -->
+<section id="glos">
+<h2>9 &middot; 术语表（随时回来查）</h2>
+<div class="glos"><b>散粒噪声</b>：光子/粒子到达的泊松涨落（~&radic;N）。</div>
+<div class="glos"><b>投影噪声</b>：测量原子自旋时的量子坍缩涨落。</div>
+<div class="glos"><b>标准量子极限（SQL）</b>：互不相关 N 粒子的精度上限（~1/&radic;N）。</div>
+<div class="glos"><b>海森堡极限（HL）</b>：N 粒子纠缠态的精度上限（~1/N）。</div>
+<div class="glos"><b>自旋压缩</b>：把集体自旋噪声从测量方向挤到正交方向。</div>
+<div class="glos"><b>NOON 态</b>：光子"全走一路或全走另一路"的纠缠态，达 HL 的教科书例子。</div>
+<div class="glos"><b>QND（量子非破坏测量）</b>：不破坏被测量的量、还能压噪声的测量。</div>
+<div class="glos"><b>Wineland 判据</b>：扣除压缩损耗后是否仍有真实计量增益的判断。</div>
+<div class="glos"><b>计量增益</b>：压缩态信噪比与 SQL 信噪比之比的平方。</div>
+<div class="glos"><b>压缩光</b>：一个正交分量噪声低于散粒噪声的光场。</div>
+<div class="glos"><b>Ramsey 干涉仪</b>：两次脉冲分离的干涉序列（钟/干涉仪核心）。</div>
+<div class="glos"><b>退相干</b>：纠缠态被环境破坏、回到经典混合态的过程。</div>
+</section>
+
+<div class="links">
+<a href="index.html">&larr; 返回主线</a>
+<a href="noise_suppression.html">姊妹篇：噪声抑制 &rarr;</a>
+<a href="#q0">回到顶部</a>
+</div>
+</main>
+<script>
+(function(){
+  var KEY='siteTheme';
+  function apply(t){document.body.setAttribute('data-theme',t);}
+  try{var saved=localStorage.getItem(KEY);if(saved==='light')apply('light');}catch(e){}
+  var tb=document.getElementById('themeBtn');
+  tb.addEventListener('click',function(){
+    var cur=document.body.getAttribute('data-theme')==='light'?'dark':'light';
+    apply(cur);try{localStorage.setItem(KEY,cur);}catch(e){}
+  });
+  var toc=document.getElementById('toc'),btn=document.getElementById('tocBtn');
+  if(toc&&btn){
+    var links=[];
+    document.querySelectorAll('main section').forEach(function(sec){
+      var h=sec.querySelector('h2');if(sec.id&&h){
+        var a=document.createElement('a');a.href='#'+sec.id;a.textContent=h.textContent;
+        toc.appendChild(a);links.push(a);
+      }
+    });
+    btn.addEventListener('click',function(){toc.classList.toggle('open');});
+    toc.addEventListener('click',function(e){if(e.target.tagName==='A')toc.classList.remove('open');});
+    window.addEventListener('scroll',function(){
+      var cur=null;
+      document.querySelectorAll('main section').forEach(function(sec){
+        if(sec.getBoundingClientRect().top<120)cur=sec.id;
+      });
+      links.forEach(function(a){a.classList.toggle('cur',a.getAttribute('href')==='#'+cur);});
+    });
+  }
+})();
+</script>
+</body>
+</html>
