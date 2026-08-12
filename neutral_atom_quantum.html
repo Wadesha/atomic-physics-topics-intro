@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>中性原子量子计算：用光镊排布量子比特</title>
+<style>
+:root{
+  --bg:#0f1115; --card:#171a21; --bord:#23262d; --mut:#9aa4b2;
+  --txt:#e6e8ec; --acc:#7dd3fc; --warn:#fbbf24; --intu:#c4b5fd; --side:#2a2140;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font:16px/1.9 -apple-system,"Segoe UI","Microsoft YaHei",sans-serif;padding:28px 20px 60px}
+main{max-width:820px;margin:0 auto}
+a{color:var(--acc);text-decoration:none}
+a:hover{text-decoration:underline}
+h1{font-size:27px;line-height:1.45;margin-bottom:8px}
+h2{font-size:21px;margin:40px 0 14px;padding-left:12px;border-left:4px solid var(--acc)}
+h3{font-size:17px;margin:24px 0 10px;color:var(--acc)}
+p{margin:12px 0}
+ul,ol{margin:10px 0 10px 24px}
+li{margin:6px 0}
+table{border-collapse:collapse;width:100%;margin:14px 0;font-size:14px}
+th,td{border:1px solid var(--bord);padding:7px 11px;text-align:left}
+th{background:#1c2029;color:var(--acc)}
+tr:nth-child(even) td{background:#151922}
+.sub{color:var(--mut);font-size:14px}
+.formula{background:#11141a;border:1px solid var(--bord);border-radius:8px;padding:12px 18px;margin:14px 0;font-family:"Cambria Math",Georgia,serif;font-size:16px;overflow-x:auto;text-align:center}
+.formula b{color:var(--acc)}
+.note{border-left:3px solid var(--warn);padding:8px 14px;margin:14px 0;background:#1a1710;font-size:14px}
+.side{background:var(--side);border:1px solid #3b2f5e;border-radius:10px;padding:12px 16px;margin:14px 0;font-size:14px}
+.side b{color:#c4b5fd}
+.glos{background:#11141a;border:1px solid var(--bord);border-radius:8px;padding:10px 14px;margin:8px 0;font-size:14px}
+.glos b{color:var(--acc)}
+.links{margin-top:30px;display:flex;gap:16px;flex-wrap:wrap;font-size:14px}
+.toplink{color:var(--mut);font-size:13px;margin-bottom:12px;display:block}
+body[data-theme="light"]{
+  --bg:#f7f8fa; --card:#ffffff; --bord:#dde1e7; --mut:#5a6472;
+  --txt:#1a2029; --acc:#0284c7; --warn:#b45309; --intu:#6d28d9; --side:#f3eefb;
+}
+body[data-theme="light"] .formula{background:#f1f3f6;border-color:#dde1e7}
+body[data-theme="light"] .note{background:#fdf6e3;border-color:#e5c97a}
+body[data-theme="light"] .side{border-color:#c9b8ec}
+body[data-theme="light"] .glos{background:#f1f3f6;border-color:#dde1e7}
+body[data-theme="light"] th{background:#eef1f5}
+body[data-theme="light"] tr:nth-child(even) td{background:#f3f5f8}
+#tocBtn{position:fixed;top:10px;right:10px;z-index:90;background:transparent;border:1px solid var(--bord);
+  color:var(--mut);border-radius:6px;font-size:14px;padding:3px 9px;cursor:pointer;opacity:.55;transition:opacity .2s}
+#tocBtn:hover{opacity:1;color:var(--acc)}
+#toc{position:fixed;top:0;left:0;right:0;z-index:89;background:var(--bg);border-bottom:1px solid var(--bord);
+  max-height:0;overflow:hidden;transition:max-height .3s ease;display:flex;flex-wrap:wrap;gap:4px 16px;padding:0 16px}
+#toc.open{max-height:70vh;overflow:auto;padding-top:44px;padding-bottom:12px}
+#toc a{font-size:13px;color:var(--mut);padding:2px 0}
+#toc a:hover{color:var(--acc)}
+#toc a.cur{color:var(--acc)}
+#themeBtn{position:fixed;right:10px;bottom:10px;z-index:90;width:34px;height:34px;border-radius:50%;
+  background:var(--card);border:1px solid var(--bord);color:var(--mut);font-size:16px;cursor:pointer;
+  opacity:.5;transition:opacity .2s}
+#themeBtn:hover{opacity:1;color:var(--acc)}
+@media(max-width:860px){main{padding:0 4px}h1{font-size:22px}}
+</style>
+</head>
+<body>
+<button id="tocBtn" title="展开/收起目录">☰</button>
+<button id="themeBtn" title="深浅切换">◐</button>
+<div id="toc"></div>
+<main>
+<a class="toplink" href="index.html">&larr; 返回《从原子到磁力仪》主线</a>
+<h1>中性原子量子计算：用光镊排布量子比特</h1>
+<p class="sub">冷原子专题的前沿篇。冷原子站讲了怎么把原子冻住、排成阵列，这一篇讲：<b>这些阵列如何变成"可编程的量子处理器"</b>——中性原子路线是当前量子计算最有竞争力的平台之一。所有数字来自公开文献。</p>
+<div class="side"><b style="color:#7dd3fc">这一篇和你有什么关系：</b>你手机芯片、网银加密、甚至天气预报背后都依赖"计算"——量子计算机要用原子的自旋来算。中性原子路线近年频繁出现在科技新闻里（"量子比特数创新高""逻辑量子比特演示"），它的硬件就是这一篇的光镊阵列：一束束激光像镊子一样夹住原子，排成可编程的棋盘。</div>
+
+<!-- ============ 0 学习地图 ============ -->
+<section id="n0">
+<h2>0 &middot; 先看地图：从"单个原子"到"量子处理器"</h2>
+<p>中性原子量子计算是一条"从原子物理长出来"的路线。推进逻辑：</p>
+<ul>
+<li>第 1 节为什么选"中性原子"：相比离子阱/超导，它有什么天然优势。</li>
+<li>第 2 节量子比特：用原子的哪些自由度当 0 和 1。</li>
+<li>第 3 节光镊阵列：怎么把几百个原子排成可编程的格子。</li>
+<li>第 4 节单比特门：怎么对单个原子做任意操作。</li>
+<li>第 5 节两比特门：里德伯阻塞——中性原子之间的"开关"。</li>
+<li>第 6 节读出：量子气显微镜与单原子成像。</li>
+<li>第 7 节纠错与规模化：逻辑量子比特、移动原子、组装。</li>
+<li>第 8 节现状与路线图：业界进展（Atom Computing、QuEra 等）。</li>
+<li>第 9 节收束：与其他平台对比 + 与主线的关系。</li>
+</ul>
+<div class="note">时间少的话：只读第 2、5 节。一句话——<b>中性原子量子计算 = 用光镊把原子一个个夹住排成阵列（量子比特），用激光做单比特门，用"里德伯阻塞"让两个原子互相"认识"（两比特门），再逐个拍照读出</b>。</div>
+</section>
+
+<!-- ============ 1 为什么选中性原子 ============ -->
+<section id="n1">
+<h2>1 &middot; 为什么中性原子成了量子计算的候选</h2>
+<p>量子计算的硬件竞争里，中性原子平台入场晚但上升快，优势来自"原子物理的固有属性"：</p>
+<ul>
+<li><b>全同性与可扩展</b>：每个原子都一模一样（不像芯片要造几十亿个一致器件），排列可重组——这是"规模化"的天然优势；</li>
+<li><b>长相干时间</b>：中性原子与外界耦合弱（没有离子阱的强静电环境、没有超导的电流），超精细基态相干时间可达秒级甚至更久；</li>
+<li><b>光镊阵列可编程</b>：用聚焦激光"夹住"原子、按任意几何排布（一维/二维/三维），阵列大小逐年指数增长；</li>
+<li><b>可移动</b>：原子可以被光镊搬来搬去，实现"动态组装"。</li>
+</ul>
+<p>代价（必须诚实说）：两比特门速度比超导/离子慢（微秒级 vs 纳秒级）、门保真度还在追赶。它赌的是"规模+相干时间"最终胜出。</p>
+</section>
+
+<!-- ============ 2 量子比特 ============ -->
+<section id="n2">
+<h2>2 &middot; 量子比特：把 0 和 1 存进原子的"自旋"</h2>
+<p>中性原子的量子比特最常用的是碱金属原子的<b>两个超精细基态</b>（比如铷/铯的 |F,m&rang; 两个塞曼子能级）或铷的 "clock transition"（磁场最不敏感的一对）：</p>
+<ul>
+<li>好处：超精细基态寿命极长（几乎不衰变）、对磁场/电场不敏感（选择合适的工作点后）；</li>
+<li>单比特操控：微波或拉曼激光驱动两个态之间的相干旋转——就像拨动一个"量子转子"；</li>
+<li>相干时间：在合适条件下（magic 光镊、低磁场）可达秒级——远长于门操作时间，余量充足。</li>
+</ul>
+</section>
+
+<!-- ============ 3 光镊阵列 ============ -->
+<section id="n3">
+<h2>3 &middot; 光镊阵列：几百个原子的"可编程棋盘"</h2>
+<p>光镊是高度聚焦的激光束，焦点处的光强梯度形成微米级势阱，可以"夹住"单个原子。把几百束光镊排成阵列（声光偏转器/空间光调制器产生），就得到原子棋盘：</p>
+<div class="formula">激光冷却（MOT）&rarr; 随机装载（每阱 ~50% 概率 0 或 1 个原子）&rarr; 原位成像确认 &rarr; 移动光镊"重新组装"（补齐空位）&rarr; 满员阵列</div>
+<p>关键的工程技巧是<b>组装（defect-free assembly）</b>：初始装载是随机的，但用可移动光镊把原子搬来搬去、把空位填满——几分钟内得到一个"全满"的规则阵列（几十到几百个原子），这是可编程量子计算的前提。</p>
+</section>
+
+<!-- ============ 4 单比特门 ============ -->
+<section id="n4">
+<h2>4 &middot; 单比特门：拨动一个"量子转子"</h2>
+<p>单比特操作（任意单量子比特旋转）用微波或拉曼光实现：</p>
+<ul>
+<li>微波直接驱动两个超精细态之间的相干 Rabi 振荡——&pi; 脉冲翻转（0&harr;1）、&pi;/2 脉冲造叠加态；</li>
+<li>全局微波一次性作用整个阵列（所有原子一起做同一种操作）——"全局门"效率高；</li>
+<li>单原子寻址：用聚焦的激光（局部光移/失谐）只影响特定原子，实现"单比特寻址门"。</li>
+</ul>
+<p>单比特门保真度已到 99.9% 以上（几近完美），不是瓶颈——瓶颈在两比特门和读出。</p>
+</section>
+
+<!-- ============ 5 两比特门：里德伯阻塞 ============ -->
+<section id="n5">
+<h2>5 &middot; 两比特门：里德伯阻塞——原子之间的"无线电"</h2>
+<p>中性原子彼此"无感"（电中性），怎么让两个原子相互作用？答案是<b>里德伯激发</b>：</p>
+<ul>
+<li>用激光把其中一个原子激发到<b>高主量子数态</b>（比如 n~50&ndash;100）——此时原子半径暴涨（~微米级）、电偶极矩巨大，相当于"无线电天线"；</li>
+<li><b>里德伯阻塞</b>：如果原子 A 已经在里德伯态，它的巨大电场会把附近原子 B 的里德伯能级"推离共振"——B 就无法再被激发到里德伯态（<1 &micro;m 范围内被"阻塞"）；</li>
+<li>利用这个"要么 A、要么 B、不能同时"的效应，实现受控门：经典例子里，用"控制-目标"序列做 CNOT 或 CPHASE 门。</li>
+</ul>
+<div class="formula">原子 A 激发到里德伯态 &rarr; 阻塞 B &rarr; 双原子"相互作用被点亮" &rarr; 两比特纠缠门</div>
+<p>两比特门保真度已超过 99%（多个研究团队达到），阵列规模从 2020 年的几十个原子快速爬升。</p>
+</section>
+
+<!-- ============ 6 读出 ============ -->
+<section id="n6">
+<h2>6 &middot; 读出：量子气显微镜与单原子成像</h2>
+<p>中性原子平台的"杀手锏"是<b>能看见每个原子</b>：</p>
+<ul>
+<li><b>量子气显微镜</b>：高数值孔径物镜 + 荧光成像，逐个分辨阵列里每个格点的原子（空间分辨率 ~1 &micro;m）；</li>
+<li><b>态依赖读出</b>：先用一束光把"1 态"的原子荧光标记（0 态不发光），拍照——直接读出每个量子比特是 0 还是 1（单次读出保真度 &gt;99%）；</li>
+<li><b>破坏性读出</b>：读出会加热/丢失原子，但阵列可以重新装载再跑下一轮——"一轮一算"是这类平台的运行模式。</li>
+</ul>
+</section>
+
+<!-- ============ 7 纠错与规模化 ============ -->
+<section id="n7">
+<h2>7 &middot; 规模化：纠错、移动、组装</h2>
+<p>迈向实用量子计算的三大工程主题：</p>
+<ul>
+<li><b>量子纠错</b>：中性原子的独特优势是可以"移动原子"——把物理量子比特搬来搬去实现"动态连接"，这正好匹配表面码等纠错码需要的"邻近操作"结构；多个研究团队已演示逻辑量子比特（2023&ndash;2024 里程碑）；</li>
+<li><b>光晶格中的扩展</b>：从光镊阵列切换到深光晶格，原子数可以到上千甚至上万（但要牺牲一些单原子寻址能力）；</li>
+<li><b>集成化</b>：原子芯片（atom chip）、微透镜阵列、空间光调制器——把"桌面光学"压缩成可制造模块。</li>
+</ul>
+</section>
+
+<!-- ============ 8 现状与路线图 ============ -->
+<section id="n8">
+<h2>8 &middot; 现状：谁在做、做到哪了</h2>
+<table>
+<tr><th>方向</th><th>代表性进展</th></tr>
+<tr><td>阵列规模</td><td>数百个原子的无缺陷阵列已常规；更大规模在快速爬升</td></tr>
+<tr><td>单比特门</td><td>保真度 &gt;99.9%</td></tr>
+<tr><td>两比特门</td><td>保真度 &gt;99%（里德伯门）</td></tr>
+<tr><td>逻辑量子比特</td><td>2023&ndash;2024 年多个团队演示（含纠错）</td></tr>
+<tr><td>业界玩家</td><td>Atom Computing（原子阵列）、QuEra（中性原子+里德伯）、PASQAL、Infleqtion 等</td></tr>
+<tr><td>中期目标</td><td>数千物理比特 + 纠错逻辑比特 + 特定问题演示</td></tr>
+</table>
+<p>中性原子平台在"规模"维度上走得很快——因为"多一个原子"比"多一个芯片"容易。它的竞争点在：能否在规模扩大的同时保持门保真度和读出速度。</p>
+</section>
+
+<!-- ============ 9 收束 ============ -->
+<section id="n9">
+<h2>9 &middot; 收束：与主线的关系</h2>
+<p>中性原子量子计算是主线"用光驯服原子"的终极形态之一：</p>
+<div class="formula">主线磁力仪（读自旋）&rarr; 冷原子（冻住）&rarr; 光镊阵列（排布）&rarr; 里德伯门（相互作用）&rarr; 量子处理器</div>
+<p>它把主线里所有技术（光抽运、激光冷却、稳频、光与自旋相干控制）打包成了一个"原子物理×量子信息"的完整栈。和磁力仪/原子钟的共性很明显：<b>核心都是"让原子尽可能安静、尽可能可控"，然后把这些原子当成资源</b>——磁力仪用它们测磁场，量子计算机用它们算问题。量子时代的原子物理，正在从"读世界"走向"算世界"。</p>
+<div class="side"><b>一句话总结：</b>中性原子量子计算 = 光镊排原子（量子比特）+ 微波拨自旋（单比特门）+ 里德伯阻塞（两比特门）+ 逐原子拍照（读出）——规模扩张最快的量子计算平台之一，也是主线原子技术最前沿的延伸。</div>
+</section>
+
+<!-- ============ 10 术语表 ============ -->
+<section id="glos">
+<h2>10 &middot; 术语表（随时回来查）</h2>
+<div class="glos"><b>量子比特</b>：量子信息的单位，原子的两个超精细基态充当 0/1。</div>
+<div class="glos"><b>光镊</b>：聚焦激光束形成的微米级势阱，可单个夹住原子。</div>
+<div class="glos"><b>光镊阵列</b>：几百束光镊排成的原子棋盘（可编程几何）。</div>
+<div class="glos"><b>无缺陷组装</b>：移动光镊补齐空位，得到满员规则阵列。</div>
+<div class="glos"><b>Rabi 振荡</b>：微波/光驱动两态间的相干翻转（&pi; 脉冲=翻转）。</div>
+<div class="glos"><b>里德伯态</b>：高主量子数激发态，半径大、电偶极矩巨大。</div>
+<div class="glos"><b>里德伯阻塞</b>：一个原子的里德伯激发阻止邻近原子激发（&lt;1 &micro;m）。</div>
+<div class="glos"><b>CNOT/CPHASE 门</b>：受控两比特门，靠里德伯阻塞实现。</div>
+<div class="glos"><b>量子气显微镜</b>：逐格点荧光成像，单原子分辨。</div>
+<div class="glos"><b>态依赖读出</b>：只让"1 态"发光，拍照直接读 0/1。</div>
+<div class="glos"><b>量子纠错</b>：用多个物理比特编码一个逻辑比特，容忍错误。</div>
+<div class="glos"><b>表面码</b>：适合"邻近操作"的纠错码，与原子可移动特性匹配。</div>
+<div class="glos"><b>magic 光镊</b>：对两个态光移相同的波长，消除退相干。</div>
+<div class="glos"><b>全局门</b>：微波一次性作用于整个阵列的门操作。</div>
+</section>
+
+<div class="links">
+<a href="index.html">&larr; 返回主线</a>
+<a href="cold_atoms.html">冷原子专题（前置篇）&rarr;</a>
+<a href="#n0">回到顶部</a>
+</div>
+</main>
+<script>
+(function(){
+  var KEY='siteTheme';
+  function apply(t){document.body.setAttribute('data-theme',t);}
+  try{var saved=localStorage.getItem(KEY);if(saved==='light')apply('light');}catch(e){}
+  var tb=document.getElementById('themeBtn');
+  tb.addEventListener('click',function(){
+    var cur=document.body.getAttribute('data-theme')==='light'?'dark':'light';
+    apply(cur);try{localStorage.setItem(KEY,cur);}catch(e){}
+  });
+  var toc=document.getElementById('toc'),btn=document.getElementById('tocBtn');
+  if(toc&&btn){
+    var links=[];
+    document.querySelectorAll('main section').forEach(function(sec){
+      var h=sec.querySelector('h2');if(sec.id&&h){
+        var a=document.createElement('a');a.href='#'+sec.id;a.textContent=h.textContent;
+        toc.appendChild(a);links.push(a);
+      }
+    });
+    btn.addEventListener('click',function(){toc.classList.toggle('open');});
+    toc.addEventListener('click',function(e){if(e.target.tagName==='A')toc.classList.remove('open');});
+    window.addEventListener('scroll',function(){
+      var cur=null;
+      document.querySelectorAll('main section').forEach(function(sec){
+        if(sec.getBoundingClientRect().top<120)cur=sec.id;
+      });
+      links.forEach(function(a){a.classList.toggle('cur',a.getAttribute('href')==='#'+cur);});
+    });
+  }
+})();
+</script>
+</body>
+</html>
